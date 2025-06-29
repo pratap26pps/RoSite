@@ -6,8 +6,10 @@ const dispatch=useDispatch();
   return (
     <div>
       <LoginModal />
-      <h1 className="text-3xl font-bold text-center mt-10">Welcome to RO Store</h1>
-      <button onClick={()=>dispatch(AuthModel(true))}> OPEN BOX</button>
-    </div>
+      <div className="text-3xl font-bold text-center mt-20">
+        <p>Welcome to RO Store</p>
+        <button onClick={()=>dispatch(AuthModel(true))}>open modal</button>
+      </div>     
+     </div>
   );
 }
