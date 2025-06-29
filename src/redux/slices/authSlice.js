@@ -1,18 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-     showAuthModal: true,
+  showAuthModal: true,
 };
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-       closeAuthModal: (state) => {
-      state.showAuthModal = false;
+  name: "auth",
+  initialState,
+  reducers: {
+    AuthModel: (state, actions) => {
+      state.showAuthModal = actions.payload;
     },
-    },
+  },
 });
 
-export const {closeAuthModal } = authSlice.actions;
+export const { AuthModel } = authSlice.actions;
 export default authSlice.reducer;
