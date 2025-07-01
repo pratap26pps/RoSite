@@ -25,15 +25,15 @@ export default function Chatbot() {
     <>
       <button
         onClick={() => setShow(!show)}
-        className="fixed bottom-5 right-5 bg-blue-600 text-white rounded-full w-14 h-14 shadow-lg"
+        className="fixed bottom-5 right-5 bg-blue-600 text-white z-50 rounded-full w-14 h-14 shadow-lg"
       >
         💬
       </button>
 
       {show && (
-        <div className="fixed bottom-20 right-5 shadow-xl rounded-lg w-80 max-h-[400px] flex flex-col">
+        <div className="fixed bottom-20 bg-gray-700 z-50 right-5 shadow-xl rounded-lg w-80 max-h-[400px] flex flex-col">
           <div className="p-3 border-b font-bold">Ask RO Assistant</div>
-          <div className="p-2 bg-amber-600 overflow-y-auto flex-1">
+          <div className="p-2 bg-gray-5̦̦00 overflow-y-auto flex-1">
             {messages.map((msg, i) => (
               <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
                 <span

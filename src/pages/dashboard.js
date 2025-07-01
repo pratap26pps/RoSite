@@ -15,11 +15,11 @@ export default function Dashboard() {
   if (status === "loading") return <p>Loading...</p>;
 
   return (
-    <div className="p-6 mt-6 flex flex-col items-center justify-center">
-      <h1 className="text-2xl font-bold mb-4">Welcome, {session.user.name}</h1>
-      <p>Email: {session.user?.email}</p>
+    <div className="p-6 mt-20 flex flex-col items-center justify-center">
+      <h1 className="text-2xl font-bold mb-4">Welcome, {session?.user?.name}</h1>
+      <p>Email: {session?.user?.email}</p>
       <img
-        src={session.user?.image}
+        src={session?.user?.image}
         alt="User Profile"
         className="w-20 h-20 rounded-full mt-4"
       />

@@ -22,9 +22,9 @@ export default function LoginModal() {
         </button>
         <button
           onClick={() => dispatch(AuthModel(false))}
-          className="mt-4 text-gray-600 underline"
+          className="mt-4 text-gray-300 underline"
         >
-          CLOse
+          Close
         </button>
       </div>
     </div>
