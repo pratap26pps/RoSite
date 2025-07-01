@@ -44,6 +44,8 @@ export default function Navbar() {
             <NavigationMenuTrigger>services</NavigationMenuTrigger>
             <NavigationMenuContent className="min-w-[200px] px-4 py-2">
               <NavigationMenuLink href="/custom-room">Custom Room</NavigationMenuLink>
+              <NavigationMenuLink href="/custom-room">Certifications</NavigationMenuLink>
+              <NavigationMenuLink href="/custom-room">Our Reviews</NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -73,6 +75,7 @@ export default function Navbar() {
                   <NavigationMenuContent className="min-w-[100px] px-4 py-2">
 
                     <NavigationMenuLink href="/dashboard">Dashboard</NavigationMenuLink>
+                    <NavigationMenuLink href="/cart">My Cart</NavigationMenuLink>
                     <NavigationMenuLink onClick={() => signOut()}>Logout</NavigationMenuLink>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
