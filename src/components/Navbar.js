@@ -1,6 +1,6 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -12,6 +12,7 @@ import {
 
 
 export default function Navbar() {
+  const router=useRouter();
   const { data: session, status } = useSession();
   // console.log("Session Data:", session.user);
   return (
@@ -80,7 +81,7 @@ export default function Navbar() {
           </>
         ) : (
           <button
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            onClick={() => router.push("/login")}
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Login
