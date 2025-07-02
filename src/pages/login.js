@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { signIn } from 'next-auth/react';
 import { Eye, EyeOff } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
@@ -49,17 +49,17 @@ const login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pt-34   lg:flex-row-reverse items-center justify-around bg-blue-200 px-4 py-10 gap-10">
+    <div className="min-h-screen flex flex-col lg:flex-row-reverse items-center justify-around bg-blue-200 px-4 py-10 gap-10">
 
       {/* Left Side Animation */}
       {animationData1 && (
-        <div className="w-full max-w-sm lg:max-w-md">
+        <div className="w-full scale-150 max-w-sm lg:max-w-md">
           <Lottie animationData={animationData1} loop={true} />
         </div>
       )}
 
       {/* Login Card */}
-      <div className="bg-gray-300 shadow-xl rounded-2xl px-6 py-6 w-full max-w-md">
+      <div className="bg-blue-100 scale-110 shadow-xl rounded-2xl px-6 py-6 w-full max-w-md">
 
         {/* Top Logo + Welcome */}
         <div className="flex justify-between items-center mb-4">
@@ -67,7 +67,7 @@ const login = () => {
         ROTECX
         </Link>
           <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-extrabold text-gray-700">Welcome Back!</h2>
+      
             {animationData && (
               <div className="w-24 h-24">
                 <Lottie animationData={animationData} loop={true} />
@@ -96,7 +96,7 @@ const login = () => {
               required
               autoComplete="off"
               placeholder="Enter your email"
-              className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2  text-black placeholder:text-black border-2 border-blue-400 rounded-lg f "
             />
           </div>
 
@@ -115,8 +115,9 @@ const login = () => {
                 required
                 autoComplete="off"
                 placeholder="Enter your password"
-                className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2  text-black placeholder:text-black border-2 border-blue-400 rounded-lg  "
               />
+          
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -124,13 +125,21 @@ const login = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
-          </div>
-
+               </div>
+                   <Link href='/forgotpassword'>
+                       
+             <label htmlFor="password" className="block top-4 text-sm hover:underline cursor-pointer font-medium text-gray-600 mb-1">
+            Forgot Password
+            </label>
+                   </Link>
+       
+         
+             </div>
+            
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 cursor-pointer text-white py-2 rounded-lg font-semibold transition duration-200"
           >
             Login
           </button>
@@ -138,8 +147,8 @@ const login = () => {
 
         {/* Google Login */}
         <button
-          onClick={handleGoogleLogin}
-          className="w-full mt-4 flex items-center justify-center gap-2 border  py-2 rounded-lg bg-gray-600  transition"
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          className="w-full mt-4 flex cursor-pointer items-center justify-center gap-2 border  py-2 rounded-lg bg-gray-600 hover:bg-gray-700  transition"
         >
           <FaGoogle size={18} />
           Login with Google
@@ -148,7 +157,7 @@ const login = () => {
         {/* Signup Link */}
         <p className="text-sm text-center text-gray-600 mt-4">
           Don’t have an account?{' '}
-          <a href="/signup" className="text-green-600 font-medium hover:underline">
+          <a href="/signup" className="text-blue-600 font-medium hover:underline">
             Sign Up
           </a>
         </p>

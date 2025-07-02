@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
-
+import { Toaster } from "react-hot-toast";
 const Chatbot = dynamic(() => import('../components/Chatbot'), {
   ssr: false,
 });
@@ -24,6 +24,17 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
         <Navbar />
         <Chatbot/>
         <Component {...pageProps} />
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              background: '#4CAF50',
+              color: '#fff',
+              fontSize: '16px',
+            },
+          }}
+        />
         <Footer/>
       </Provider>
     </SessionProvider>

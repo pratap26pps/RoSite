@@ -12,44 +12,53 @@ import {
 
 
 export default function Navbar() {
-  const router=useRouter();
+  const router = useRouter();
   const { data: session, status } = useSession();
   // console.log("Session Data:", session.user);
   return (
     <nav className="flex bg-blue-100 fixed w-full z-50 items-center justify-between px-6 py-3 top-0 shadow">
-     {/* logo */}
+      {/* logo */}
       <Link href="/" className="text-xl font-bold text-blue-600">
         ROTECX
       </Link>
       {/* Navigation Menu */}
-     <div className="flex items-center gap-6">
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
-            <NavigationMenuContent className="min-w-[200px] px-4 py-2">
-              <NavigationMenuLink href="/dashboard">shop</NavigationMenuLink>
-              <NavigationMenuLink>shop details</NavigationMenuLink>
-              <NavigationMenuLink>cart</NavigationMenuLink>
-              <NavigationMenuLink>checkout</NavigationMenuLink>
-              <NavigationMenuLink>price block</NavigationMenuLink>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+      <div className="flex items-center gap-6">
+        <NavigationMenu>
 
-      <NavigationMenu>
-        <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>services</NavigationMenuTrigger>
-            <NavigationMenuContent className="min-w-[200px] px-4 py-2">
-              <NavigationMenuLink href="/custom-room">Custom Room</NavigationMenuLink>
-              <NavigationMenuLink href="/custom-room">Certifications</NavigationMenuLink>
-              <NavigationMenuLink href="/custom-room">Our Reviews</NavigationMenuLink>
+            <NavigationMenuTrigger className="!bg-transparent text-black p-0 border-none shadow-none hover:bg-transparent">Shop</NavigationMenuTrigger>
+            <NavigationMenuContent className="min-w-[160px] py-2">
+              <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition">
+                Shop
+              </NavigationMenuLink>
+              <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition">
+                Shop Details
+              </NavigationMenuLink>
+
+              <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition">
+                Checkout
+              </NavigationMenuLink>
+              <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition">
+                Price Block
+              </NavigationMenuLink>
             </NavigationMenuContent>
+
           </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+
+        </NavigationMenu>
+
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="!bg-transparent text-black p-0 border-none shadow-none hover:bg-transparent">services</NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[160px] py-2">
+                <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/custom-room">Custom Room</NavigationMenuLink>
+                <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/custom-room">Certifications</NavigationMenuLink>
+                <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/custom-room">Our Reviews</NavigationMenuLink>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
 
       {/* User Profile or Login Button */}
@@ -58,25 +67,29 @@ export default function Navbar() {
           <p>Loading...</p>
         ) : session ? (
           <>
-            {session?.user && (
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <img
-                  src={session?.user?.image}
-                  alt="User Profile"
-                  className="w-7 h-7 rounded-full mt-1"
-                />
-                <p className="text-sm text-gray-500">Hi, {session?.user?.name}</p>
-              </Link>
-            )}
+
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Account</NavigationMenuTrigger>
-                  <NavigationMenuContent className="min-w-[100px] px-4 py-2">
+                  <NavigationMenuTrigger
+                    className="!bg-transparent text-black p-0 border-none shadow-none hover:bg-transparent">
+                    {session?.user && (
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={session?.user?.image}
+                          alt="User Profile"
+                          className="w-7 h-7 rounded-full mt-1"
+                        />
+                        <p className="text-sm text-gray-500">Hi, {session?.user?.name}</p>
+                      </div>
+                    )}
 
-                    <NavigationMenuLink href="/dashboard">Dashboard</NavigationMenuLink>
-                    <NavigationMenuLink href="/cart">My Cart</NavigationMenuLink>
-                    <NavigationMenuLink onClick={() => signOut()}>Logout</NavigationMenuLink>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="min-w-[100px]  py-2">
+
+                    <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/dashboard">Dashboard</NavigationMenuLink>
+                    <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/cart">My Cart</NavigationMenuLink>
+                    <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" onClick={() => signOut()}>Logout</NavigationMenuLink>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>

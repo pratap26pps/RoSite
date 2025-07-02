@@ -1,17 +1,17 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+ import React, { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react'; 
 import { Eye, EyeOff } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import Link from 'next/link';
+import Router from 'next/router';
+
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [document, setDocument] = useState(null);
   const [animationData, setAnimationData] = useState(null);
-
+  const router = Router; 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -41,7 +41,7 @@ const Signup = () => {
     e.preventDefault();
     console.log('Signup Data:', formData);
     console.log('Selected Document:', document);
-    // ✅ Add your API call here
+    router.push('/otp');  
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -49,13 +49,13 @@ const Signup = () => {
   const handleGoogleSignup = () => console.log('Google Signup Clicked');
 
   return (
-    <div className="bg-blue-200 flex flex-col-reverse  lg:flex-row items-center justify-around px-4  overflow-hidden lg:-mb-34">
+    <div className="min-h-screen flex flex-col text-black  lg:flex-row items-center justify-around bg-blue-200 px-4 py-10 gap-10">
 
       {/* Signup Card */}
-      <div className="bg-gray-300 mb-10 shadow-xl rounded-2xl px-6 py-8 w-full max-w-md">
-        {/* Top: Logo + Heading */}
+      <div className="bg-blue-100  scale-110 shadow-xl rounded-2xl px-6 py-8 w-full max-w-md">
+         
         <div className="flex items-center justify-between mb-4">
- <Link href="/" className="text-xl font-bold text-blue-600">
+        <Link href="/" className="text-xl font-bold text-blue-600">
         ROTECX
         </Link>          <h2 className="text-2xl font-extrabold text-gray-800">Create Account</h2>
         </div>
@@ -110,7 +110,6 @@ const Signup = () => {
             className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
 
-
           {/* Passwords */}
           <div className="flex gap-2.5">
             {/* Password */}
@@ -160,7 +159,7 @@ const Signup = () => {
           {/* Create Account Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 rounded-lg font-semibold transition"
           >
             Create Account
           </button>
@@ -168,8 +167,8 @@ const Signup = () => {
 
         {/* Google Signup */}
         <button
-          onClick={handleGoogleSignup}
-          className="w-full mt-4 flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg bg-gray-600  transition"
+           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          className="w-full mt-4 flex items-center text-white cursor-pointer justify-center gap-2 border border-gray-400 py-2 rounded-lg bg-gray-600  transition"
         >
           <FaGoogle size={18} />
           Sign up with Google
@@ -186,7 +185,7 @@ const Signup = () => {
 
       {/* Lottie Animation */}
       {animationData && (
-        <div className="w-auto h-[800px] max-w-sm sm:pt-44 lg:mb-0 lg:mr-10">
+        <div className="w-auto scale-125 h-[800px] max-w-sm sm:pt-44 lg:mb-0 lg:mr-10">
           <Lottie animationData={animationData} loop={true} />
         </div>
       )}
