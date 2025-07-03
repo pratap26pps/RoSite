@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function ChooseProductSection() {
   return (
     <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-around">
         {/* Left: Cooler Image */}
         <div className="relative w-full md:w-1/2 flex justify-center">
           

@@ -3,7 +3,7 @@
 export default function HeroSection() {
   return (
     <section className="w-full min-h-screen bg-[#eaf6fd] relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between pt-24 pb-10">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-around pt-24 pb-10">
         {/* Left Content */}
         <div
           className="md:w-1/2 text-center md:text-left"

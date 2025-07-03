@@ -1,26 +1,27 @@
- import React, { useState, useEffect } from 'react';
-import { signIn } from 'next-auth/react'; 
+import React, { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
 import { Eye, EyeOff } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import Link from 'next/link';
 import Router from 'next/router';
+import toast from 'react-hot-toast';
 
 const Signup = () => {
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [document, setDocument] = useState(null);
   const [animationData, setAnimationData] = useState(null);
-  const router = Router; 
+  const [loading, setLoading] = useState(false);
+  const router = Router;
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     mobile: '',
-    vehicle: '',
     password: '',
     confirmPassword: '',
-    userType: '',
   });
 
   useEffect(() => {
@@ -37,27 +38,79 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
-    console.log('Signup Data:', formData);
-    console.log('Selected Document:', document);
-    router.push('/otp');  
+    const mobileRegex = /^[0-9]{10}$/;
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+ 
+
+    if (!mobileRegex.test(formData.mobile)) {
+      toast.error("Mobile number must be exactly 10 digits");
+      return;
+    }
+    if (!passwordRegex.test(formData.password)) {
+      toast.error(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol"
+      );
+      return;
+    }
+ 
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match!');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "Signup failed");
+        return;
+      }
+
+      toast.success("Otp Sent! Please verify your email.");
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("pendingSignup", JSON.stringify(formData));
+      }
+
+
+      router.push(`/otp?email=${formData.email}`);
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
-  const handleGoogleSignup = () => console.log('Google Signup Clicked');
+
 
   return (
     <div className="min-h-screen flex flex-col text-black  lg:flex-row items-center justify-around bg-blue-200 px-4 py-10 gap-10">
 
-      {/* Signup Card */}
+
       <div className="bg-blue-100  scale-110 shadow-xl rounded-2xl px-6 py-8 w-full max-w-md">
-         
+
         <div className="flex items-center justify-between mb-4">
-        <Link href="/" className="text-xl font-bold text-blue-600">
-        ROTECX
-        </Link>          <h2 className="text-2xl font-extrabold text-gray-800">Create Account</h2>
+          <Link href="/" className="text-xl font-bold text-blue-600">
+            ROTECX
+          </Link>
+          <h2 className="text-2xl font-extrabold text-gray-800">Create Account</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,7 +163,7 @@ const Signup = () => {
             className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
 
-          {/* Passwords */}
+
           <div className="flex gap-2.5">
             {/* Password */}
             <div className="relative w-1/2">
@@ -124,6 +177,7 @@ const Signup = () => {
                 autoComplete="new-password"
                 className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+            
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -132,6 +186,7 @@ const Signup = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+
 
             {/* Confirm Password */}
             <div className="relative w-1/2">
@@ -145,6 +200,7 @@ const Signup = () => {
                 autoComplete="new-password"
                 className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+      
               <button
                 type="button"
                 onClick={toggleConfirmPasswordVisibility}
@@ -161,13 +217,14 @@ const Signup = () => {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 rounded-lg font-semibold transition"
           >
-            Create Account
+            {loading ? 'Creating Account...' : 'Create Account'}
+
           </button>
         </form>
 
         {/* Google Signup */}
         <button
-           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           className="w-full mt-4 flex items-center text-white cursor-pointer justify-center gap-2 border border-gray-400 py-2 rounded-lg bg-gray-600  transition"
         >
           <FaGoogle size={18} />

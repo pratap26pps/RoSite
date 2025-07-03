@@ -6,8 +6,12 @@ import { Eye, EyeOff } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 const login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter()
+  const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,17 +41,40 @@ const login = () => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
     console.log('Form Data:', formData);
-    // Login logic here
+    if (!formData.email || !formData.password) {
+      alert('Please fill in all fields');
+      return;
+    }
+     try {
+    setloading(true);
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success('Login successful!');
+      router.push('/dashboard');
+    } else {
+      toast.error(data.message || 'Login failed. Please try again.');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    toast.error('Something went wrong. Please try again later.');
+  }finally {
+    setloading(false);
+  }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Google Login Clicked');
-    // Google OAuth logic here
-  };
-
+ 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row-reverse items-center justify-around bg-blue-200 px-4 py-10 gap-10">
 
@@ -141,7 +168,7 @@ const login = () => {
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-600 cursor-pointer text-white py-2 rounded-lg font-semibold transition duration-200"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

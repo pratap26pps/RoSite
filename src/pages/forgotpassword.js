@@ -3,19 +3,19 @@ import React, { useState } from 'react'
  
 import { BiArrowFromRight } from 'react-icons/bi'
 import Link from 'next/link'
-// import toast from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
  
 const Forgotpassword = () => {
    const [emailsend,setemailsend]=useState(false)
    const [email,setemail]=useState("")
-      const [loading,setLoading] = useState(false);     
+   const [loading,setLoading] = useState(false);     
  
     const resetpasswordhandler = async (e)=>{
+        e.preventDefault();
       try{
         setLoading(true);
-         e.preventDefault();
-       const result = await fetch('/api/resetpasstoken', {
+       const result = await fetch('/api/auth/resetpasstoken', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ const Forgotpassword = () => {
       console.log("data in forgotpass",data);
       setLoading(false);
       setemailsend(true)
-      if (result) {
+      if (result.ok) {
         console.log("Email sent:", data.message);
         toast.success("Email Sent")
   
@@ -70,9 +70,10 @@ const Forgotpassword = () => {
                  <div className='flex flex-col space-y-5 mt-2 items-center'>
                     <label htmlFor="">Email Address <sup>*</sup></label>
                     <input className='p-3 border rounded-lg w-80  text-blue-600 font-bold'
-                      required
+                     id="email"
+                     required
                      type="email"
-                     name='email'
+                      name="email"
                      value={email}
                      onChange={(e)=>setemail(e.target.value)}
                       placeholder='myemailaddress@gmail.com' />
@@ -91,7 +92,7 @@ const Forgotpassword = () => {
                  
              <Link href={'/login'}>
              <div className='flex lg:mt-3'>
-                               <BiArrowFromRight className='mt-1'/>
+                <BiArrowFromRight className='mt-1'/>
                <p>back to login</p>
             </div>
             </Link>   

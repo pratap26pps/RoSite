@@ -25,7 +25,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
         <Chatbot/>
         <Component {...pageProps} />
         <Toaster
-          position="top-right"
+          position="top-center"
           reverseOrder={false}
           toastOptions={{
             style: {

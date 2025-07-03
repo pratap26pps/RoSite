@@ -1,67 +1,53 @@
-import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import axios from "axios";
+import React, { useState ,useEffect} from "react";
 import OTPInput from "react-otp-input";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import Cookies from "js-cookie";
-
+import { useRouter,useSearchParams } from "next/navigation";
+import axios from "axios";
 import { BiArrowFromRight } from "react-icons/bi";
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const OtpPage = () => {
-//   const { signupdata,receivedOtp } = useSelector((state) => state.auth);
-//   console.log("signudata during otp",signupdata);
+
+  const router = useRouter();
+ const [pendingSignup, setPendingSignup] = useState({});
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [otp, setotp] = useState("");
-//   const router = useRouter();
-//   const dispatch = useDispatch();
- const [loading, setLoading] = useState(false);
-
-//   const email = signupdata?.email;
-//   useEffect(() => {
-//     if (!signupdata) {
-//       router.push("Account/Signup");
-//     }
-//   }, [signupdata]);
-
+  const [loading, setLoading] = useState(false);
+ 
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem("pendingSignup");
+    if (stored) {
+      setPendingSignup(JSON.parse(stored));
+    }
+  }
+}, []);
   const handleonsubmit =async (e) => {
-//  validation otp
-
-if(otp ===receivedOtp){
-
-  toast.success("otp-verified successfully");
-
-  // api call signup
-    console.log("signupdata", signupdata);
+ 
     e.preventDefault();
-setLoading(false);
+        if (!otp || !email) {
+      toast.error("Missing email or OTP");
+      return;
+    }
 
-     try {
-      const response = await axios.post("/api/users/signup", JSON.stringify(signupdata), {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    setLoading(true);
+    try {
+     const response = await axios.post("/api/auth/verify-otp", {
+         ...pendingSignup,
+        code: otp,
       });
-      console.log("Signup Success:", response.data);
-      Cookies.set("role", response.data.role);
-      // Redirect to login after successful signup
-      if (response.data.role === "owner") {
-        router.push("/Account/profile"); // Owner goes to admin panel
-      } else {
-        router.push("/Account/Login");
 
+      if (response.status === 200) {
+        toast.success("Email verified successfully!");
+        router.push("/login");
       }
-    } catch (err) {
-      console.error("Signup Error:", err.response?.data?.error || err.message);
-
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      toast.error("Invalid OTP or email. Please try again.");
     } finally {
       setLoading(false);
     }
-
-
-}else{
-  toast.error("invalid otp aagya");
-}
 
   };
 
@@ -84,7 +70,7 @@ setLoading(false);
               inputType="text"
               value={otp}
               onChange={setotp}
-              numInputs={4}
+              numInputs={6}
               renderSeparator={<span>-</span>}
               renderInput={(props) => <input {...props} />}
             />
@@ -96,7 +82,7 @@ setLoading(false);
                bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 
                dark:bg-blue-500 dark:hover:bg-blue-600"
             >
-              Verify Email
+             {loading ? "Verifying..." : "Verify OTP"}
             </button>
           </form>
           <Link href="/signup">
@@ -105,9 +91,9 @@ setLoading(false);
               <p>back to signup</p>
             </div>
           </Link>
-          <button className="mt-3 -ml-6" onClick={() => dispatch(takeotp(email))}>
+          {/* <button className="mt-3 -ml-6" onClick={() => resendhandler(email)}>
             Resend it
-          </button>
+          </button> */}
         </div>
       )}
     </div>
