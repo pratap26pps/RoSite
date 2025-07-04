@@ -28,6 +28,7 @@ export default async function handler(req, res) {
     await users.create({
       ...parsed.data,
       password: hashedPassword,
+      image: "/images/avatar.png",
       role,
     });
     await Otp.deleteMany({ email });

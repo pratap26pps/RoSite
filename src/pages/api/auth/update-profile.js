@@ -12,12 +12,12 @@ export default async function handler(req, res) {
   const user = JSON.parse(customUser);
   await connectDB();
 
-  const { firstName, lastName, mobile, photo } = req.body;
+  const { firstName, lastName, mobile, image } = req.body;
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
       user.id,
-      { firstName, lastName, mobile, photo },
+      { firstName, lastName, mobile, image },
       { new: true }
     );
 

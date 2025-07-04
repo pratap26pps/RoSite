@@ -1,106 +1,101 @@
-"use client"
-import React, { useState } from 'react'
- 
-import { BiArrowFromRight } from 'react-icons/bi'
-import Link from 'next/link'
-import toast from 'react-hot-toast'
+"use client";
+import React, { useState } from "react";
+import { BiArrowFromRight } from "react-icons/bi";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
- 
 const Forgotpassword = () => {
-   const [emailsend,setemailsend]=useState(false)
-   const [email,setemail]=useState("")
-   const [loading,setLoading] = useState(false);     
- 
-    const resetpasswordhandler = async (e)=>{
-        e.preventDefault();
-      try{
-        setLoading(true);
-       const result = await fetch('/api/auth/resetpasstoken', {
+  const [emailsend, setemailsend] = useState(false);
+  const [email, setemail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const resetpasswordhandler = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const result = await fetch("/api/auth/resetpasstoken", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
-   
-      }) 
+      });
+
       const data = await result.json();
-      console.log("data in forgotpass",data);
       setLoading(false);
-      setemailsend(true)
+
       if (result.ok) {
-        console.log("Email sent:", data.message);
-        toast.success("Email Sent")
-  
+        setemailsend(true);
+        toast.success("Reset email sent!");
       } else {
-        console.error(" Error:", data.message);
+        toast.error(data.message || "Failed to send email.");
       }
     } catch (error) {
       console.error("Error sending reset email:", error);
+      toast.error("Something went wrong!");
     }
-    }
-
+  };
 
   return (
-    <div className='min-h-screen py-32 text-black flex flex-col items-center bg-blue-200'>
- 
-        <div className='flex flex-col items-center '>
-            <h1 className=''>
-                {
-                    !emailsend ? ("Reset your Password"):("check your Email")
-                }
-            </h1>
-            <div>
-                {
-                   !emailsend ? <p className='w-96 p-3 ml-4'>
-                      "Have no fear. we'll email you instruction to reset your password. if 
-                      you don't have access to email ,we can try account recovery "
-                   </p>
-                : <p className='ml-12 my-5 scale-110'>{`we have send the reset email to ${email} `}
-                 <span>kindly check your E-mail</span> </p>
-                  
-                
-                }
-            </div>
-            <form onSubmit={resetpasswordhandler} className=''>
+    <div className="min-h-screen bg-blue-200 flex items-center justify-center py-20 px-4">
+      <div className="bg-white shadow-xl rounded-2xl max-w-md w-full px-8 py-10 space-y-6">
+        <h2 className="text-2xl font-bold text-center text-blue-700">
+          {emailsend ? "Check Your Email" : "Reset Your Password"}
+        </h2>
 
-        
-            {
-              !emailsend && (
- 
-                 <div className='flex flex-col space-y-5 mt-2 items-center'>
-                    <label htmlFor="">Email Address <sup>*</sup></label>
-                    <input className='p-3 border rounded-lg w-80  text-blue-600 font-bold'
-                     id="email"
-                     required
-                     type="email"
-                      name="email"
-                     value={email}
-                     onChange={(e)=>setemail(e.target.value)}
-                      placeholder='myemailaddress@gmail.com' />
-                 </div>
-                )
-            }
-                 {
-              loading ?(<div className='loader ml-5 mt-2'></div>):( 
-              <button className='p-2 ml-12 cursor-pointer lg:w-48 mt-3 bg-blue-400 text-black rounded-lg '
-                type='submit'>
-                 {
-                  !emailsend ?"Reset Password":"Resend Email"
-                 }
+        {!emailsend ? (
+          <>
+            <p className="text-sm text-gray-600 text-center">
+              Have no fear. We'll email you instructions to reset your password.
+              If you don't have access to your email, we can try account
+              recovery.
+            </p>
+
+            <form onSubmit={resetpasswordhandler} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address <sup className="text-red-500">*</sup>
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  required
+                  value={email}
+                  onChange={(e) => setemail(e.target.value)}
+                  className="w-full px-4 py-2 mt-1 border border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-700 font-semibold placeholder:text-gray-500"
+                  placeholder="myemailaddress@gmail.com"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white font-medium py-2 rounded-md hover:bg-blue-600 transition"
+              >
+                {loading ? "Sending..." : "Reset Password"}
               </button>
+            </form>
+          </>
+        ) : (
+          <p className="text-center text-blue-600 font-medium">
+            We’ve sent a password reset link to <strong>{email}</strong>. Please
+            check your inbox.
+          </p>
         )}
-                 
-             <Link href={'/login'}>
-             <div className='flex lg:mt-3'>
-                <BiArrowFromRight className='mt-1'/>
-               <p>back to login</p>
-            </div>
-            </Link>   
-               </form>
-        </div>
-      
-    </div>
-  )
-}
 
-export default Forgotpassword
+        <Link
+          href="/login"
+          className="flex items-center justify-center gap-1 text-blue-600 hover:underline mt-4"
+        >
+          <BiArrowFromRight size={18} />
+          <span>Back to Login</span>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Forgotpassword;
