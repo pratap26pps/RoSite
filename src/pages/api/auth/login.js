@@ -35,7 +35,14 @@ export default async function handler(req, res) {
     });
 
     res.setHeader("Set-Cookie", cookie);
-    return res.status(200).json({ message: "Login successful" });
+    return res.status(200).json({ message: "Login successful", user: {
+      id: user._id,
+      email: user.email,
+      name: user.firstName + " " + user.lastName,
+      image: user.image || "/images/avatar.png",
+      mobile: user.mobile,
+      role: user.role,
+    } });
 
 
   } catch (err) {

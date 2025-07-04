@@ -39,7 +39,7 @@ const OtpPage = () => {
 
       if (response.status === 200) {
         toast.success("Email verified successfully!");
-        router.push("/login");
+        router.push("/dashboard");
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -50,33 +50,34 @@ const OtpPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center scale-125 bg-blue-200 text-black px-4">
+    <div className="min-h-screen flex items-center justify-center lg:scale-125 bg-blue-200 text-black px-4">
       {loading ? (
         <p className="text-xl font-semibold">Verifying...</p>
       ) : (
-        <div className="w-full max-w-md bg-white shadow-lg rounded-2xl px-8 py-10 text-center">
+        <div className="w-full max-w-md bg-blue-100 shadow-lg rounded-2xl px-8 py-10 text-center">
           <h1 className="text-4xl font-bold text-blue-700 mb-4">Verify Email</h1>
           <p className="text-sm text-gray-600 mb-6">
             A verification code has been sent to your email. Enter it below to verify.
           </p>
 
           <form className="my-4 space-y-6" onSubmit={handleonsubmit}>
-            <div className="flex justify-center">
+            <div className="flex py-3 justify-center">
               <OTPInput
-                inputStyle="w-32 h-12 border border-gray-400 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              
+                inputStyle="scale-200 border border-gray-400 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 name="otp"
                 inputType="text"
                 value={otp}
                 onChange={setotp}
                 numInputs={6}
-                renderSeparator={<span className="px-2">-</span>}
+                renderSeparator={<span className="px-4">-</span>}
                 renderInput={(props) => <input {...props} />}
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white font-semibold text-lg rounded-lg shadow hover:bg-blue-700 transition"
+              className="w-full py-3 bg-blue-600 cursor-pointer scale-90 text-white font-semibold text-lg rounded-lg shadow hover:bg-blue-700 transition"
             >
               {loading ? "Verifying..." : "Verify OTP"}
             </button>

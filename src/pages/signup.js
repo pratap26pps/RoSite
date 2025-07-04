@@ -13,6 +13,8 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animationData, setAnimationData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
   const router = Router;
 
   const [formData, setFormData] = useState({
@@ -41,28 +43,31 @@ const Signup = () => {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
+    setErrors({});
     const mobileRegex = /^[0-9]{10}$/;
 
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
- 
+
+
+    let newErrors = {};
 
     if (!mobileRegex.test(formData.mobile)) {
-      toast.error("Mobile number must be exactly 10 digits");
-      return;
+      newErrors.mobile = "Mobile number must be exactly 10 digits";
     }
     if (!passwordRegex.test(formData.password)) {
-      toast.error(
-        "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol"
-      );
-      return;
+      newErrors.password =
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol";
     }
- 
-
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match!');
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
 
     try {
       setLoading(true);
@@ -162,7 +167,9 @@ const Signup = () => {
             autoComplete="off"
             className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
-
+          {errors.mobile && (
+            <p className="text-sm text-red-500 mt-1">{errors.mobile}</p>
+          )}
 
           <div className="flex gap-2.5">
             {/* Password */}
@@ -177,7 +184,7 @@ const Signup = () => {
                 autoComplete="new-password"
                 className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-            
+
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -200,7 +207,7 @@ const Signup = () => {
                 autoComplete="new-password"
                 className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-      
+             
               <button
                 type="button"
                 onClick={toggleConfirmPasswordVisibility}
@@ -211,7 +218,12 @@ const Signup = () => {
             </div>
           </div>
 
-
+ {errors.password && (
+                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              )}
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>
+              )}
           {/* Create Account Button */}
           <button
             type="submit"

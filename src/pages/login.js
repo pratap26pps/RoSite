@@ -8,6 +8,8 @@ import Lottie from 'lottie-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from "react-redux";
+import { setUser } from '../redux/slices/authSlice';
 const login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter()
@@ -16,6 +18,7 @@ const login = () => {
     email: '',
     password: '',
   });
+  const dispatch = useDispatch();
 
   const [animationData, setAnimationData] = useState(null);
   const [animationData1, setAnimationData1] = useState(null);
@@ -41,40 +44,41 @@ const login = () => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form Data:', formData);
     if (!formData.email || !formData.password) {
       alert('Please fill in all fields');
       return;
     }
-     try {
-    setloading(true);
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      setloading(true);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      toast.success('Login successful!');
-      router.push('/dashboard');
-    } else {
-      toast.error(data.message || 'Login failed. Please try again.');
+      const data = await response.json();
+      console.log('Response Data at login page:', data);
+      dispatch(setUser(data.user));
+      if (response.ok) {
+        toast.success('Login successful!');
+        router.push('/dashboard');
+      } else {
+        toast.error(data.message || 'Login failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Something went wrong. Please try again later.');
+    } finally {
+      setloading(false);
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    toast.error('Something went wrong. Please try again later.');
-  }finally {
-    setloading(false);
-  }
   };
 
- 
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row-reverse items-center justify-around bg-blue-200 px-4 py-10 gap-10">
 
@@ -90,11 +94,11 @@ const login = () => {
 
         {/* Top Logo + Welcome */}
         <div className="flex justify-between items-center mb-4">
-         <Link href="/" className="text-xl font-bold text-blue-600">
-        ROTECX
-        </Link>
+          <Link href="/" className="text-xl font-bold text-blue-600">
+            ROTECX
+          </Link>
           <div className="flex flex-col items-center">
-      
+
             {animationData && (
               <div className="w-24 h-24">
                 <Lottie animationData={animationData} loop={true} />
@@ -144,7 +148,7 @@ const login = () => {
                 placeholder="Enter your password"
                 className="w-full px-4 py-2  text-black placeholder:text-black border-2 border-blue-400 rounded-lg  "
               />
-          
+
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -152,17 +156,17 @@ const login = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-               </div>
-                   <Link href='/forgotpassword'>
-                       
-             <label htmlFor="password" className="block top-4 text-sm hover:underline cursor-pointer font-medium text-gray-600 mb-1">
-            Forgot Password
-            </label>
-                   </Link>
-       
-         
-             </div>
-            
+            </div>
+            <Link href='/forgotpassword'>
+
+              <label htmlFor="password" className="block top-4 text-sm hover:underline cursor-pointer font-medium text-gray-600 mb-1">
+                Forgot Password
+              </label>
+            </Link>
+
+
+          </div>
+
           {/* Login Button */}
           <button
             type="submit"

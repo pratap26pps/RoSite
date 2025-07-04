@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/authSlice";  
 
 const ProfileUpdate = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ const ProfileUpdate = () => {
     image: "",
   });
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -53,6 +56,11 @@ const ProfileUpdate = () => {
       const res = await axios.post("/api/upload", uploadForm);
       const imageUrl = res.data.url;
       setFormData((prev) => ({ ...prev, image: imageUrl }));
+      dispatch(setUser((prev) => ({
+      ...prev,
+      image: imageUrl,
+    })));
+
       toast.success("Image uploaded!");
     } catch (err) {
       toast.error("Image upload failed!");
@@ -65,6 +73,11 @@ const ProfileUpdate = () => {
     try {
       const res = await axios.patch("/api/auth/update-profile", formData);
       toast.success(res.data.message || "Profile updated!");
+       const updatedUser = {
+        ...res.data.user, 
+        name: `${formData.firstName} ${formData.lastName}`,
+      };
+      dispatch(setUser(updatedUser));
     } catch (err) {
       toast.error(err.response?.data?.message || "Update failed!");
     } finally {

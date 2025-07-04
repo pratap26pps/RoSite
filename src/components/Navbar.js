@@ -1,10 +1,10 @@
 "use client";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -14,35 +14,37 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Menu, X } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../redux/slices/authSlice";
 
 export default function Navbar() {
 
   const router = useRouter();
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
- 
- console.log("user", user);
- console.log("session", session);
+  const [user2, setUser] = useState("");
+  const dispatch = useDispatch();
 
- useEffect(() => {
-  if (status === "authenticated" && session?.user) {
-    setUser(session.user);
-  } else if (status === "unauthenticated") {
-    axios.get("/api/auth/me")
-      .then((res) => setUser(res.data.user))
-      .catch(() => setUser(null));
-  }
-}, [status, session]);
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      setUser(session.user);
+    } else if (status === "unauthenticated") {
+      axios.get("/api/auth/me")
+        .then((res) => setUser(res.data.user))
+        .catch(() => setUser(null));
+    }
+  }, [status, session]);
+
 
   const handleLogout = async () => {
     try {
-        await axios.get("/api/auth/logout");
-    if (session) {
+      await axios.get("/api/auth/logout");
       signOut();
-    } else {
-    return  router.push("/");
-    }
+      dispatch(clearUser());
+      setUser(null);
+      return router.push("/");
     } catch (error) {
       console.error("Logout error", error);
     }
@@ -50,7 +52,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-blue-100 fixed w-full z-50 shadow">
-      <div className="flex justify-around items-center px-6 py-3">
+      <div className="flex justify-between lg:justify-around items-center px-6 py-3">
         {/* Logo */}
         <Link href="/" className="text-xl font-bold text-blue-600">
           ROTECX
@@ -110,18 +112,18 @@ export default function Navbar() {
 
         {/* Auth/Login Buttons */}
         <div className="hidden sm:flex items-center gap-4">
-          {  user ? (
+          {user || user2 ? (
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="!bg-transparent cursor-pointer text-black p-0 border-none shadow-none hover:bg-transparent">
                     <div className="flex items-center gap-2">
                       <img
-                        src={user?.image     || "images/avatar.png"}
+                        src={user2?.image || user.image || "images/avatar.png"}
                         alt="User"
                         className="w-7 h-7 rounded-full"
                       />
-                      <p className="text-sm text-gray-500">Hi, {user.firstName ||user?.name}</p>
+                      <p className="text-sm text-gray-500">Hi, {user?.name || user2?.name}</p>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="min-w-[100px] py-2">
@@ -135,7 +137,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => router.push("/login")}
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-3 py-1 bg-blue-500 text-white cursor-pointer rounded hover:bg-blue-600"
             >
               Login
             </button>
@@ -189,7 +191,7 @@ export default function Navbar() {
           </div>
           {/* Auth Section */}
           <div>
-            { user ? (
+            {user || user2 ? (
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
@@ -200,7 +202,7 @@ export default function Navbar() {
                           alt="User"
                           className="w-7 h-7 rounded-full"
                         />
-                        <p className="text-sm text-gray-500">Hi, {user.firstName ||user.name}</p>
+                        <p className="text-sm text-gray-500">Hi, {user.firstName || user.name}</p>
                       </div>
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[100px] py-2">
@@ -214,7 +216,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => router.push("/login")}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
+                className="px-4 py-2 bg-blue-500 text-white cursor-pointer rounded hover:bg-blue-600 w-full"
               >
                 Login
               </button>
