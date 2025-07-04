@@ -19,7 +19,7 @@ export default function Dashboard() {
       setUser(session.user);
     }
   }, [status, session]);
-
+console.log("User data:", user);
   const handleLogout = async () => {
     try {
       await axios.get("/api/auth/logout");

@@ -23,6 +23,8 @@ export default async function handler(req, res) {
       id: user._id,
       email: user.email,
       name: user.firstName + " " + user.lastName,
+      image: user.image || "/images/avatar.png",
+      mobile: user.mobile,
       role: user.role,
     }), {
       httpOnly: true,

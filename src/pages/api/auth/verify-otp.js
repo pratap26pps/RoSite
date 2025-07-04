@@ -24,11 +24,18 @@ export default async function handler(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const isFirstUser = (await users.countDocuments({})) === 0;
     const role = isFirstUser ? "admin" : "customer";
+    const image = "/images/avatar.png";
+    console.log("Data to insert:", {
+  ...parsed.data,
+  password: hashedPassword,
+  image,
+  role,
+});
 
     await users.create({
       ...parsed.data,
       password: hashedPassword,
-      image: "/images/avatar.png",
+      image,
       role,
     });
     await Otp.deleteMany({ email });
