@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const faqs = [
   {
@@ -49,7 +50,6 @@ const faqs = [
     question: "Are your products certified?",
     answer: "Yes, we have full water test certifications available on the website.",
   },
- 
 ];
 
 export default function Footer() {
@@ -62,6 +62,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white px-4 py-10">
       <div className="max-w-6xl mx-auto">
+        {/* Contact Info */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Contact Information</h2>
           <p>📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
@@ -70,16 +71,24 @@ export default function Footer() {
           <p>📺 <strong>YouTube:</strong> <a href="https://youtube.com/@rotechnicalxperts" target="_blank" className="text-blue-400 underline">RO TECHNICAL XPERTS</a></p>
         </div>
 
+        {/* FAQs */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className="bg-gray-800 rounded p-4 cursor-pointer"
+                className="bg-gray-800 rounded p-4 cursor-pointer transition duration-300"
                 onClick={() => toggleFAQ(i)}
               >
-                <h3 className="font-semibold text-lg">{faq.question}</h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg">{faq.question}</h3>
+                  {activeIndex === i ? (
+                    <FaChevronUp className="text-gray-300" />
+                  ) : (
+                    <FaChevronDown className="text-gray-300" />
+                  )}
+                </div>
                 {activeIndex === i && (
                   <p className="mt-2 text-sm text-gray-300">{faq.answer}</p>
                 )}
@@ -88,6 +97,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Copyright */}
         <div className="mt-10 text-center text-sm text-gray-400">
           &copy; {new Date().getFullYear()} RO TECHNICAL XPERTS. All rights reserved.
         </div>

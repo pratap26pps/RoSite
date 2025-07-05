@@ -139,8 +139,8 @@ export function CarouselSize() {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious className="-left-2 sm:left-4"/>
-      <CarouselNext className="-right-2 sm:right-4"/>
+      <CarouselPrevious />
+      <CarouselNext />
     </Carousel>
   </div>
 

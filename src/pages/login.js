@@ -10,9 +10,11 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from "react-redux";
 import { setUser } from '../redux/slices/authSlice';
+
+
 const login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -46,7 +48,6 @@ const login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
     if (!formData.email || !formData.password) {
       alert('Please fill in all fields');
       return;
@@ -62,7 +63,6 @@ const login = () => {
       });
 
       const data = await response.json();
-      console.log('Response Data at login page:', data);
       dispatch(setUser(data.user));
       if (response.ok) {
         toast.success('Login successful!');
@@ -71,36 +71,31 @@ const login = () => {
         toast.error(data.message || 'Login failed. Please try again.');
       }
     } catch (error) {
-      console.error('Login error:', error);
       toast.error('Something went wrong. Please try again later.');
     } finally {
       setloading(false);
     }
   };
 
-
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row-reverse items-center justify-around bg-blue-200 px-4 py-10 gap-10">
-
+    <div className="min-h-screen flex flex-col lg:flex-row-reverse items-center justify-center lg:gap-52 bg-blue-200 px-2 py-5">
       {/* Left Side Animation */}
       {animationData1 && (
-        <div className="w-full scale-150 max-w-sm lg:max-w-md">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md scale-125 flex justify-center items-center mb-6 lg:mb-0">
           <Lottie animationData={animationData1} loop={true} />
         </div>
       )}
 
       {/* Login Card */}
-      <div className="bg-blue-100 scale-110 shadow-xl rounded-2xl px-6 py-6 w-full max-w-md">
-
+      <div className="bg-blue-100 shadow-xl rounded-2xl px-4 py-6 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md ">
         {/* Top Logo + Welcome */}
         <div className="flex justify-between items-center mb-4">
-          <Link href="/" className="text-xl font-bold text-blue-600">
+          <Link href="/" className="text-lg sm:text-xl font-bold text-blue-600">
             ROTECX
           </Link>
           <div className="flex flex-col items-center">
-
             {animationData && (
-              <div className="w-24 h-24">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
                 <Lottie animationData={animationData} loop={true} />
               </div>
             )}
@@ -108,14 +103,13 @@ const login = () => {
         </div>
 
         {/* Heading */}
-        <h3 className="text-xl text-black font-bold text-center mb-6">Login to Your Account</h3>
+        <h3 className="text-lg sm:text-xl text-black font-bold text-center mb-4 sm:mb-6">Login to Your Account</h3>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1">
               Email
             </label>
             <input
@@ -127,13 +121,13 @@ const login = () => {
               required
               autoComplete="off"
               placeholder="Enter your email"
-              className="w-full px-4 py-2  text-black placeholder:text-black border-2 border-blue-400 rounded-lg f "
+              className="w-full px-3 py-2 sm:px-4 sm:py-2 text-black placeholder:text-black border-2 border-blue-400 rounded-lg text-sm sm:text-base"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1">
               Password
             </label>
             <div className="relative">
@@ -146,31 +140,27 @@ const login = () => {
                 required
                 autoComplete="off"
                 placeholder="Enter your password"
-                className="w-full px-4 py-2  text-black placeholder:text-black border-2 border-blue-400 rounded-lg  "
+                className="w-full px-3 py-2 sm:px-4 sm:py-2 text-black placeholder:text-black border-2 border-blue-400 rounded-lg text-sm sm:text-base"
               />
-
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             <Link href='/forgotpassword'>
-
-              <label htmlFor="password" className="block top-4 text-sm hover:underline cursor-pointer font-medium text-gray-600 mb-1">
+              <label htmlFor="password" className="block mt-1 text-xs sm:text-sm hover:underline cursor-pointer font-medium text-gray-600">
                 Forgot Password
               </label>
             </Link>
-
-
           </div>
 
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 cursor-pointer text-white py-2 rounded-lg font-semibold transition duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 cursor-pointer text-white py-2 rounded-lg font-semibold transition duration-200 text-sm sm:text-base"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
@@ -179,14 +169,14 @@ const login = () => {
         {/* Google Login */}
         <button
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="w-full mt-4 flex cursor-pointer items-center justify-center gap-2 border  py-2 rounded-lg bg-gray-600 hover:bg-gray-700  transition"
+          className="w-full mt-3 sm:mt-4 flex cursor-pointer items-center justify-center gap-2 border py-2 rounded-lg bg-gray-600 hover:bg-gray-700 transition text-white text-sm sm:text-base"
         >
-          <FaGoogle size={18} />
+          <FaGoogle size={16} />
           Login with Google
         </button>
 
         {/* Signup Link */}
-        <p className="text-sm text-center text-gray-600 mt-4">
+        <p className="text-xs sm:text-sm text-center text-gray-600 mt-3 sm:mt-4">
           Don’t have an account?{' '}
           <a href="/signup" className="text-blue-600 font-medium hover:underline">
             Sign Up

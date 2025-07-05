@@ -8,7 +8,6 @@ import Router from 'next/router';
 import toast from 'react-hot-toast';
 
 const Signup = () => {
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animationData, setAnimationData] = useState(null);
@@ -41,14 +40,11 @@ const Signup = () => {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     setErrors({});
     const mobileRegex = /^[0-9]{10}$/;
-
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
 
     let newErrors = {};
 
@@ -67,7 +63,6 @@ const Signup = () => {
       setErrors(newErrors);
       return;
     }
-
 
     try {
       setLoading(true);
@@ -91,7 +86,6 @@ const Signup = () => {
         localStorage.setItem("pendingSignup", JSON.stringify(formData));
       }
 
-
       router.push(`/otp?email=${formData.email}`);
     } catch (error) {
       console.error("Signup error:", error);
@@ -104,14 +98,11 @@ const Signup = () => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
-
   return (
-    <div className="min-h-screen flex flex-col text-black  lg:flex-row items-center justify-around bg-blue-200 px-4 py-10 gap-10">
-
-
-      <div className="bg-blue-100  scale-110 shadow-xl rounded-2xl px-6 py-8 w-full max-w-md">
-
-        <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen flex flex-col-reverse lg:flex-row items-center justify-center bg-blue-200 px-2 py-20 gap-6">
+      {/* Form Section */}
+      <div className="bg-blue-100 shadow-xl rounded-2xl px-4 py-6 w-full max-w-md mx-auto sm:px-6 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
           <Link href="/" className="text-xl font-bold text-blue-600">
             ROTECX
           </Link>
@@ -119,9 +110,8 @@ const Signup = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
           {/* Name */}
-          <div className="flex gap-2.5">
+          <div className="flex flex-col sm:flex-row gap-2.5">
             <input
               type="text"
               name="firstName"
@@ -130,7 +120,7 @@ const Signup = () => {
               onChange={handleChange}
               required
               autoComplete="off"
-              className="w-1/2 px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-1/2 px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
@@ -140,7 +130,7 @@ const Signup = () => {
               onChange={handleChange}
               required
               autoComplete="off"
-              className="w-1/2 px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-1/2 px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -153,7 +143,7 @@ const Signup = () => {
             onChange={handleChange}
             required
             autoComplete="off"
-            className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Mobile */}
@@ -165,15 +155,15 @@ const Signup = () => {
             onChange={handleChange}
             required
             autoComplete="off"
-            className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
           {errors.mobile && (
             <p className="text-sm text-red-500 mt-1">{errors.mobile}</p>
           )}
 
-          <div className="flex gap-2.5">
+          <div className="flex flex-col sm:flex-row gap-2.5">
             {/* Password */}
-            <div className="relative w-1/2">
+            <div className="relative w-full sm:w-1/2">
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -182,21 +172,20 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 autoComplete="new-password"
-                className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute right-2 top-2 text-gray-500"
+                tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
-
             {/* Confirm Password */}
-            <div className="relative w-1/2">
+            <div className="relative w-full sm:w-1/2">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 name="confirmPassword"
@@ -205,39 +194,39 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 autoComplete="new-password"
-                className="w-full px-4 py-2  placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 placeholder:text-black border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-             
               <button
                 type="button"
                 onClick={toggleConfirmPasswordVisibility}
                 className="absolute right-2 top-2 text-gray-500"
+                tabIndex={-1}
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
- {errors.password && (
-                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-              )}
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>
-              )}
+          {errors.password && (
+            <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+          )}
+          {errors.confirmPassword && (
+            <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>
+          )}
+
           {/* Create Account Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 rounded-lg font-semibold transition"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
-
           </button>
         </form>
 
         {/* Google Signup */}
         <button
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="w-full mt-4 flex items-center text-white cursor-pointer justify-center gap-2 border border-gray-400 py-2 rounded-lg bg-gray-600  transition"
+          className="w-full mt-4 flex items-center text-white cursor-pointer justify-center gap-2 border border-gray-400 py-2 rounded-lg bg-gray-600 transition"
         >
           <FaGoogle size={18} />
           Sign up with Google
@@ -254,8 +243,10 @@ const Signup = () => {
 
       {/* Lottie Animation */}
       {animationData && (
-        <div className="w-auto scale-125 h-[800px] max-w-sm sm:pt-44 lg:mb-0 lg:mr-10">
-          <Lottie animationData={animationData} loop={true} />
+        <div className="w-full max-w-xs mx-auto lg:mt-52 lg:scale-125 flex justify-center items-center">
+          <div className="w-full h-64 sm:h-80 md:h-[400px] lg:h-[500px]">
+            <Lottie animationData={animationData} loop={true} />
+          </div>
         </div>
       )}
     </div>
