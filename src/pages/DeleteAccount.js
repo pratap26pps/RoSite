@@ -3,11 +3,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../redux/slices/authSlice";
+import { setUser } from "../redux/slices/authSlice";
+ import { signOut } from "next-auth/react";
 
 const DeleteAccount = () => {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -20,6 +25,10 @@ const DeleteAccount = () => {
     try {
       const res = await axios.delete("/api/auth/delete-account");
       toast.success(res.data.message || "Account deleted.");
+    
+       dispatch(clearUser());
+       setUser(null);
+      await signOut({ redirect: false });
       router.push("/login");
     } catch (err) {
       toast.error(err.response?.data?.message || "Delete failed!");

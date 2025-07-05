@@ -22,7 +22,7 @@ export default function Navbar() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user2, setUser] = useState("");
+  const [user2, setUser] = useState(null);
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
@@ -41,10 +41,10 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await axios.get("/api/auth/logout");
-      signOut();
+     await signOut({ redirect: false });
       dispatch(clearUser());
       setUser(null);
-      return router.push("/");
+     router.push("/");
     } catch (error) {
       console.error("Logout error", error);
     }
@@ -119,7 +119,7 @@ export default function Navbar() {
                   <NavigationMenuTrigger className="!bg-transparent cursor-pointer text-black p-0 border-none shadow-none hover:bg-transparent">
                     <div className="flex items-center gap-2">
                       <img
-                        src={user2?.image || user.image || "images/avatar.png"}
+                        src={user?.image || user2?.image || "images/avatar.png"}
                         alt="User"
                         className="w-7 h-7 rounded-full"
                       />
@@ -129,7 +129,7 @@ export default function Navbar() {
                   <NavigationMenuContent className="min-w-[100px] py-2">
                     <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/dashboard">Dashboard</NavigationMenuLink>
                     <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" href="/cart">My Cart</NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" onClick={() => signOut()}>Logout</NavigationMenuLink>
+                    <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" onClick={handleLogout}>Logout</NavigationMenuLink>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -202,7 +202,7 @@ export default function Navbar() {
                           alt="User"
                           className="w-7 h-7 rounded-full"
                         />
-                        <p className="text-sm text-gray-500">Hi, {user.firstName || user.name}</p>
+                        <p className="text-sm text-gray-500">Hi,{user?.name || user2?.name}</p>
                       </div>
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[100px] py-2">
