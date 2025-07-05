@@ -1,26 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
 const UpdatePassword = () => {
+  const { data: session } = useSession();
   const [form, setForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
+  console.log("Session in UpdatePassword:", session);
   const [visible, setVisible] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const user = useSelector((state) => state.auth.user);
 
-  if (!user?.password) {
-  return <p className="text-center text-blue-400 bg-blue-50 py-72">You signed in via Google. Password change is not applicable.</p>;
-}
+
 
 
   const [loading, setLoading] = useState(false);
@@ -64,9 +63,14 @@ const UpdatePassword = () => {
     }
   };
 
+
+  if (session?.user?.role === "customer") {
+
+    return <p className="text-center text-blue-400 bg-blue-50 py-72">You signed in via Google. Password change is not applicable.</p>;
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50 py-16 px-4">
-      
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white text-gray-700 shadow-lg rounded-xl p-8 space-y-6"
