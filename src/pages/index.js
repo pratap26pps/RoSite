@@ -5,6 +5,7 @@ import ChooseProductSection from "../components/ChooseProductSection";
 import PromoOffers from "../components/PromocodeBanner";
 import { CarouselSize } from "../components/ProductCard";
 import TopSellingProducts from "../components/Sellingproductcard";
+import Testimonials from "../components/Testimonial";
 export default function Home() {
   return (
     <div>
@@ -13,7 +14,8 @@ export default function Home() {
       <ChooseProductSection />
       <CarouselSize />
       <TopSellingProducts />
-      <YoutubeTrust/>   
+      <YoutubeTrust/>  
+      <Testimonials /> 
       <PromoOffers /> 
      </div>
   );
