@@ -83,19 +83,20 @@ export function CarouselSize() {
 
   }
   return (
-  <section className="relative overflow-x-hidden bg-gradient-to-b from-blue-50 to-blue-100 py-24">
+  <section className="relative  bg-gradient-to-b from-blue-50 to-blue-100 py-24">
   <div className="max-w-7xl mx-auto px-4">
     <h2 className="text-3xl sm:text-4xl font-bold text-blue-700 text-center mb-10">
       💧 Explore Our Products
     </h2>
 
-    <Carousel opts={{ align: "start" }} className="w-full">
-      <CarouselContent>
+    <Carousel opts={{ align: "start" }} className="w-full overflow-hidden relative">
+      <CarouselContent> 
         {products.map((product) => (
-          <CarouselItem
-            key={product.id}
-            className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
-          >
+       <CarouselItem
+  key={product.id}
+  className="min-w-0 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+>
+
             <div className="p-2 lg:p-4 h-full">
               <Card className="flex flex-col h-full rounded-xl shadow-md hover:shadow-xl transition bg-white">
                 <CardContent className="flex flex-col justify-between h-full lg:px-11 text-center">
@@ -138,8 +139,8 @@ export function CarouselSize() {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="-left-2 sm:left-4"/>
+      <CarouselNext className="-right-2 sm:right-4"/>
     </Carousel>
   </div>
 

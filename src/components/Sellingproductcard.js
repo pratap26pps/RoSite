@@ -70,7 +70,7 @@ export default function TopSellingProducts() {
            Top Selling Products
         </h2>
 
-        <Carousel opts={{ align: "start" }} className="w-full">
+        <Carousel opts={{ align: "start" }} className="w-full overflow-hidden relative">
           <CarouselContent>
                 {topSellingProducts.map((product) => (
                   <CarouselItem
@@ -118,8 +118,9 @@ export default function TopSellingProducts() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+        
+      <CarouselPrevious className="-left-2 sm:left-4"/>
+      <CarouselNext className="-right-2 sm:right-4"/>
         </Carousel>
       </div>
     </section>
