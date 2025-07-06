@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useState} from "react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -21,64 +21,12 @@ import { setUser } from "../redux/slices/authSlice";
 export default function Navbar() {
 
   const router = useRouter();
-  const { data: session, status } = useSession();
+
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user2, setUser2] = useState(null);
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
-
-  // useEffect(() => {
-  //   if (status === "authenticated" && session?.user) {
-  //     setUser2(session.user);
-  //     dispatch(setUser(session.user));
-  //   } 
-  //   else if (status === "unauthenticated") {
-  //     axios.get("/api/auth/me")
-  //       .then((res) => setUser2(res.data.user))
-  //       .catch(() => setUser2(null));
-  //   }
-  // }, [status, session]);
-
-  useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      // Google Sign-in
-      if (status === "authenticated" && session?.user) {
-        setUser(session.user);
-        dispatch(setUser(session.user));
-        return;
-      }
-      if(!user){
-        return;
-      }
-     
-      const userdata = localStorage.getItem("userdata");
-
-      console.log("User from localStorage before:", userdata);
-
-      if (userdata) {
-        const parsedUser = JSON.parse(userdata);
-        console.log("User from localStorage after:", parsedUser);
-
-        const response = await axios.get(`/api/auth/signup?id=${parsedUser._id}`);
-        console.log("Response from /api/auth/signup:", response.data);
-
-        if (response.data) {
-          setUser(response.data);
-          dispatch(setUser(response.data));
-        }
-      }
-    } catch (error) {
-      console.error("Final fallback error:", error);
-      setUser(null);
-    }
-  };
-
-  fetchUser();
-}, [status, session, dispatch]);
-
-
+ 
   const handleLogout = async () => {
     try {
       await axios.get("/api/auth/logout");
@@ -153,18 +101,18 @@ export default function Navbar() {
 
         {/* Auth/Login Buttons */}
         <div className="hidden sm:flex items-center gap-4">
-          {user || user2 ? (
+          {user  ? (
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="!bg-transparent cursor-pointer text-black p-0 border-none shadow-none hover:bg-transparent">
                     <div className="flex items-center gap-2">
                       <img
-                        src={user?.image || user2?.image || "images/avatar.png"}
+                        src={user?.image || "images/avatar.png"}
                         alt="User"
                         className="w-7 h-7 rounded-full"
                       />
-                      <p className="text-sm text-gray-500">Hi, {user?.name || user2?.name || `${user?.firstName} ${user?.lastName}`}</p>
+                      <p className="text-sm text-gray-500">Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}</p>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="min-w-[100px] py-2">
@@ -232,7 +180,7 @@ export default function Navbar() {
           </div>
           {/* Auth Section */}
           <div>
-            {user || user2 ? (
+            {user ? (
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
@@ -243,7 +191,7 @@ export default function Navbar() {
                           alt="User"
                           className="w-7 h-7 rounded-full"
                         />
-                        <p className="text-sm text-gray-500">Hi,{user?.name || user2?.name}</p>
+                        <p className="text-sm text-gray-500">Hi,{user?.name }</p>
                       </div>
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[100px] py-2">

@@ -1,6 +1,10 @@
 import { parse } from "cookie";
+import connectDB from "@/src/lib/dbConnect";
+import users from "@/src/models/users";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  await connectDB();
+
   const { customUser } = parse(req.headers.cookie || "");
 
   if (!customUser) {
@@ -8,9 +12,15 @@ export default function handler(req, res) {
   }
 
   try {
-    const user = JSON.parse(customUser);
+    const parsed = JSON.parse(customUser);
+    const user = await users.findById(parsed.id).select("-password");
+    console.log("user in cookie updated data",user)
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     return res.status(200).json({ user });
   } catch (err) {
-    return res.status(400).json({ message: "Invalid cookie" });
+    return res.status(400).json({ message: "Invalid cookie or DB error" });
   }
 }

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         firstName: formData.firstName,
         lastName: formData.lastName,
         mobile: formData.mobile,
-        image: req.body.image,
+        image: formData.image,
       },
       { new: true }
     );

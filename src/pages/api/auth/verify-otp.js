@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import Otp from "@/src/models/Otp";
 import users from "@/src/models/users";
 import { signupSchema } from "@/src/lib/zodSchemas/userSchema";
+import { serialize } from "cookie";
 export default async function handler(req, res) {
   await connectDB();
 
@@ -39,6 +40,23 @@ export default async function handler(req, res) {
       role,
     });
     await Otp.deleteMany({ email });
+
+     // Set cookie
+    const cookie = serialize("customUser", JSON.stringify({
+      id: userdata._id,
+      email: userdata.email,
+      name: userdata.firstName + " " + userdata.lastName,
+      image: userdata.image || "/images/avatar.png",
+      mobile: userdata.mobile,
+      role: userdata.role,
+    }), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    });
+  res.setHeader("Set-Cookie", cookie);  
 
     return res.status(200).json({ message: "Email verified successfully" ,data:userdata});
   }

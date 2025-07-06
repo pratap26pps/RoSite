@@ -34,33 +34,7 @@ const ProfileUpdate = () => {
   }
 }, [user]);
 
-  useEffect(() => {
-  const fetchUser = async () => {
-    try {
-     
-      const userdata = localStorage.getItem("userdata");
-      console.log("User from localStorage before:", userdata);
-
-      if (userdata) {
-        const parsedUser = JSON.parse(userdata);
-        console.log("User from localStorage after:", parsedUser);
-
-        const response = await axios.get(`/api/auth/signup?id=${parsedUser._id}`);
-        console.log("Response from /api/auth/signup:", response.data);
-
-        if (response.data) {
-      
-          dispatch(setUser(response.data));
-        }
-      }
-    } catch (error) {
-      console.error("Final fallback error:", error);
-    
-    }
-  };
-
-  fetchUser();
-}, [dispatch]);
+ 
 
 
   const handleChange = (e) => {

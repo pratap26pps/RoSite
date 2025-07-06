@@ -43,7 +43,7 @@ const OtpPage = () => {
       if (response.status === 200) {
         toast.success("Email verified successfully!");
         dispatch(setUser(response.data.data));
-          localStorage.setItem("userdata", JSON.stringify(response.data.data));
+          // localStorage.setItem("userdata", JSON.stringify(response.data.data)); dont use this
         router.push("/dashboard");
         
       }

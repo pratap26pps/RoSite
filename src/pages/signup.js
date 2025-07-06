@@ -101,7 +101,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex flex-col-reverse lg:flex-row items-center justify-center bg-blue-200 px-2 py-20 gap-6">
       {/* Form Section */}
-      <div className="bg-blue-100 shadow-xl rounded-2xl px-4 py-6 w-full max-w-md mx-auto sm:px-6 sm:py-8">
+      <div className="bg-blue-100 shadow-xl rounded-2xl w-full max-w-md mx-auto sm:px-6 sm:py-8">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
           <Link href="/" className="text-xl font-bold text-blue-600">
             ROTECX
@@ -180,7 +180,7 @@ const Signup = () => {
                 className="absolute right-2 top-2 text-gray-500"
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
 
@@ -202,7 +202,7 @@ const Signup = () => {
                 className="absolute right-2 top-2 text-gray-500"
                 tabIndex={-1}
               >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </div>

@@ -87,7 +87,7 @@ const login = () => {
       )}
 
       {/* Login Card */}
-      <div className="bg-blue-100 shadow-xl rounded-2xl px-4 py-6 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md ">
+      <div className="bg-blue-100 shadow-xl rounded-2xl px-8 py-6 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md ">
         {/* Top Logo + Welcome */}
         <div className="flex justify-between items-center mb-4">
           <Link href="/" className="text-lg sm:text-xl font-bold text-blue-600">
@@ -147,7 +147,7 @@ const login = () => {
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
             <Link href='/forgotpassword'>
