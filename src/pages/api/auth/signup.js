@@ -28,6 +28,28 @@ if (!parsed.success) {
 
     return res.status(201).json({ message: "Otp Sent Successfully" });
   }
+  else if(req.method === "GET"){
+ const { id } = req.query;
+ console.log("id in signup route",id)
+  if (!id) {
+    return res.status(400).json({ success: false, message: "Missing user ID" });
+  }
+
+  try {
+    const user = await users.findById(id).select("-password");  
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+  }
 
   return res.status(405).end("Method Not Allowed");
 }
+ 
+ 

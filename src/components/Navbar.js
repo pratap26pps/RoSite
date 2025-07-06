@@ -16,26 +16,67 @@ import {
 import { Menu, X } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { clearUser } from "../redux/slices/authSlice";
+import { setUser } from "../redux/slices/authSlice";
 
 export default function Navbar() {
 
   const router = useRouter();
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user2, setUser] = useState(null);
+  const [user2, setUser2] = useState(null);
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
 
+  // useEffect(() => {
+  //   if (status === "authenticated" && session?.user) {
+  //     setUser2(session.user);
+  //     dispatch(setUser(session.user));
+  //   } 
+  //   else if (status === "unauthenticated") {
+  //     axios.get("/api/auth/me")
+  //       .then((res) => setUser2(res.data.user))
+  //       .catch(() => setUser2(null));
+  //   }
+  // }, [status, session]);
+
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      setUser(session.user);
-    } else if (status === "unauthenticated") {
-      axios.get("/api/auth/me")
-        .then((res) => setUser(res.data.user))
-        .catch(() => setUser(null));
+  const fetchUser = async () => {
+    try {
+      // Google Sign-in
+      if (status === "authenticated" && session?.user) {
+        setUser(session.user);
+        dispatch(setUser(session.user));
+        return;
+      }
+      if(!user){
+        return;
+      }
+     
+      const userdata = localStorage.getItem("userdata");
+
+      console.log("User from localStorage before:", userdata);
+
+      if (userdata) {
+        const parsedUser = JSON.parse(userdata);
+        console.log("User from localStorage after:", parsedUser);
+
+        const response = await axios.get(`/api/auth/signup?id=${parsedUser._id}`);
+        console.log("Response from /api/auth/signup:", response.data);
+
+        if (response.data) {
+          setUser(response.data);
+          dispatch(setUser(response.data));
+        }
+      }
+    } catch (error) {
+      console.error("Final fallback error:", error);
+      setUser(null);
     }
-  }, [status, session]);
+  };
+
+  fetchUser();
+}, [status, session, dispatch]);
 
 
   const handleLogout = async () => {
@@ -123,7 +164,7 @@ export default function Navbar() {
                         alt="User"
                         className="w-7 h-7 rounded-full"
                       />
-                      <p className="text-sm text-gray-500">Hi, {user?.name || user2?.name}</p>
+                      <p className="text-sm text-gray-500">Hi, {user?.name || user2?.name || `${user?.firstName} ${user?.lastName}`}</p>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="min-w-[100px] py-2">

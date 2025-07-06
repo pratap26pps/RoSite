@@ -11,25 +11,56 @@ const ProfileUpdate = () => {
     lastName: "",
     mobile: "",
     image: "",
+    email:""
   });
   const [loading2, setLoading2] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   console.log("User in ProfileUpdate:", user);
+  
  useEffect(() => {
   if (user) {
     const firstName = user.firstName || user.name?.split(" ")[0] || "";
     const lastName = user.lastName || user.name?.split(" ").slice(1).join(" ") || "";
-
+    const email = user.email;
     setFormData({
       firstName,
       lastName,
+      email,
       mobile: user.mobile || "",
       image: user.image || "",
     });
   }
 }, [user]);
+
+  useEffect(() => {
+  const fetchUser = async () => {
+    try {
+     
+      const userdata = localStorage.getItem("userdata");
+      console.log("User from localStorage before:", userdata);
+
+      if (userdata) {
+        const parsedUser = JSON.parse(userdata);
+        console.log("User from localStorage after:", parsedUser);
+
+        const response = await axios.get(`/api/auth/signup?id=${parsedUser._id}`);
+        console.log("Response from /api/auth/signup:", response.data);
+
+        if (response.data) {
+      
+          dispatch(setUser(response.data));
+        }
+      }
+    } catch (error) {
+      console.error("Final fallback error:", error);
+    
+    }
+  };
+
+  fetchUser();
+}, [dispatch]);
 
 
   const handleChange = (e) => {
@@ -70,7 +101,7 @@ const ProfileUpdate = () => {
     try {
       console.log("Form data before submit:", formData);
 
-      const res = await axios.patch("/api/auth/update-profile", formData);
+      const res = await axios.patch("/api/auth/update-profile", formData,);
       toast.success(res.data.message || "Profile updated!");
       const updatedUser = {
         ...res.data.user,
@@ -83,6 +114,13 @@ const ProfileUpdate = () => {
       setLoading(false);
     }
   };
+    
+ if (!user)
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-blue-100  relative">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50 px-4 py-20">

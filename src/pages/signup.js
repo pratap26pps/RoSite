@@ -109,7 +109,7 @@ const Signup = () => {
           <h2 className="text-2xl font-extrabold text-gray-800">Create Account</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-black">
           {/* Name */}
           <div className="flex flex-col sm:flex-row gap-2.5">
             <input
@@ -235,9 +235,9 @@ const Signup = () => {
         {/* Login Link */}
         <p className="text-sm text-center text-gray-700 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
+          <Link href="/login" className="text-blue-600 font-medium hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
 

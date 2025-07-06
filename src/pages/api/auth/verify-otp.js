@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   role,
 });
 
-    await users.create({
+  const userdata=  await users.create({
       ...parsed.data,
       password: hashedPassword,
       image,
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     });
     await Otp.deleteMany({ email });
 
-    return res.status(200).json({ message: "Email verified successfully" });
+    return res.status(200).json({ message: "Email verified successfully" ,data:userdata});
   }
 
   res.status(405).end("Method Not Allowed");

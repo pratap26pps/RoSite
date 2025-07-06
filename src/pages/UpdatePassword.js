@@ -73,7 +73,7 @@ const UpdatePassword = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white text-gray-700 shadow-lg rounded-xl p-8 space-y-6"
+        className="w-full max-w-md bg-blue-100 text-gray-700 shadow-lg rounded-xl p-8 space-y-6"
       >
         <h2 className="text-2xl font-bold text-blue-700 text-center">Update Password</h2>
 

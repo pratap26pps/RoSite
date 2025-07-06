@@ -1,7 +1,7 @@
 import formidable from "formidable";
 import connectDB from "@/src/lib/dbConnect";
  
-import product from "@/src/models/product";
+import product from "@/src/models/Product";
 import { productSchema } from "@/src/lib/zodSchemas/productSchema";
 import imageuploadcloudanary from "@/src/lib/imageUpload";
 

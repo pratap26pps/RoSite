@@ -1,4 +1,4 @@
-import product from "@/src/models/product";
+import product from "@/src/models/Product";
 
 export default function handler(req, res) {
     const {

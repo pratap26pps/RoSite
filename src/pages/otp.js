@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { BiArrowFromRight } from "react-icons/bi";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/authSlice";
 
 const OtpPage = () => {
   const router = useRouter();
@@ -13,6 +15,7 @@ const OtpPage = () => {
   const email = searchParams.get("email");
   const [otp, setotp] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -36,10 +39,13 @@ const OtpPage = () => {
         ...pendingSignup,
         code: otp,
       });
-
+      console.log("Response from OTP verification:", response.data.data);
       if (response.status === 200) {
         toast.success("Email verified successfully!");
+        dispatch(setUser(response.data.data));
+          localStorage.setItem("userdata", JSON.stringify(response.data.data));
         router.push("/dashboard");
+        
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
