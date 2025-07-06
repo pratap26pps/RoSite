@@ -136,18 +136,28 @@ useEffect(() => {
         {(user?.role ||user2?.role )=== "admin" ? (
           <div>
             <AdminDashboard/>
-           <div className="grid grid-cols-1 lg:-mt-36 sm:grid-cols-2 gap-4">
-            <Button >
+           <div className="grid grid-cols-1 lg:-mt-54 sm:grid-cols-2 gap-4">
+            <Button
+            className="cursor-pointer"
+             onClick={()=>router.push("/admin/products/add-product")}>
               Add Category/Product
             </Button>
-            <Button >
+            <Button
+             className="cursor-pointer"
+             onClick={()=>router.push("/admin/products/productlist")}>
               Product History
             </Button>
-            <Button >
+            <Button 
+             className="cursor-pointer"
+                 onClick={()=>router.push("/admin/userlist")}
+            >
               Customer Management
             </Button>
-            <Button >
-              Order Overview
+            <Button 
+             className="cursor-pointer"
+               onClick={()=>router.push("/admin/order/orderlist")}
+            >
+              Order Management
             </Button>
           </div>
           </div>

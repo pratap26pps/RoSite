@@ -1,49 +1,32 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = {
-    items: [],
-    loading: false,
-    error: null,
+  products: [],
 };
 
-const productSlice = createSlice({
-    name: 'products',
-    initialState,
-    reducers: {
-        fetchProductsStart(state) {
-            state.loading = true;
-            state.error = null;
-        },
-        fetchProductsSuccess(state, action) {
-            state.loading = false;
-            state.items = action.payload;
-        },
-        fetchProductsFailure(state, action) {
-            state.loading = false;
-            state.error = action.payload;
-        },
-        addProduct(state, action) {
-            state.items.push(action.payload);
-        },
-        removeProduct(state, action) {
-            state.items = state.items.filter(item => item.id !== action.payload);
-        },
-        updateProduct(state, action) {
-            const index = state.items.findIndex(item => item.id === action.payload.id);
-            if (index !== -1) {
-                state.items[index] = action.payload;
-            }
-        },
+export const productSlice = createSlice({
+  name: "product",
+  initialState,
+  reducers: {
+    addProduct: (state, action) => {
+      const newProduct = {
+        id: nanoid(),
+        dateAdded: new Date().toISOString().split("T")[0],
+        ...action.payload,
+      };
+      state.products.push(newProduct);
     },
+    deleteProduct: (state, action) => {
+      state.products = state.products.filter(p => p.id !== action.payload);
+    },
+    updateProduct: (state, action) => {
+      const index = state.products.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) {
+        state.products[index] = action.payload;
+      }
+    },
+  },
 });
 
-export const {
-    fetchProductsStart,
-    fetchProductsSuccess,
-    fetchProductsFailure,
-    addProduct,
-    removeProduct,
-    updateProduct,
-} = productSlice.actions;
-
+export const { addProduct, deleteProduct, updateProduct } = productSlice.actions;
 export default productSlice.reducer;

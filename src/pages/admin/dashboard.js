@@ -27,7 +27,7 @@ export default function AdminDashboard() {
                     {cards.map((card) => (
                         <div
                             key={card.title}
-                            className="bg-white rounded-xl shadow-md flex flex-col items-center py-8 px-4"
+                            className="bg-blue-100 rounded-xl shadow-md flex flex-col items-center py-8 lg:mr-0 mr-12"
                         >
                             <span className="text-4xl">{card.icon}</span>
                             <div className="text-lg mt-3 text-gray-700">{card.title}</div>
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
                     ))}
                 </section>
                 {/* Recent Orders */}
-                <section className="bg-white rounded-xl text-gray-700 shadow-md p-6">
+                <section className="bg-white scale-[80%] -ml-10 lg:ml-0 lg:scale-100 md:scale-100 rounded-xl text-gray-700 shadow-md p-6">
                     <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-left border-collapse">
