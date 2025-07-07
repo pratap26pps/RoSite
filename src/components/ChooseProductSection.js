@@ -1,57 +1,67 @@
-import Image from "next/image";
+ import { Truck, CalendarDays, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export default function ChooseProductSection() {
+export default function WaterDeliverySection() {
   return (
-    <section className="bg-white py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center gap-12 md:gap-8">
-        {/* Right: Text */}
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 text-gray-900 leading-tight">
-            CHOOSE COOLER OR <span className="text-blue-500">WATER PUMP</span>
+    <section className="bg-[#f9fbff] p-6 sm:p-12  shadow-md">
+      <div className="flex flex-col md:flex-row items-center gap-8">
+        {/* Left Image Section */}
+        <div className="relative w-full md:w-1/2 flex justify-center">
+          <div className="p-4 relative z-10">
+            <img
+              src="https://wavio.peerduck.com/wp-content/uploads/2020/12/Group-69-7.png"  
+              alt="Water Delivery"
+              width={500}
+              height={500}
+              className="rounded-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Right Text Section */}
+        <div className="w-full md:w-1/2 space-y-10 text-center md:text-left">
+          <h2 className="text-3xl font-bold text-black">
+            DELIVERY <span className="text-blue-500">SERVICE</span>
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500 uppercase tracking-widest mb-8">
-            Available to order
+          <p className="text-gray-600">
+            Our refreshing purified bottled water can now be delivered directly to your door
+            with our water delivery service.
           </p>
 
-          <div className="flex flex-col sm:flex-row sm:divide-x sm:divide-gray-200 w-full max-w-md">
-            <div className="mb-8 sm:mb-0 sm:pr-8 flex-1">
-              <p className="text-pink-500 text-3xl sm:text-4xl font-bold"> 62</p>
-              <h4 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">
-                kinds of floor and desktop coolers
-              </h4>
-              <p className="text-gray-600 text-sm sm:text-base">
-                Our refreshing purified bottled water can now be delivered
-                directly to your door with our water delivery service.
-              </p>
+          {/* Service Info */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Truck className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="font-semibold text-black">FREE DELIVERY</span>
             </div>
-            <div className="sm:pl-8 flex-1 border-t sm:border-t-0 sm:border-l border-gray-200 pt-8 sm:pt-0">
-              <p className="text-pink-500 text-3xl sm:text-4xl font-bold"> 30</p>
-              <h4 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">
-                types of pumps and accessories
-              </h4>
-              <p className="text-gray-600 text-sm sm:text-base">
-                Vestibulum vitae leo at felis semper lacinia. Vivamus quis turpis
-                eget dui faucibus eleifend.
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <CalendarDays className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="font-semibold text-black">7 DAYS A WEEK</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Clock className= "w-5 h-5 text-blue-600" />
+              </div>
+              <span className="font-semibold text-black">8:00 - 23:00</span>
             </div>
           </div>
 
-          <button className="mt-10 bg-gradient-to-r from-blue-500 to-blue-400 text-white px-8 py-3 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 font-semibold text-base sm:text-lg">
-            Order Now
-          </button>
-        </div>
-
-        {/* Left: Cooler Image */}
-        <div className="relative w-full md:w-1/2 flex justify-center items-center mb-8 md:mb-0">
-          <div className="absolute -z-10 w-64 h-64 md:w-80 md:h-80 bg-blue-100 rounded-full blur-2xl opacity-60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-          <Image
-            src="/images/image.png"
-            alt="Cooler"
-            width={320}
-            height={420}
-            className="rounded-3xl shadow-2xl object-cover"
-            priority
-          />
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center md:justify-start">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white text-base px-6 py-3 rounded-full">
+              Order Now
+            </Button>
+            <Button
+              variant="outline"
+              className="text-blue-500 border-blue-500 px-6 py-3 rounded-full text-base"
+            >
+              Read More
+            </Button>
+          </div>
         </div>
       </div>
     </section>

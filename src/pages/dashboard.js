@@ -74,7 +74,7 @@ export default function Dashboard() {
         { user?.role=== "admin" ? (
           <div>
             <AdminDashboard/>
-           <div className="grid grid-cols-1 lg:-mt-54 sm:grid-cols-2 gap-4">
+           <div className="grid grid-cols-1 lg:-mt-40 sm:grid-cols-2 gap-4">
             <Button
             className="cursor-pointer"
              onClick={()=>router.push("/admin/products/add-product")}>
@@ -102,10 +102,14 @@ export default function Dashboard() {
           
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Button >
+            <Button 
+                 onClick={()=>router.push("/cart")}
+            >
               My Cart
             </Button>
-            <Button >
+            <Button 
+             onClick={()=>router.push("/customer/orderhistory")}
+            >
               Order History
             </Button>
             <Button >

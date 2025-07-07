@@ -7,26 +7,67 @@ import {
   removeFromCart,
 } from "@/src/redux/slices/cartSlice";
 import Image from "next/image";
-
+ 
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+ 
 export default function CartPage() {
-  const { cartItems } = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
 
-  const total = cartItems.reduce(
+  const dispatch = useDispatch();
+  const  product  = useSelector((state) => state.cart.cartItems);
+  const user = useSelector((state) => state.auth.user);
+ 
+  const router= useRouter()
+ 
+ 
+
+
+  const total = product.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
+  const checkouthandler =()=>{
+      if (!user) {
+    toast.error("Please login to proceed to checkout");
+    router.push("/login");
+    return;
+  }
+
+  if (user.role === "admin") {
+    toast.error("Oops! Admins cannot checkout.");
+    return;
+  }
+
+  if (user.role !== "customer") {
+    toast.error("Unauthorized access. Please login as customer.");
+    router.push("/login");
+  }
+    router.push("/customer/billingorder")
+  }
+
+  const removehandler =(id)=>{
+    dispatch(removeFromCart(id));
+      toast.success("Product removed from cart");
+  }
   return (
     <div className="min-h-screen bg-blue-50 py-25 px-4">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Left: Cart Items */}
         <div className="md:col-span-2">
           <h2 className="text-3xl font-bold text-blue-700 mb-6">Your Cart</h2>
 
-          {cartItems.length === 0 ? (
+          {product.length === 0 ? (
+           <div>
             <p className="text-gray-600">🛒 Your cart is empty.</p>
+            <Button 
+            className="mt-2 cursor-pointer"
+              onClick={()=>router.push("/shop")}
+            >Shop Now</Button>
+           </div> 
           ) : (
-            cartItems.map((item) => (
+            product.map((item) => (
               <div
                 key={item.id}
                 className="bg-white rounded-xl shadow-md flex items-center p-4 mb-4"
@@ -47,14 +88,14 @@ export default function CartPage() {
                   <div className="flex items-center mt-2 gap-2">
                     <button
                       onClick={() => dispatch(decreaseQty(item.id))}
-                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      className="px-2 py-1 bg-gray-600 rounded hover:bg-gray-800"
                     >
                       -
                     </button>
-                    <span>{item.quantity}</span>
+                    <span className="text-gray-900">{item.quantity}</span>
                     <button
                       onClick={() => dispatch(increaseQty(item.id))}
-                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      className="px-2 py-1 bg-gray-600 rounded hover:bg-gray-800"
                     >
                       +
                     </button>
@@ -65,7 +106,7 @@ export default function CartPage() {
                     ₹{item.quantity * item.price}
                   </p>
                   <button
-                    onClick={() => dispatch(removeFromCart(item.id))}
+                    onClick={() =>removehandler(item.id)}
                     className="text-sm text-red-500 mt-2 hover:underline"
                   >
                     Remove
@@ -76,7 +117,7 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Summary */}
+        {/* Right: Summary */}
         <div className="bg-blue-100 rounded-xl shadow-md p-6 h-fit">
           <h3 className="text-2xl font-bold mb-4 text-blue-700">Summary</h3>
           <div className="flex text-blue-400 justify-between mb-2">
@@ -92,7 +133,9 @@ export default function CartPage() {
             <span>Total</span>
             <span>₹{(total * 1.05).toFixed(0)}</span>
           </div>
-          <button className="w-full mt-6 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
+          <button
+          onClick={()=>checkouthandler()}
+          className="w-full mt-6 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
             Proceed to Checkout
           </button>
         </div>
