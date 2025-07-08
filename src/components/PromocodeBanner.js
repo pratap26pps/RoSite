@@ -1,4 +1,5 @@
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { CheckCircle, Copy } from "lucide-react";
 
 const offers = [
@@ -25,37 +26,48 @@ export default function PromoOffers() {
   const handleCopy = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
-    setTimeout(() => setCopiedCode(""), 2000); // Reset after 2s
+    setTimeout(() => setCopiedCode(""), 2000);
   };
 
   return (
-    <section className="bg-gradient-to-r from-blue-50 to-blue-100 py-16 px-4">
-      <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-4 text-blue-700">
-          💸 Special Offers for Our Customers
+    <section className="relative py-20 px-4 font-sans bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#172554] text-white overflow-hidden">
+      {/* Floating Orbs Background */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-[120px] animate-float" />
+      <div className="absolute bottom-10 right-1/3 w-60 h-60 bg-cyan-400/20 rounded-full blur-[100px] animate-float delay-1000" />
+
+      {/* Content */}
+      <div className="max-w-6xl mx-auto text-center relative z-10">
+        <h2 className="text-3xl sm:text-4xl font-bold text-cyan-100 mb-4">
+          ✨ Special Offers Just for You
         </h2>
-        <p className="text-gray-600 mb-10">
-          Use these promo codes while ordering for exciting discounts!
+        <p className="text-blue-200 text-base mb-10">
+          Tap the code to copy & apply at checkout. Limited time only!
         </p>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {offers.map((offer) => (
             <div
               key={offer.code}
-              className="bg-white rounded-xl shadow-md p-6 relative hover:shadow-lg transition"
+              className="rounded-3xl bg-white/10 text-white shadow-xl backdrop-blur-lg p-6 transition-transform hover:scale-[1.03]"
             >
-              <h3 className="text-xl font-semibold text-blue-600 mb-2">{offer.title}</h3>
-              <p className="text-gray-700 mb-4">{offer.description}</p>
+              <h3 className="text-lg font-semibold text-cyan-300 mb-2">
+                {offer.title}
+              </h3>
+              <p className="text-sm text-blue-100 mb-4">
+                {offer.description}
+              </p>
 
-              <div className="flex items-center justify-between bg-blue-100 px-3 py-2 rounded-lg">
-                <span className="font-mono font-semibold text-blue-700">{offer.code}</span>
+              <div className="flex items-center justify-between bg-blue-900/40 border border-blue-700 rounded-xl px-4 py-2 shadow-inner">
+                <span className="font-mono text-cyan-300 font-semibold text-sm tracking-wide">
+                  {offer.code}
+                </span>
                 <button
                   onClick={() => handleCopy(offer.code)}
-                  className="text-sm text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                  className="text-cyan-400 text-sm font-medium flex items-center gap-1 hover:text-cyan-300"
                 >
                   {copiedCode === offer.code ? (
                     <>
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-4 h-4 text-green-400" />
                       Copied
                     </>
                   ) : (
@@ -70,6 +82,21 @@ export default function PromoOffers() {
           ))}
         </div>
       </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+      `}</style>
     </section>
   );
 }

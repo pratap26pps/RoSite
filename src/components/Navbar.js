@@ -42,10 +42,12 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-100 fixed w-full z-50 shadow">
+    
+   <nav className="fixed w-full z-50  bg-gradient-to-br from-blue-500 via-blue-200 to-cyan-900 animate-gradient bg-[length:400%_400%] transition-all duration-500">
+
       <div className="flex justify-between lg:justify-around items-center px-6 py-3">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-blue-600">
+        <Link href="/" className="text-xl font-bold text-blue-900">
           ROTECX
         </Link>
 
@@ -61,13 +63,14 @@ export default function Navbar() {
         <div className="hidden sm:flex items-center gap-6">
           {/* Shop Menu */}
           <NavigationMenu>
-            <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-black hover:bg-blue-100 rounded transition" onClick={()=>router.push("/contact")}>contact</NavigationMenuLink>
+            <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-white rounded transition" onClick={()=>router.push("/contact")}>contact</NavigationMenuLink>
 
           </NavigationMenu>
 
           <NavigationMenu>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="!bg-transparent cursor-pointer  text-black p-0 border-none shadow-none hover:bg-transparent">
+               <NavigationMenuList>
+          <NavigationMenuItem>
+              <NavigationMenuTrigger className="!bg-transparent cursor-pointer  text-white p-0 border-none shadow-none hover:bg-transparent">
                 Shop
               </NavigationMenuTrigger>
               <NavigationMenuContent className="min-w-[160px] py-2">
@@ -77,10 +80,13 @@ export default function Navbar() {
                 <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-600 rounded transition" onClick={()=>router.push("/priceblock")}>Price Block</NavigationMenuLink>
               </NavigationMenuContent>
             </NavigationMenuItem>
+               </NavigationMenuList>
+            
           </NavigationMenu>
-          <NavigationMenu>
-            <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm  text-black hover:bg-blue-100 rounded transition" onClick={()=>router.push("/about")}>About</NavigationMenuLink>
 
+
+          <NavigationMenu>
+            <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm  text-blue-100 rounded transition" onClick={()=>router.push("/about")}>About</NavigationMenuLink>
           </NavigationMenu>
 
 
@@ -88,7 +94,7 @@ export default function Navbar() {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="!bg-transparent cursor-pointer  text-black p-0 border-none shadow-none hover:bg-transparent">
+                <NavigationMenuTrigger className="!bg-transparent cursor-pointer  text-white p-0 border-none shadow-none hover:bg-transparent">
                   Services
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="min-w-[160px] py-2">
@@ -103,11 +109,11 @@ export default function Navbar() {
 
         {/* Auth/Login Buttons */}
         <div className="hidden sm:flex items-center gap-4 relative">
-               <p className="text-blue-900 rounded-full p-2  absolute ml-3">{totalItems}</p>
+               <p className="text-white rounded-full p-2  absolute ml-4 animate-bounce">{totalItems}</p>
 
                <FaCartArrowDown
                onClick={()=>router.push("/cart")}
-               className="text-black scale-150 mr-6 cursor-pointer"/>
+               className="text-white scale-125 mr-6 cursor-pointer"/>
           {user  ? (
             <NavigationMenu>
               <NavigationMenuList>
@@ -132,7 +138,7 @@ export default function Navbar() {
             </NavigationMenu>
           ) : (
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/authpage")}
               className="px-3 py-1 bg-blue-500 text-white cursor-pointer rounded hover:bg-blue-600"
             >
               Login
@@ -224,6 +230,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+
     </nav>
   );
 }
+

@@ -8,7 +8,7 @@ import TopSellingProducts from "../components/Sellingproductcard";
 import Testimonials from "../components/Testimonial";
 export default function Home() {
   return (
-    <div>
+    <div >
      
       <HeroSection />
       <ChooseProductSection />

@@ -7,5 +7,5 @@
   "editor.suggestOnTriggerCharacters": true,
   "editor.tabCompletion": "on",
   "editor.snippetSuggestions": "inline",
-  "editor.wordBasedSuggestions": true
+  "editor.wordBasedSuggestions": "matchingDocuments"
 }

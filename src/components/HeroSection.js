@@ -1,60 +1,81 @@
- 
+"use client";
+import { useEffect } from "react";
+import CursorSpotlight from "./CursorSpotlight"; // adjust path if needed
+
+// Background Components
+const BackgroundBeams = () => (
+  <div className="absolute inset-0 overflow-hidden z-0">
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-900 to-cyan-900" />
+    <div className="absolute inset-0">
+      {/* Beams */}
+      <div className="absolute top-1/4 left-1/4 w-px h-32 bg-gradient-to-b from-transparent via-cyan-400 to-transparent animate-pulse opacity-60" />
+      <div className="absolute top-1/2 right-1/3 w-px h-24 bg-gradient-to-b from-transparent via-blue-400 to-transparent animate-pulse delay-300 opacity-60" />
+      <div className="absolute bottom-1/4 left-1/2 w-px h-28 bg-gradient-to-b from-transparent via-purple-400 to-transparent animate-pulse delay-700 opacity-60" />
+      
+      {/* Orbs */}
+      <div className="absolute top-1/6 left-1/6 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full blur-xl animate-float" />
+      <div className="absolute bottom-1/6 right-1/6 w-40 h-40 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-xl animate-float delay-1000" />
+      <div className="absolute top-1/2 left-1/8 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-xl animate-float delay-500" />
+    </div>
+  </div>
+);
+
+const Spotlight = ({ className = "" }) => (
+  <div className={`absolute inset-0 overflow-hidden ${className}`}>
+    <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-radial from-blue-400/30 via-cyan-400/20 to-transparent rounded-full blur-3xl animate-pulse" />
+  </div>
+);
+
+const GridPattern = () => (
+  <div className="absolute inset-0 opacity-20 z-0">
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
+  </div>
+);
 
 export default function HeroSection() {
+  useEffect(() => {
+    import("aos").then((AOS) => AOS.init({ duration: 1000 }));
+  }, []);
+
   return (
-    <section className="w-full min-h-screen bg-[#eaf6fd] relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-around pt-24 pb-10">
-        {/* Left Content */}
-        <div
-          className="md:w-1/2 text-center md:text-left"
-          data-aos="fade-right"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4 text-gray-900">
-            SAFE DRINKING <span className="text-blue-500">WATER</span>
+    <section className="relative w-full  min-h-screen overflow-hidden text-white">
+      {/* Aceternity UI Backgrounds */}
+      <CursorSpotlight />
+      <BackgroundBeams />
+      <Spotlight />
+      <GridPattern />
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-40  grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+        {/* Left Section */}
+        <div data-aos="fade-right" className="space-y-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-md">
+            PURE <span className="text-cyan-300">WATER</span> FOR HEALTHY LIFE
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
-            We provide the best water quality insights to ensure your health
-            and safety.
+          <p className="text-lg text-slate-200">
+            Get access to the cleanest water with advanced RO purification technology.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition">
+          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            <button className="btn px-8 py-3 text-base font-semibold rounded-full bg-white text-blue-700 shadow-md hover:bg-blue-100 hover:text-blue-900 transition">
               Our Services
             </button>
-            <button className="bg-white text-gray-800 px-6 py-3 rounded-full shadow hover:bg-gray-100 transition">
-              Discover More
+            <button className="btn px-8 py-3 text-base font-semibold rounded-full bg-blue-700 text-white shadow-md hover:bg-blue-800 transition">
+               Discover More
             </button>
           </div>
         </div>
 
-        {/* Right Image */}
-        <div
-          className="relative md:w-1/2 flex justify-center"
-          data-aos="fade-left"
-        >
+        {/* Right Image Section */}
+        <div className="flex justify-center md:justify-end" data-aos="fade-left">
           <img
             src="https://wavio.peerduck.com/wp-content/uploads/2022/09/Group-447.png"
-            alt="Smiling Girl"
-            width={600}
-            height={600}
-            className="z-10"
+            alt="Water Girl"
+            className="w-[90%] drop-shadow-2xl max-w-[600px] "
           />
         </div>
       </div>
 
-      {/* Wave bottom border */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] rotate-180">
-        <svg
-          className="relative block w-full h-[80px]"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          viewBox="0 0 1200 120"
-        >
-          <path
-            d="M0,0V46.29c47.22,22,104.2,36.92,166,40.36,60.69,3.37,125.63-6.61,185-22.26,61.87-16.3,120.76-39.69,185-39.87,61.86-.18,118.7,21.56,180,34.91,48.62,10.48,108,18.27,164,3.86,30.22-7.63,58.62-20.63,84-36.48V0Z"
-            fill="#ffffff"
-          ></path>
-        </svg>
-      </div>
+     
     </section>
   );
 }

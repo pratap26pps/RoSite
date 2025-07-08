@@ -1,10 +1,8 @@
+"use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, CardContent } from "@/components/ui/card";
-import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { addToCart } from "../redux/slices/cartSlice";
 import {
   Carousel,
   CarouselContent,
@@ -52,117 +50,100 @@ const products = [
   },
 ];
 
-
-
 export function CarouselSize() {
   const dispatch = useDispatch();
 
-  //  const [products, setProducts] = useState([]);
-
-  // const fetchProducts = async () => {
-  //   try {
-  //     const res = await axios.get("/api/products");
-  //     setProducts(res.data);
-  //   } catch (err) {
-  //     toast.error("Failed to load products");
-  //     console.error(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchProducts();
-  // }, []);
-
-
-
-
-
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
-    toast.success(`${product.name} added to cart!`)
+    toast.success(`${product.name} added to cart!`);
+  };
 
-  }
   return (
-    <section className="relative  bg-gradient-to-b from-blue-50 to-blue-100 py-24">
+    <section className="relative py-24 font-sans overflow-hidden">
+      {/* Balloon Background Effect */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute w-[700px] h-[700px] bg-gradient-to-tr from-blue-500 via-cyan-400 to-purple-500 rounded-full blur-[150px] opacity-30 animate-blob animation-delay-1000 top-[-200px] left-[-150px]" />
+        <div className="absolute w-[500px] h-[500px] bg-gradient-to-tr from-purple-400 to-blue-600 rounded-full blur-[100px] opacity-20 animate-blob animation-delay-4000 top-[400px] right-[-200px]" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl sm:text-4xl font-bold text-blue-700 text-center mb-10">
+        <h2 className="text-4xl font-extrabold text-center text-blue-700 mb-12 tracking-tight">
           💧 Explore Our Products
         </h2>
 
-        <Carousel opts={{ align: "start" }} className="w-full overflow-hidden relative">
+        <Carousel opts={{ align: "start" }} className="w-full overflow-visible relative">
           <CarouselContent>
             {products.map((product) => (
               <CarouselItem
                 key={product.id}
-                className="min-w-0 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                className="min-w-0 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 px-2"
               >
+                <div className="h-full">
+                  <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition duration-300 h-full flex flex-col justify-between">
+                    {/* Image */}
+                    <div className="relative w-full h-36 mt-4">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-contain px-4"
+                      />
+                    </div>
 
-                <div className="p-2 lg:p-4 h-full">
-                  <Card className="flex flex-col h-full rounded-xl shadow-md hover:shadow-xl transition bg-white">
-                    <CardContent className="flex flex-col justify-between h-full lg:px-11 text-center">
-                      {/* Image */}
-                      <div className="relative w-full h-24 sm:h-44 mb-4">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-
-                      {/* Title & Desc */}
-                      <div className="flex flex-col gap-1 flex-grow">
-                        <h3 className="text-base sm:text-lg font-semibold text-blue-800">
-                          {product.name}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                          {product.description}
-                        </p>
-                      </div>
+                    {/* Body */}
+                    <div className="card-body items-center text-center px-4 py-4">
+                      <h3 className="card-title text-blue-800 text-lg sm:text-xl">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
 
                       {/* Buttons */}
-                      <div className="mt-4 flex -ml-6 lg:ml-0 lg:justify-between lg:scale-110  scale-75 gap-2 w-full">
+                      <div className="card-actions mt-4 flex flex-wrap justify-center gap-2 w-full">
                         <button
                           onClick={() => handleAddToCart(product)}
-                          className="flex-1 whitespace-nowrap bg-blue-500 text-white px-2 py-2 rounded-md text-xs sm:px-3 sm:py-2 sm:text-sm hover:bg-blue-600 transition"
+                          className="btn btn-primary btn-sm"
                         >
                           Add to Cart
                         </button>
-                        <button className="flex-1 whitespace-nowrap bg-green-500 text-white px-3 py-2 rounded-md text-sm hover:bg-green-600 transition">
-                          Buy Now
-                        </button>
+                        <button className="btn btn-success btn-sm">Buy Now</button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
 
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 shadow-lg" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 shadow-lg" />
         </Carousel>
       </div>
 
-      {/* SVG Bottom Curve */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none rotate-180">
-        <svg
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          className="w-full h-[100px]"
-        >
-          <path
-            d="M0,0V46.29c47.22,22,104.2,36.92,166,40.36
-            c60.69,3.37,125.63-6.61,185-22.26
-            c61.87-16.3,120.76-39.69,185-39.87
-            c61.86-.18,118.7,21.56,180,34.91
-            c48.62,10.48,108,18.27,164,3.86
-            c30.22-7.63,58.62-20.63,84-36.48V0Z"
-            fill="#ffffff"
-          />
-        </svg>
-      </div>
-    </section>
+      {/* Tailwind balloon blob animation */}
+      <style jsx>{`
+        .animate-blob {
+          animation: blob 20s infinite;
+        }
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
 
+        @keyframes blob {
+          0%,
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.05);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.95);
+          }
+        }
+      `}</style>
+    </section>
   );
 }

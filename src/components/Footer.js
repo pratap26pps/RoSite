@@ -1,18 +1,22 @@
+"use client";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const faqs = [
   {
     question: "What is the warranty period for your RO systems?",
-    answer: "All systems come with a standard 1-year warranty. Extended warranty available on request.",
+    answer:
+      "All systems come with a standard 1-year warranty. Extended warranty available on request.",
   },
   {
     question: "Is installation free?",
-    answer: "Yes, FREE ASSEMBLING & installation is provided across our service areas.",
+    answer:
+      "Yes, FREE ASSEMBLING & installation is provided across our service areas.",
   },
   {
     question: "Do you offer service support after purchase?",
-    answer: "Yes, we provide ongoing AMC (Annual Maintenance Contracts) and on-call support.",
+    answer:
+      "Yes, we provide ongoing AMC (Annual Maintenance Contracts) and on-call support.",
   },
   {
     question: "Which RO system is best for borewell water?",
@@ -20,7 +24,8 @@ const faqs = [
   },
   {
     question: "How often should I replace the filters?",
-    answer: "Pre-filters every 3–6 months and RO membrane annually, depending on usage.",
+    answer:
+      "Pre-filters every 3–6 months and RO membrane annually, depending on usage.",
   },
   {
     question: "Do you offer Cash on Delivery?",
@@ -36,7 +41,8 @@ const faqs = [
   },
   {
     question: "Do you sell on Amazon or Flipkart?",
-    answer: "Yes, our products are available on Amazon and Flipkart. See store links.",
+    answer:
+      "Yes, our products are available on Amazon and Flipkart. See store links.",
   },
   {
     question: "How to contact for bulk/wholesale orders?",
@@ -48,7 +54,8 @@ const faqs = [
   },
   {
     question: "Are your products certified?",
-    answer: "Yes, we have full water test certifications available on the website.",
+    answer:
+      "Yes, we have full water test certifications available on the website.",
   },
 ];
 
@@ -60,48 +67,91 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-900 text-white px-4 py-10">
-      <div className="max-w-6xl mx-auto">
+    <footer className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white px-4 py-16 animate-gradient bg-[length:400%_400%]">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-10">
         {/* Contact Info */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">Contact Information</h2>
-          <p>📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
-          <p>📞 <strong>Phone:</strong> +91-9876543210, +91-9998887776</p>
-          <p>📧 <strong>Email:</strong> support@rotechnicalxperts.com</p>
-          <p>📺 <strong>YouTube:</strong> <a href="https://youtube.com/@rotechnicalxperts" target="_blank" className="text-blue-400 underline">RO TECHNICAL XPERTS</a></p>
+        <div>
+          <h2 className="text-2xl font-bold mb-4 border-b-2 border-primary pb-2">
+            Contact Information
+          </h2>
+          <div className="space-y-3 text-base leading-relaxed">
+            <p>
+              📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004
+            </p>
+            <p>
+              📞 <strong>Phone:</strong> +91-9876543210, +91-9998887776
+            </p>
+            <p>
+              📧 <strong>Email:</strong> support@rotechnicalxperts.com
+            </p>
+            <p>
+              📺 <strong>YouTube:</strong>{" "}
+              <a
+                href="https://youtube.com/@rotechnicalxperts"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-700 underline"
+              >
+                RO TECHNICAL XPERTS
+              </a>
+            </p>
+          </div>
         </div>
 
         {/* FAQs */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
-          <div className="space-y-3">
+          <h2 className="text-2xl font-bold mb-4 border-b-2 border-primary pb-2">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className="bg-gray-800 rounded p-4 cursor-pointer transition duration-300"
                 onClick={() => toggleFAQ(i)}
+                className="bg-gray-800 p-4 rounded-lg cursor-pointer border border-gray-700 transition-all duration-300"
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-lg">{faq.question}</h3>
+                  <h3 className="font-semibold text-base">{faq.question}</h3>
                   {activeIndex === i ? (
                     <FaChevronUp className="text-gray-300" />
                   ) : (
                     <FaChevronDown className="text-gray-300" />
                   )}
                 </div>
-                {activeIndex === i && (
-                  <p className="mt-2 text-sm text-gray-300">{faq.answer}</p>
-                )}
+                <div
+                  className={`mt-2 text-sm text-gray-300 transition-all duration-300 ease-in-out overflow-hidden ${
+                    activeIndex === i ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  {faq.answer}
+                </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Copyright */}
-        <div className="mt-10 text-center text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} RO TECHNICAL XPERTS. All rights reserved.
-        </div>
       </div>
+
+      {/* Footer Bottom */}
+      <div className="mt-12 text-center text-sm text-gray-400 border-t border-gray-700 pt-6">
+        &copy; {new Date().getFullYear()} RO TECHNICAL XPERTS. All rights reserved.
+      </div>
+
+      {/* Gradient animation */}
+      <style jsx>{`
+        .animate-gradient {
+          animation: gradientBG 10s ease infinite;
+        }
+
+        @keyframes gradientBG {
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+      `}</style>
     </footer>
   );
 }
