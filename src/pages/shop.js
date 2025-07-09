@@ -17,9 +17,10 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import toast from "react-hot-toast";
+import { Search, Filter, DollarSign, Star, ShoppingCart } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 const dummyProducts = [
   {
     id: 1,
@@ -62,7 +63,7 @@ const dummyProducts = [
     image: "/images/image copy 5.png",
   },
   {
-    id: 4,
+    id: 6,
     name: "Carbon Filter Z3",
     sqNumber: "SQ789",
     category: "Carbon",
@@ -70,7 +71,7 @@ const dummyProducts = [
     image: "/images/image copy 4.png",
   },
   {
-    id: 5,
+    id: 7,
     name: "Carbon Filter Z3",
     sqNumber: "SQ789",
     category: "Carbon",
@@ -78,7 +79,7 @@ const dummyProducts = [
     image: "/images/image copy 5.png",
   },
   {
-    id: 4,
+    id: 8,
     name: "Carbon Filter Z3",
     sqNumber: "SQ789",
     category: "Carbon",
@@ -86,25 +87,24 @@ const dummyProducts = [
     image: "/images/image copy 4.png",
   },
   {
-    id: 5,
+    id: 9,
     name: "Carbon Filter Z3",
     sqNumber: "SQ789",
     category: "Carbon",
     price: 5000,
     image: "/images/image copy 5.png",
   },
-   
 ];
 
 const categories = ["All", "RO", "UV", "Carbon"];
 const PRODUCTS_PER_PAGE = 6;
-export default function ShopPage() {
 
+export default function ShopPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 20000]);
- const [currentPage, setCurrentPage] = useState(1);
-const dispatch = useDispatch()
+  const [currentPage, setCurrentPage] = useState(1);
+ const dispatch = useDispatch()
   const filteredProducts = dummyProducts.filter((product) => {
     const matchSearch =
       product.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -116,7 +116,7 @@ const dispatch = useDispatch()
     return matchSearch && matchCategory && matchPrice;
   });
 
-    const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
@@ -124,189 +124,251 @@ const dispatch = useDispatch()
 
   const handlePageChange = (page) => setCurrentPage(page);
 
-const carthandler = async (id) => {
-  const product = dummyProducts.find((product) => product.id === id);
-  if (!product) return toast.error("Product not found");
+  const carthandler = async (id) => {
+    const product = dummyProducts.find((product) => product.id === id);
+    if (!product) return;
 
-  localStorage.setItem("specific-product", JSON.stringify(product));
-  toast.success(`${product.name} is added`);
-  dispatch(addToCart(product));
-};
-
+    dispatch(addToCart(product));
+    toast.success(`${product.name} is added`);
+    console.log(`Added ${product.name} to cart`);
+  };
 
   return (
-    <div className="bg-blue-50 relative">
-<section className="relative bg-blue-50">
-  {/* SVG curve at the top */}
-  <div className="absolute top-0 left-0 w-full overflow-hidden leading-none z-20">
-    <svg
-      className="w-full h-32 md:h-60"
-      viewBox="0 0 1440 320"
-      preserveAspectRatio="none"
-    >
-      <path
-        fill="#60a5fa"  // light blue background for curve
-        d="M0,160L60,176C120,192,240,224,360,213.3C480,203,600,149,720,154.7C840,160,960,224,1080,229.3C1200,235,1320,181,1380,154.7L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
-      />
-    </svg>
-  </div>
-
-  {/* Heading */}
-  <h2 className="text-4xl flex justify-center font-semibold mb-2 text-blue-700 z-40 pt-32">
-    Products
-  </h2>
-</section>
-   
-    <div className="flex flex-col md:flex-row gap-6 px-4 py-10 z-30 bg-blue-50 min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-full md:w-1/4 h-[60%] space-y-8 bg-blue-100 p-8 rounded-xl shadow-sm">
-        {/* Search */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-blue-700">🔍 Search Products</h2>
-          <Input
-            placeholder="Name or SQ number"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="text-gray-800 border-2 border-gray-600 p-2"
-          />
+    <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 min-h-screen">
+      {/* Header Section */}
+      <section className="relative overflow-hidden">
+        {/* Animated background particles */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-1 h-1 bg-cyan-400 rounded-full animate-ping"></div>
+          <div className="absolute top-60 left-1/4 w-1.5 h-1.5 bg-blue-300 rounded-full animate-bounce"></div>
         </div>
 
-        {/* Category */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-blue-700">📦 Filter by Category</h2>
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full h-12 border border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent className="border border-gray-300 rounded-md">
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  <p className="text-gray-700">{category}</p>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+       
+        {/* Heading */}
+        <div className="relative z-40 pt-32  text-center">
+         
+          <p className="text-slate-300 text-lg max-w-2xl mx-auto px-4">
+            Discover our collection of high-quality water purification systems
+          </p>
         </div>
+      </section>
 
-        {/* Price Slider */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-blue-700">💰 Filter by Price</h2>
-          <Slider
-            value={priceRange}
-            onValueChange={setPriceRange}
-            min={0}
-            max={20000}
-            step={500}
-            className="mb-2"
-          />
-          <div className="text-sm text-gray-600 flex justify-between">
-            <span>₹{priceRange[0]}</span>
-            <span>₹{priceRange[1]}</span>
-          </div>
-        </div>
+      <div className="flex flex-col md:flex-row gap-8 px-4 py-10 z-30 relative">
+        {/* Sidebar */}
+        <aside className="w-full md:w-1/4 space-y-6">
+          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+            
+            {/* Search */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-blue-400 mb-3">
+                <Search className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">Search Products</h3>
+              </div>
+              <div className="relative">
+                <Input
+                  placeholder="Name or SQ number"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20 pl-4 pr-4 py-3 rounded-xl"
+                />
+                <Search className="absolute right-3 top-3 w-5 h-5 text-slate-400" />
+              </div>
+            </div>
 
-        {/* Reviews */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-blue-700">⭐ Recent Reviews</h2>
-          <ul className="text-sm text-gray-700 space-y-2">
-            <li>“Great product!” – Aakash</li>
-            <li>“Fast delivery.” – Neha</li>
-            <li>“Worth the price.” – Raju</li>
-          </ul>
-        </div>
-      </aside>
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
 
-         {/* Main Product Grid */}
-      <div className="w-full md:w-3/4">
-        <main className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        
-          {paginatedProducts.map((product) => (
-            <Card key={product.id} className="rounded-xl overflow-hidden shadow hover:shadow-md transition bg-white flex flex-col justify-between h-[380px] p-8">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded-md"
+            {/* Category */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-blue-400 mb-3">
+                <Filter className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">Filter by Category</h3>
+              </div>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl h-12">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-600 rounded-xl">
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category} className="text-slate-100 hover:bg-slate-700 focus:bg-slate-700">
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
+
+            {/* Price Slider */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-blue-400 mb-3">
+                <DollarSign className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">Price Range</h3>
+              </div>
+              <Slider
+                value={priceRange}
+                onValueChange={setPriceRange}
+                min={0}
+                max={20000}
+                step={500}
+                className="mb-4"
               />
-              <CardContent className="p-2 flex flex-col justify-between flex-grow">
-                <div className="space-y-1">
-                  <h3 className="text-blue-700 font-semibold text-lg">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-500">SQ: {product.sqNumber}</p>
-                  <p className="text-green-600 font-bold text-base">₹{product.price}</p>
-                </div>
-                <button
-                onClick={()=>carthandler(product.id)}
-                className="mt-4 bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 text-sm transition w-full">
-                  Add to Cart
-                </button>
-              </CardContent>
-            </Card>
-          ))}
+              <div className="flex justify-between text-sm">
+                <span className="bg-slate-700/50 px-3 py-1 rounded-lg text-slate-300">
+                  ₹{priceRange[0].toLocaleString()}
+                </span>
+                <span className="bg-slate-700/50 px-3 py-1 rounded-lg text-slate-300">
+                  ₹{priceRange[1].toLocaleString()}
+                </span>
+              </div>
+            </div>
 
-          {paginatedProducts.length === 0 && (
-            <div className="col-span-full text-center text-gray-500 py-10">
-              No products match your filters.
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
+
+            {/* Reviews */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-blue-400 mb-3">
+                <Star className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">Recent Reviews</h3>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Aakash", review: "Great product!", rating: 5 },
+                  { name: "Neha", review: "Fast delivery.", rating: 4 },
+                  { name: "Raju", review: "Worth the price.", rating: 5 }
+                ].map((review, index) => (
+                  <div key={index} className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="flex text-yellow-400">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-current" />
+                        ))}
+                      </div>
+                      <span className="text-slate-300 text-sm font-medium">{review.name}</span>
+                    </div>
+                    <p className="text-slate-400 text-sm">"{review.review}"</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Product Grid */}
+        <div className="w-full md:w-3/4">
+          <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {paginatedProducts.map((product) => (
+              <Card key={product.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-2 hover:border-blue-500/50">
+                <div className="relative overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm rounded-full px-3 py-1 text-blue-300 text-sm font-medium">
+                    {product.category}
+                  </div>
+                </div>
+                
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-slate-100 font-bold text-xl group-hover:text-blue-400 transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-slate-400 text-sm bg-slate-700/30 rounded-lg px-3 py-1 inline-block">
+                      SQ: {product.sqNumber}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        ₹{product.price.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => carthandler(product.id)}
+                   
+                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </button>
+                </CardContent>
+              </Card>
+            ))}
+
+            {paginatedProducts.length === 0 && (
+              <div className="col-span-full text-center py-20">
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-12 backdrop-blur-sm">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="text-2xl font-bold text-slate-300 mb-2">No Products Found</h3>
+                  <p className="text-slate-400">No products match your current filters. Try adjusting your search criteria.</p>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center">
+              <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-2">
+                <Pagination>
+                  <PaginationContent className="gap-2">
+                    {/* Previous Arrow */}
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                        className={`px-4 py-2 rounded-xl transition-all duration-300 ${
+                          currentPage === 1
+                            ? "text-slate-500 cursor-not-allowed"
+                            : "text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                        }`}
+                      >
+                        ←
+                      </PaginationLink>
+                    </PaginationItem>
+
+                    {/* Page Numbers */}
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink
+                          isActive={currentPage === i + 1}
+                          onClick={() => handlePageChange(i + 1)}
+                          className={`px-4 py-2 rounded-xl transition-all duration-300 ${
+                            currentPage === i + 1
+                              ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg"
+                              : "text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                          }`}
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                    {/* Next Arrow */}
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() =>
+                          currentPage < totalPages && handlePageChange(currentPage + 1)
+                        }
+                        className={`px-4 py-2 rounded-xl transition-all duration-300 ${
+                          currentPage === totalPages
+                            ? "text-slate-500 cursor-not-allowed"
+                            : "text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                        }`}
+                      >
+                        →
+                      </PaginationLink>
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
             </div>
           )}
-        </main>
-{/* pagination */}
-        {totalPages > 1 && (
-  <Pagination>
-    <PaginationContent className="justify-center gap-1 mt-4">
-      {/* Previous Arrow */}
-      <PaginationItem>
-        <PaginationLink
-          onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-          className={`px-3 py-2 rounded-md border ${
-            currentPage === 1
-              ? "text-gray-300 border-gray-200 cursor-not-allowed"
-              : "hover:bg-gray-100 text-gray-700 border-gray-300"
-          }`}
-        >
-          «
-        </PaginationLink>
-      </PaginationItem>
-
-      {/* Page Numbers */}
-      {Array.from({ length: totalPages }, (_, i) => (
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i + 1}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-2 rounded-md border ${
-              currentPage === i + 1
-                ? "bg-blue-600 text-white border-blue-600"
-                : "hover:bg-gray-100 text-gray-700 border-gray-300"
-            }`}
-          >
-            {i + 1}
-          </PaginationLink>
-        </PaginationItem>
-      ))}
-
-      {/* Next Arrow */}
-      <PaginationItem>
-        <PaginationLink
-          onClick={() =>
-            currentPage < totalPages && handlePageChange(currentPage + 1)
-          }
-          className={`px-3 py-2 rounded-md border ${
-            currentPage === totalPages
-              ? "text-gray-300 border-gray-200 cursor-not-allowed"
-              : "hover:bg-gray-100 text-gray-700 border-gray-300"
-          }`}
-        >
-          »
-        </PaginationLink>
-      </PaginationItem>
-    </PaginationContent>
-  </Pagination>
-)}
-
+        </div>
       </div>
     </div>
-     </div>
   );
 }

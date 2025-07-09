@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
+ 
+
 
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,

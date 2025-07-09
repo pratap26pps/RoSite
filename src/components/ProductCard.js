@@ -105,7 +105,7 @@ export function CarouselSize() {
                         >
                           Add to Cart
                         </button>
-                        <button className="btn btn-success btn-sm">Buy Now</button>
+                        <button className="btn btn-success btn-sm text-blue-600">Buy Now</button>
                       </div>
                     </div>
                   </div>
@@ -114,8 +114,8 @@ export function CarouselSize() {
             ))}
           </CarouselContent>
 
-          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 shadow-lg" />
-          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 shadow-lg" />
+          <CarouselPrevious   />
+          <CarouselNext  />
         </Carousel>
       </div>
 

@@ -57,7 +57,7 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
+    signIn("google", { callbackUrl: "/testdashboard" });
   };
 
   const handleSignup = async (e) => {
@@ -123,7 +123,7 @@ export default function AuthPage() {
 
       dispatch(setUser(data.user));
       toast.success("Login successful!");
-      router.push("/dashboard");
+      router.push("/testdashboard");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {

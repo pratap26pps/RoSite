@@ -67,7 +67,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white px-4 py-16 animate-gradient bg-[length:400%_400%]">
+    <footer className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white px-4 py-16 animate-gradient  relative">
       <div className="max-w-6xl mx-auto grid grid-cols-1 gap-10">
         {/* Contact Info */}
         <div>

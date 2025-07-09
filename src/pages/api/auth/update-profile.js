@@ -5,19 +5,19 @@ import User from "@/src/models/users";
 export default async function handler(req, res) {
   if (req.method !== "PATCH") return res.status(405).json({ message: "Method not allowed" });
  await connectDB();
- const formData = req.body;
- console.log("formData",formData)
- if(!formData){
+ const profileForm = req.body;
+ console.log("profileForm",profileForm)
+ if(!profileForm){
   return res.status(401).json({ message: "Unauthorized" });
  }
   try {
    const updatedUser = await User.findOneAndUpdate(
-      { email: formData.email },
+      { email: profileForm.email },
       {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        mobile: formData.mobile,
-        image: formData.image,
+        firstName: profileForm.firstName,
+        lastName: profileForm.lastName,
+        mobile: profileForm.mobile,
+        image: profileForm.image,
       },
       { new: true }
     );
