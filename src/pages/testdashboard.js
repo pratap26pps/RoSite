@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { setUser } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
+import { signOut } from 'next-auth/react';
+import { clearUser } from '../redux/slices/authSlice';
 const AdminDashboard = () => {
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
@@ -102,10 +104,19 @@ const AdminDashboard = () => {
     { id: 4, action: 'Order shipped', time: '15 minutes ago', type: 'shipping' }
   ]);
 
-  const menuItems = [
+  const AdminItems = [
     { key: 'overview', label: 'Overview', icon: '📊' },
     { key: 'orders', label: 'Orders', icon: '🛒' },
     { key: 'customers', label: 'Customers', icon: '👥' },
+    { key: 'Add Category/Product', label: 'Add Category/Product', icon: '⊍' },
+    { key: 'Product-History', label: 'Product-History', icon: '👥' },
+    { key: 'deliveries', label: 'Deliveries', icon: '🚚' },
+    { key: 'settings', label: 'Settings', icon: '⚙️' },
+  ];
+    const CustomerItems = [
+    { key: 'overview', label: 'Overview', icon: '📊' },
+    { key: 'orders history', label: 'Orders', icon: '🛒' },
+    { key: 'my Cart', label: 'Customers', icon: '👥' },
     { key: 'deliveries', label: 'Deliveries', icon: '🚚' },
     { key: 'settings', label: 'Settings', icon: '⚙️' },
   ];
@@ -168,9 +179,10 @@ const AdminDashboard = () => {
        dispatch(clearUser());
        setUser(null);
       await signOut({ redirect: false });
-      router.push("/login");
+      router.push("/authpage");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Delete failed!");
+
+      toast.error(err.data || "Delete failed!");
     } finally {
       setLoading(false);
     }
@@ -502,7 +514,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
               />
               {!collapsed && (
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{`${user.firstName} ${user?.lastName}`}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{ user?.name || `${user.firstName} ${user?.lastName}` }</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{user?.role}</p>
                 </div>
               )}
@@ -511,8 +523,11 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
+            {
+              user.role === "admin" ? 
+            
             <ul className="space-y-2">
-              {menuItems.map(item => (
+              {AdminItems.map(item => (
                 <li key={item.key}>
                   <button
                     onClick={() => setSelectedMenuItem(item.key)}
@@ -528,6 +543,26 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 </li>
               ))}
             </ul>
+            :
+             
+            <ul className="space-y-2">
+              {CustomerItems.map(item => (
+                <li key={item.key}>
+                  <button
+                    onClick={() => setSelectedMenuItem(item.key)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      selectedMenuItem === item.key
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
+                    }`}
+                  >
+                    <span className="text-xl">{item.icon}</span>
+                    {!collapsed && <span className="font-medium">{item.label}</span>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            }
           </nav>
 
           {/* Profile Actions */}
@@ -563,7 +598,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 <span className="text-xl">{collapsed ? '☰' : '✕'}</span>
               </button>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {menuItems.find(item => item.key === selectedMenuItem)?.label}
+                {AdminItems.find(item => item.key === selectedMenuItem)?.label}
               </h1>
             </div>
             

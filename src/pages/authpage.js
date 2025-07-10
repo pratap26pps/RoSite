@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { signIn } from "next-auth/react";
 import { setUser } from "../redux/slices/authSlice";
 import { Chrome, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+
 import toast from "react-hot-toast";
 
 // ShadCN UI
@@ -30,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { BackgroundBeams, Spotlight, GridPattern } from "@/components/ui/backgrounds";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
@@ -92,7 +94,7 @@ export default function AuthPage() {
 
       toast.success("OTP sent. Please verify.");
       localStorage.setItem("pendingSignup", JSON.stringify(formData));
-      router.push(`/otp?email=${formData.email}`);
+      router.push(`/OtpPage?email=${formData.email}`);
     } catch (error) {
       toast.error("Something went wrong!");
     } finally {
@@ -209,7 +211,12 @@ export default function AuthPage() {
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                    <Button disabled={loading} type="submit" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                     <Link href='/forgotpassword'>
+              <label htmlFor="password" className="block mt-1 text-xs sm:text-sm hover:underline cursor-pointer font-medium text-gray-200">
+                Forgot Password
+              </label>
+            </Link>
+                    <Button disabled={loading} type="submit" className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
                       {loading ? "Logging in..." : "Login"}
                     </Button>
                   </motion.form>
@@ -240,7 +247,7 @@ export default function AuthPage() {
                     </div>
                     {errors.password && <p className="text-sm text-red-400">{errors.password}</p>}
                     {errors.confirmPassword && <p className="text-sm text-red-400">{errors.confirmPassword}</p>}
-                    <Button disabled={loading} type="submit" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                    <Button disabled={loading} type="submit" className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
                       {loading ? "Creating Account..." : "Create Account"}
                     </Button>
                   </motion.form>
