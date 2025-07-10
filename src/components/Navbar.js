@@ -201,7 +201,9 @@ export default function PremiumNavigation() {
                       className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                         Dashboard
                       </NavigationMenuLink>
-                      <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                      <NavigationMenuLink
+                       onClick={() => router.push("/cart")}
+                      className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                         My Cart
                       </NavigationMenuLink>
                       <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2" onClick={handleLogout}>
@@ -302,7 +304,7 @@ export default function PremiumNavigation() {
                   {totalItems}
                 </div>
                 <ShoppingCart 
-                    onClick={() => router.push("/cart")}
+                    onClick={() => {router.push("/cart"),setMenuOpen(!menuOpen)}}
                 className="text-slate-200 w-6 h-6 cursor-pointer" />
               </div>
               
@@ -321,14 +323,18 @@ export default function PremiumNavigation() {
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="min-w-[140px] py-2 bg-slate-700/95 backdrop-blur-md border border-blue-500/20 rounded-xl">
                         <NavigationMenuLink 
-                              onClick={() => router.push("/testdashboard")}
+                              onClick={() => {router.push("/testdashboard"),setMenuOpen(!menuOpen)}}
                         className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                           Dashboard
                         </NavigationMenuLink>
-                        <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                        <NavigationMenuLink 
+                         onClick={() => {router.push("/cart"),setMenuOpen(!menuOpen)}}
+                        className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                           My Cart
                         </NavigationMenuLink>
-                        <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2" onClick={handleLogout}>
+                        <NavigationMenuLink
+                        
+                        className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2" onClick={handleLogout}>
                           Logout
                         </NavigationMenuLink>
                       </NavigationMenuContent>
@@ -337,7 +343,7 @@ export default function PremiumNavigation() {
                 </NavigationMenu>
               ) : (
                 <button
-                onClick={() => router.push("/authpage")}
+                onClick={() => {router.push("/authpage"),setMenuOpen(!menuOpen)}}
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all duration-300 flex-1"
                 >
                   Login
