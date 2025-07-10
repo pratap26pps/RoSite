@@ -1,7 +1,8 @@
 import formidable from "formidable";
 import connectDB from "@/src/lib/dbConnect";
  
-import product from "@/src/models/Product";
+ 
+import Product from "@/src/models/Product";
 import { productSchema } from "@/src/lib/zodSchemas/productSchema";
 import imageuploadcloudanary from "@/src/lib/imageUpload";
 
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
       }
     });
   } else if (req.method === "GET") {
-    const products = await product.find();
+    const products = await Product.find();
     return res.status(200).json(products);
   } else {
     return res.status(405).json({ message: "Method Not Allowed" });

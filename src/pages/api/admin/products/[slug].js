@@ -1,5 +1,5 @@
 
-
+import Product from "@/src/models/Product";
 export default function handler(req, res) {
     const {
         query: { slug },
@@ -11,7 +11,7 @@ export default function handler(req, res) {
         return res.status(405).end(`Method ${method} Not Allowed`);
     }
 
-    const product = product.find((p) => p.slug === slug);
+    const product = Product.find((p) => p.slug === slug);
 
     if (!product) {
         return res.status(404).json({ message: 'Product not found' });
