@@ -295,11 +295,15 @@ export default function PremiumNavigation() {
 
             {/* Mobile Auth Section */}
             <div className="flex items-center gap-4 pt-4 border-t border-blue-500/20">
-              <div className="relative">
+              <div className="relative" 
+              
+              >
                 <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                   {totalItems}
                 </div>
-                <ShoppingCart className="text-slate-200 w-6 h-6 cursor-pointer" />
+                <ShoppingCart 
+                    onClick={() => router.push("/cart")}
+                className="text-slate-200 w-6 h-6 cursor-pointer" />
               </div>
               
               {user ? (
@@ -333,7 +337,7 @@ export default function PremiumNavigation() {
                 </NavigationMenu>
               ) : (
                 <button
-                  onClick={() => router.push("/login")}
+                onClick={() => router.push("/authpage")}
                   className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all duration-300 flex-1"
                 >
                   Login
