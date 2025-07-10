@@ -228,18 +228,25 @@ export default function PremiumNavigation() {
             {/* Mobile menu content with dark theme */}
             <div className="space-y-4">
               <NavigationMenu>
-                <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300">
+                <NavigationMenuLink
+                  onClick={()=>{router.push("/customer/our-reviews"), setMenuOpen(!menuOpen)}}
+                className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300">
                   Our Reviews
                 </NavigationMenuLink>
               </NavigationMenu>
 
               <NavigationMenu>
+                       <NavigationMenuList>
+
+                 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="!bg-transparent ml-4 cursor-pointer text-slate-200 hover:text-blue-300 p-0 border-none shadow-none hover:bg-transparent">
                     Shop
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-700/95 backdrop-blur-md border border-blue-500/20 rounded-xl">
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                    <NavigationMenuLink
+                             onClick={()=>{router.push("/shop"),setMenuOpen(!menuOpen)}}
+                    className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                       Shop
                     </NavigationMenuLink>
                     <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
@@ -253,6 +260,7 @@ export default function PremiumNavigation() {
                     </NavigationMenuLink>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+                      </NavigationMenuList>
               </NavigationMenu>
 
               <NavigationMenu>
@@ -268,7 +276,9 @@ export default function PremiumNavigation() {
                       Services
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-700/95 backdrop-blur-md border border-blue-500/20 rounded-xl">
-                      <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                      <NavigationMenuLink
+                        onClick={()=>{router.push("/custom-room"),setMenuOpen(!menuOpen)}}
+                      className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                         Custom Room
                       </NavigationMenuLink>
                       <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">

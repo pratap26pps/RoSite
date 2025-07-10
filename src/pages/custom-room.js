@@ -171,7 +171,7 @@ export default function BuildPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedComponents, setSelectedComponents] = useState({});
   const [savedConfigs, setSavedConfigs] = useState([]);
-const router= useRouter();
+  const router= useRouter();
   const currentStepId = steps[currentStep].id;
   const currentComponents = components[currentStepId ] || [];
 
@@ -367,50 +367,129 @@ const router= useRouter();
           </p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
-              const StepIcon = step.icon;
-              const isActive = index === currentStep;
-              const isCompleted = index < currentStep;
-
-              return (
-                <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
-                    isActive
-                      ? "border-blue-500 bg-blue-500 text-white"
-                      : isCompleted
-                      ? "border-green-500 bg-green-500 text-white"
-                      : "border-gray-300 dark:border-slate-600 text-gray-400"
-                  }`}>
-                    {isCompleted ? (
-                      <CheckCircle className="h-6 w-6" />
-                    ) : (
-                      <StepIcon className="h-6 w-6" />
-                    )}
-                  </div>
-                  <div className="ml-3">
-                    <div className={`text-sm font-medium ${
-                      isActive
-                        ? "text-blue-600 dark:text-blue-400"
-                        : isCompleted
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}>
-                      {step.name}
-                    </div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className={`w-16 h-0.5 mx-4 ${
-                      isCompleted ? "bg-green-500" : "bg-gray-300 dark:bg-slate-600"
-                    }`} />
-                  )}
-                </div>
-              );
-            })}
+   {/* Progress Steps */}
+<div className="mb-8">
+  {/* Mobile/Tablet Layout - Vertical Stack */}
+  <div className="block lg:hidden">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
+      {steps.map((step, index) => {
+        const StepIcon = step.icon;
+        const isActive = index === currentStep;
+        const isCompleted = index < currentStep;
+        return (
+          <div key={step.id} className="flex items-center">
+            {/* Step Icon */}
+            <div
+              className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
+                isActive
+                  ? "border-blue-500 bg-blue-500 text-white"
+                  : isCompleted
+                  ? "border-green-500 bg-green-500 text-white"
+                  : "border-gray-300 dark:border-slate-600 text-gray-400"
+              }`}
+            >
+              {isCompleted ? (
+                <CheckCircle className="h-6 w-6" />
+              ) : (
+                <StepIcon className="h-6 w-6" />
+              )}
+            </div>
+            {/* Step Label */}
+            <div className="ml-3">
+              <div
+                className={`text-sm font-medium ${
+                  isActive
+                    ? "text-blue-600 dark:text-blue-400"
+                    : isCompleted
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
+                {step.name}
+              </div>
+            </div>
           </div>
-        </div>
+        );
+      })}
+    </div>
+    {/* Progress Bars for Mobile/Tablet */}
+    <div className="flex flex-wrap mt-6 gap-4 items-center justify-center">
+      {steps.map((_, index) =>
+        index < steps.length - 1 ? (
+          <div
+            key={index}
+            className={`flex-1 h-0.5 max-w-[60px] ${
+              index < currentStep
+                ? "bg-green-500"
+                : "bg-gray-300 dark:bg-slate-600"
+            }`}
+          />
+        ) : null
+      )}
+    </div>
+  </div>
+
+  {/* Large Screen Layout - Single Line */}
+  <div className="hidden lg:block">
+    <div className="flex items-center justify-between">
+      {steps.map((step, index) => {
+        const StepIcon = step.icon;
+        const isActive = index === currentStep;
+        const isCompleted = index < currentStep;
+        return (
+          <div key={step.id} className="flex  items-center flex-1">
+            {/* Step Container */}
+            <div className="flex flex-col items-center">
+              {/* Step Icon */}
+              <div
+                className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
+                  isActive
+                    ? "border-blue-500 bg-blue-500 text-white"
+                    : isCompleted
+                    ? "border-green-500 bg-green-500 text-white"
+                    : "border-gray-300 dark:border-slate-600 text-gray-400"
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle className="h-6 w-6" />
+                ) : (
+                  <StepIcon className="h-6 w-6" />
+                )}
+              </div>
+              {/* Step Label */}
+              <div className="mt-2 text-center">
+                <div
+                  className={`text-sm font-medium whitespace-nowrap ${
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400"
+                      : isCompleted
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  {step.name}
+                </div>
+              </div>
+            </div>
+            
+            {/* Progress Line */}
+            {index < steps.length - 1 && (
+              <div className="flex-1 -mt-5 mx-4">
+                <div
+                  className={`h-0.5 w-full transition-colors ${
+                    index < currentStep
+                      ? "bg-green-500"
+                      : "bg-gray-300 dark:bg-slate-600"
+                  }`}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
          
 
         {/* Current Step Content */}
