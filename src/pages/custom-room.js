@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/router";
 import {
   Droplets,
   Settings,
@@ -170,7 +171,7 @@ export default function BuildPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedComponents, setSelectedComponents] = useState({});
   const [savedConfigs, setSavedConfigs] = useState([]);
-
+const router= useRouter();
   const currentStepId = steps[currentStep].id;
   const currentComponents = components[currentStepId ] || [];
 
@@ -258,7 +259,9 @@ export default function BuildPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button variant="water" size="lg" className="flex-1">
+            <Button 
+            onClick={()=>router.push("/customer/billingorder") }
+            variant="water" size="lg" className="flex-1 cursor-pointer hover:text-green-500">
               <ShoppingCart className="h-5 w-5 mr-2" />
               Proceed to Checkout
             </Button>
@@ -278,7 +281,7 @@ export default function BuildPage() {
     return (
       <div className="space-y-6">
         <div className=" rounded-xl shadow-lg">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-semibold   mb-4">
             Select {steps[currentStep].name}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -418,15 +421,15 @@ export default function BuildPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+            className="mt-8   rounded-xl p-6 shadow-lg"
           >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold   mb-4">
               Current Configuration
             </h3>
             <div className="space-y-2">
               {Object.entries(selectedComponents).map(([category, component]) => (
                 <div key={category} className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">{component.name}</span>
+                  <span className="text-gray-400 dark:text-gray-400">{component.name}</span>
                   <span className="font-medium">₹{component.price.toLocaleString()}</span>
                 </div>
               ))}

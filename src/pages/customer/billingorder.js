@@ -55,7 +55,7 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
 
 
   return (
-    <div className="min-h-screen bg-blue-50 py-20 px-4 md:px-8">
+    <div className="min-h-screen relative py-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Billing Details */}
         <Card className="shadow-lg">
