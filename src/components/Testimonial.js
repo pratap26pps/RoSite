@@ -34,14 +34,11 @@ const testimonials = [
 
 export default function TestimonialSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0f172a] text-white w-full">
-      {/* Floating Background Effects */}
-      <div className="absolute top-20 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-[120px] z-0 animate-float" />
-      <div className="absolute bottom-10 right-1/3 w-60 h-60 bg-purple-400/20 rounded-full blur-[100px] z-0 animate-float delay-1000" />
-
+    <section className="relative overflow-hidden pb-20 -mt-20 text-white w-full">
+       
       {/* Heading */}
       <h2 className="text-2xl sm:text-4xl font-bold text-center text-blue-100 py-8 font-sans tracking-tight z-10 relative">
-        ❤️ What Our Clients Say
+         What Our Clients Say
       </h2>
 
       {/* Scrolling Testimonials */}

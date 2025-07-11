@@ -1,28 +1,21 @@
 "use client";
 import Link from "next/link";
+import {
+  Wrench,
+  Trophy,
+  PhoneCall,
+  Target,
+  CheckCircle,
+  Youtube,
+} from "lucide-react";
 
 export default function YoutubeTrust() {
   return (
-    <section className="relative py-20 px-6 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#172554] text-white overflow-hidden font-sans">
-      {/* 🔷 Animated Blurred Floating Circles */}
-      <div className="absolute top-16 left-1/4 w-72 h-72 bg-blue-400/30 rounded-full blur-[100px] animate-float" />
-      <div className="absolute bottom-12 right-1/5 w-64 h-64 bg-purple-500/20 rounded-full blur-[100px] animate-float delay-1000" />
-
-      {/* 🧮 SVG Grid Background */}
-      <div className="absolute inset-0 z-0">
-        <svg className="w-full h-full opacity-10" viewBox="0 0 100 100" fill="none">
-          <defs>
-            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M10 0L0 0 0 10" stroke="white" strokeWidth="0.2" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
+    <section className="relative py-20 text-white overflow-hidden font-sans">
+      
       {/* Main Content */}
       <div className="max-w-6xl mx-auto relative z-10 grid md:grid-cols-2 gap-10 items-center">
-        {/* 🌟 Trust Info */}
+        {/* Trust Info */}
         <div>
           <h2 className="text-3xl sm:text-4xl font-bold text-cyan-100 mb-4 leading-tight">
             Trusted by 25,000+ Clients <br /> Since{" "}
@@ -34,23 +27,44 @@ export default function YoutubeTrust() {
             20+ years.
           </p>
 
-          <ul className="list-disc pl-6 space-y-3 text-blue-100">
-            <li>🔧 Installed 25,000+ RO Systems since 1999</li>
-            <li>🏆 Trusted by homes, hospitals, schools & defense</li>
-            <li>📞 Live support in Ballabhgarh, Faridabad & NCR</li>
-            <li>🎯 24×7 expert service with doorstep setup</li>
+          <ul className="space-y-3 text-blue-100">
+            <li className="flex items-center gap-2">
+              <Wrench className="w-5 h-5 text-cyan-300" />
+              Installed 25,000+ RO Systems since 1999
+            </li>
+            <li className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-cyan-300" />
+              Trusted by homes, hospitals, schools & defense
+            </li>
+            <li className="flex items-center gap-2">
+              <PhoneCall className="w-5 h-5 text-cyan-300" />
+              Live support in Ballabhgarh, Faridabad & NCR
+            </li>
+            <li className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-cyan-300" />
+              24×7 expert service with doorstep setup
+            </li>
           </ul>
         </div>
 
-        {/* 🎥 YouTube Highlights Card */}
+        {/*  YouTube Highlights Card */}
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all">
-          <h3 className="text-xl font-semibold text-red-500 mb-4">
-            🎥 YouTube Channel Highlights
+          <h3 className="text-xl font-semibold text-red-500 mb-4 flex items-center gap-2">
+            <Youtube className="w-5 h-5" /> YouTube Channel Highlights
           </h3>
           <ul className="space-y-3 text-blue-100 text-base">
-            <li>✅ Over <strong>1,00,000</strong> Subscribers</li>
-            <li>✅ <strong>2M+</strong> Views across tutorials & reviews</li>
-            <li>✅ Real customer reviews & live demos</li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              Over <strong>1,00,000</strong> Subscribers
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              <strong>2M+</strong> Views across tutorials & reviews
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              Real customer reviews & live demos
+            </li>
           </ul>
 
           <Link
@@ -63,9 +77,8 @@ export default function YoutubeTrust() {
         </div>
       </div>
 
-     
 
-      {/* 🌀 Floating Animation Style */}
+      {/*  Floating Animation Style */}
       <style jsx>{`
         .animate-float {
           animation: float 8s ease-in-out infinite;

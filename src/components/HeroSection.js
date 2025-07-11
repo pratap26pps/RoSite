@@ -1,7 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Truck, CalendarDays, Clock } from "lucide-react";
-
+import { Truck, CalendarDays, Clock,Settings, ShoppingCart,ShoppingBag, Search } from "lucide-react";
+ import { useRouter } from "next/navigation";
+import { CarouselSize } from "./ProductCard";
+import TopSellingProductsAndDressStyle from "./Sellingproductcard";
+import TestimonialSection from "./Testimonial";
 // Cursor Spotlight Component
 const CursorSpotlight = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -111,11 +114,10 @@ const FloatingParticles = () => (
     ))}
   </div>
 );
-
 export default function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [animateButtons, setAnimateButtons] = useState(false);
-
+const router= useRouter()
   useEffect(() => {
     // Trigger visibility for custom animations on page load
     const timer = setTimeout(() => {
@@ -143,48 +145,116 @@ export default function HeroSection() {
         <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-teal-400/50 to-transparent animate-pulse" style={{ animationDelay: '1500ms' }} />
       </div>
 
-      {/* First Section - Original Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 py-40 flex flex-col-reverse lg:flex-row items-center gap-12">
-        {/* Left Section */}
-        <div 
-          className={`space-y-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
-        >
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-2xl">
-            PURE <span className="text-cyan-300 animate-pulse">WATER</span> FOR HEALTHY LIFE
-          </h1>
-          <p className="text-lg text-slate-200 leading-relaxed">
-            Get access to the cleanest water with advanced RO purification technology.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-2">
-            <button className="group relative px-8 py-3 text-base font-semibold rounded-full bg-white text-blue-700 shadow-2xl hover:bg-blue-50 hover:text-blue-900 transition-all duration-300 overflow-hidden">
-              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
-              <span className="relative">Our Services</span>
-            </button>
-            <button className="group relative px-8 py-3 text-base font-semibold rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-2xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 overflow-hidden">
-              <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
-              <span className="relative">Discover More</span>
-            </button>
+    {/* First Section - Enhanced Hero */}
+    
+ 
+        <section className="relative z-10 w-full min-h-screen flex items-center justify-center px-4 py-20  ">
+ 
+        <div className="relative z-20 max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-12">
+          {/* Left Section - Content */}
+          <div 
+            className={`flex-1 space-y-8 text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
+          >
+            {/* Tagline */}
+            <div className="inline-block bg-gradient-to-r from-cyan-400/20 to-blue-400/20 backdrop-blur-sm border border-cyan-300/30 rounded-full px-6 py-2 mb-6">
+              <p className="text-cyan-300 font-semibold text-sm tracking-wide">
+                ✨ India's Most Trusted Custom RO Experts – Since 1999
+              </p>
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-2xl md:text-4xl font-black leading-tight drop-shadow-2xl">
+              PURE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-300 animate-pulse">WATER</span>
+              <br />
+              FOR <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">HEALTHY</span> LIFE
+            </h1>
+
+            {/* Description */}
+            <p className="text-xl text-slate-200 leading-relaxed max-w-2xl">
+              Experience the purest water with our advanced RO purification technology. 
+              Custom-built systems designed for your family's health and happiness.
+            </p>
+
+           {/* Feature Highlights */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+  {[
+    { icon: Truck, title: "Advanced RO Tech", desc: "99.9% Purification" },
+    { icon: CalendarDays, title: "Custom Solutions", desc: "Tailored for You" },
+    { icon: Clock, title: "25+ Years Trust", desc: "Proven Excellence" }
+  ].map((feature, index) => {
+    const Icon = feature.icon;
+    return (
+      <div
+        key={index}
+        className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-300/20 hover:border-cyan-300/40 transition-all duration-300"
+      >
+        <Icon className="w-6 h-6 text-cyan-300 mb-2" />
+        <h3 className="text-white font-semibold">{feature.title}</h3>
+        <p className="text-cyan-200 text-sm">{feature.desc}</p>
+      </div>
+    );
+  })}
+</div>
+
+
+ 
+
+{/* CTA Buttons */}
+<div className="flex flex-wrap gap-3 pt-4 justify-center sm:justify-start">
+  <button
+      onClick={()=>router.push("/custom-room")}
+  className="group cursor-pointer relative px-6 py-3 text-base font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-xl hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 overflow-hidden transform hover:scale-[1.03]">
+    <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-full"></span>
+    <span className="relative flex items-center gap-2">
+      <Settings className="w-5 h-5" />
+      Build Your RO
+    </span>
+  </button>
+
+  <button
+     onClick={()=>router.push("/shop")}
+  className="group cursor-pointer relative px-6 py-3 text-base font-semibold rounded-full bg-white/10 backdrop-blur-sm border border-cyan-300 text-cyan-300 hover:bg-cyan-300 hover:text-black transition-all duration-300 transform hover:scale-[1.03]">
+    <span className="relative flex items-center gap-2">
+      <ShoppingCart className="w-5 h-5" />
+      Explore Products
+    </span>
+  </button>
+</div>
+
+
+
+            
+          </div>
+
+          {/* Right Section - Enhanced Image */}
+          <div 
+            className={`flex-1 flex justify-center mt-5 lg:justify-end transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
+          >
+            <div className="relative">
+          
+             
+              
+              {/* Main Image */}
+              <img
+                src="https://wavio.peerduck.com/wp-content/uploads/2022/09/Group-447.png"
+                alt="Pure Water for Healthy Life"
+                height={445}
+                width={445}
+                className="relative  drop-shadow-2xl  hover:scale-105 transition-transform duration-500 "
+              />
+              
+              {/* Decorative Ring */}
+            </div>
           </div>
         </div>
 
-        {/* Right Image Section */}
-        <div 
-          className={`flex justify-center md:justify-end transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
-        >
-          <div className="relative">
-            {/* Glow Effect Behind Image */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl scale-110 animate-pulse"></div>
-            <img
-              src="https://wavio.peerduck.com/wp-content/uploads/2022/09/Group-447.png"
-              alt="Water Girl"
-              className="relative w-[90%] drop-shadow-2xl max-w-[600px] hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-        </div>
+         
       </section>
+ 
+ 
 
       {/* Second Section - Water Delivery */}
-      <section className="relative w-full min-h-screen px-6 py-16 sm:py-24 overflow-hidden text-white font-sans">
+        <section className="relative w-full min-h-screen px-6 pt-0 md:-mb-40 pb-9  sm:pb-24 overflow-hidden text-white font-sans  ">
         <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
           {/* Left Image */}
           <div className="w-full md:w-1/2 flex justify-center">
@@ -214,7 +284,7 @@ export default function HeroSection() {
               ].map(({ icon: Icon, label }, index) => (
                 <div key={label} className="flex items-center gap-3">
                   <div className="bg-cyan-600/20 p-2 rounded-full">
-                    <Icon className="w-5 h-5 text-cyan-300" />
+                    <Icon className="w-5 h-5v flex justify-center text-cyan-300" />
                   </div>
                   <span className="font-semibold text-white tracking-wide">{label}</span>
                 </div>
@@ -226,18 +296,20 @@ export default function HeroSection() {
                 animateButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               }`}
             >
-              <button className="bg-cyan-500 hover:bg-cyan-600 text-white text-base px-6 py-3 rounded-full shadow-lg transition-all duration-300">
-                💧 Order Now
+              <button className="bg-gradient-to-r from-cyan-600 cursor-pointer to-blue-800 hover:from-cyan-700 hover:to-blue-600 hover:bg-cyan-600 flex text-white text-base px-6 py-3 rounded-full shadow-lg transition-all duration-300">
+                <ShoppingBag className="w-5 h-5" />Order Now
               </button>
-              <button className="text-cyan-300 border-cyan-300 border px-6 py-3 rounded-full text-base hover:bg-cyan-100/10 transition-all duration-300">
-                🔍 Read More
+              <button className="text-cyan-300 border-cyan-300 cursor-pointer flex border px-6 py-3 rounded-full text-base hover:bg-cyan-100/10 transition-all duration-300">
+                  <Search className="w-5 h-5" />Read More
               </button>
             </div>
           </div>
         </div>
       </section>
 
-       
+       <CarouselSize/>
+       <TopSellingProductsAndDressStyle/>
+       <TestimonialSection/>
 
       <style jsx>{`
         @keyframes float {

@@ -2,7 +2,9 @@
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { IndianRupee } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
+import { useState,useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -17,39 +19,47 @@ const products = [
     name: "AquaFresh RO System",
     image: "/images/image copy.png",
     description: "6-stage purification with UV + Mineral Guard.",
+    price: "299",
   },
   {
     id: 2,
     name: "EcoPure Water Cooler",
     image: "/images/image copy 2.png",
     description: "Energy-efficient stainless steel water cooler.",
+    price: "199",
   },
   {
     id: 3,
     name: "Mini Pump Pro",
     image: "/images/image copy 3.png",
     description: "Compact water pump for all RO systems.",
+    price: "89",
   },
   {
     id: 4,
     name: "AquaPro Elite",
     image: "/images/image copy 4.png",
     description: "Smart RO with app control and TDS monitor.",
+    price: "449",
   },
   {
     id: 5,
-    name: "AquaPro Elite",
+    name: "AquaPro Elite Pro",
     image: "/images/image copy 5.png",
-    description: "Smart RO with app control and TDS monitor.",
+    description: "Advanced smart RO with IoT connectivity.",
+    price: "549",
   },
   {
     id: 6,
-    name: "AquaPro Elite",
+    name: "AquaPro Elite Max",
     image: "/images/image copy 6.png",
-    description: "Smart RO with app control and TDS monitor.",
+    description: "Premium smart RO with AI-powered monitoring.",
+    price: "649",
   },
 ];
 
+ 
+ 
 export function CarouselSize() {
   const dispatch = useDispatch();
 
@@ -59,53 +69,75 @@ export function CarouselSize() {
   };
 
   return (
-    <section className="relative py-24 font-sans overflow-hidden">
-      {/* Balloon Background Effect */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute w-[700px] h-[700px] bg-gradient-to-tr from-blue-500 via-cyan-400 to-purple-500 rounded-full blur-[150px] opacity-30 animate-blob animation-delay-1000 top-[-200px] left-[-150px]" />
-        <div className="absolute w-[500px] h-[500px] bg-gradient-to-tr from-purple-400 to-blue-600 rounded-full blur-[100px] opacity-20 animate-blob animation-delay-4000 top-[400px] right-[-200px]" />
-      </div>
+    <section className="relative py-12 sm:py-16 md:py-20 lg:py-24 font-sans overflow-hidden  ">
+      
+    
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-700 mb-4 tracking-tight">
+            Explore Our Products
+          </h2>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover our premium water purification solutions designed for modern homes
+          </p>
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-4xl font-extrabold text-center text-blue-700 mb-12 tracking-tight">
-          💧 Explore Our Products
-        </h2>
-
-        <Carousel opts={{ align: "start" }} className="w-full overflow-visible relative">
-          <CarouselContent>
+        <Carousel 
+          opts={{ 
+            align: "start",
+            loop: true,
+            skipSnaps: false,
+            dragFree: true,
+          }} 
+          className="w-full relative"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
             {products.map((product) => (
               <CarouselItem
                 key={product.id}
-                className="min-w-0 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 px-2"
+                className="pl-2 md:pl-4 basis-[85%]  xs:basis-[80%] sm:basis-[60%] md:basis-[45%] lg:basis-[33.333%] xl:basis-[25%]"
               >
                 <div className="h-full">
-                  <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition duration-300 h-full flex flex-col justify-between">
-                    {/* Image */}
-                    <div className="relative w-full h-36 mt-4">
+                  <div className=" rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col justify-between border border-gray-100 overflow-hidden group hover:scale-[1.02] hover:-translate-y-1">
+                    {/* Image Container */}
+                    <div className="relative w-full h-48 sm:h-52 md:h-56  overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent z-10"></div>
                       <Image
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-contain px-4"
+                        className="object-cover   transition-transform duration-300"
+                        sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 45vw, (max-width: 1280px) 33vw, 25vw"
+                        priority={product.id <= 4}
                       />
+                      {/* Price Badge */}
+                      <div className="absolute flex top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-full text-sm font-semibold z-20">
+                       <IndianRupee className="w-5 h-5" /> {product.price}
+                      </div>
                     </div>
 
-                    {/* Body */}
-                    <div className="card-body items-center text-center px-4 py-4">
-                      <h3 className="card-title text-blue-800 text-lg sm:text-xl">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
+                      <div className="flex-1">
+                        <h3 className="text-lg sm:text-xl md:text-xl font-bold text-gray-100 mb-2 line-clamp-1 group-hover:text-blue-700 transition-colors">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm sm:text-base text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+                          {product.description}
+                        </p>
+                      </div>
 
-                      {/* Buttons */}
-                      <div className="card-actions mt-4 flex flex-wrap justify-center gap-2 w-full">
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-auto">
                         <button
                           onClick={() => handleAddToCart(product)}
-                          className="btn btn-primary btn-sm"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg"
                         >
                           Add to Cart
                         </button>
-                        <button className="btn btn-success btn-sm text-blue-600">Buy Now</button>
+                        <button className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg">
+                          Buy Now
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -114,12 +146,27 @@ export function CarouselSize() {
             ))}
           </CarouselContent>
 
-          <CarouselPrevious   />
-          <CarouselNext  />
+          {/* Navigation Buttons */}
+          <div className="hidden sm:block">
+            <CarouselPrevious className="absolute -left-20 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-blue-100 hover:border-blue-300 text-blue-600 hover:text-blue-700 w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" />
+            <CarouselNext className="absolute -right-20 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-blue-100 hover:border-blue-300 text-blue-600 hover:text-blue-700 w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" />
+          </div>
+
+          {/* Mobile Navigation Dots */}
+          <div className="flex justify-center mt-6 sm:hidden">
+            <div className="flex space-x-2">
+              {products.map((_, index) => (
+                <div
+                  key={index}
+                  className="w-2 h-2 rounded-full bg-blue-200 transition-all duration-200"
+                />
+              ))}
+            </div>
+          </div>
         </Carousel>
       </div>
 
-      {/* Tailwind balloon blob animation */}
+      {/* Enhanced animations */}
       <style jsx>{`
         .animate-blob {
           animation: blob 20s infinite;
@@ -141,6 +188,26 @@ export function CarouselSize() {
           }
           66% {
             transform: translate(-20px, 20px) scale(0.95);
+          }
+        }
+
+        .line-clamp-1 {
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        @media (max-width: 480px) {
+          .xs\:basis-\[80\%\] {
+            flex-basis: 80%;
           }
         }
       `}</style>
