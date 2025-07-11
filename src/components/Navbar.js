@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -94,9 +94,8 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/customer/our-reviews")}
-              className="block cursor-pointer px-4 py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300 hover:bg-blue-800/30 relative group">
+              className="block cursor-pointer px-4 py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Reviews</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </NavigationMenuLink>
             </NavigationMenu>
 
@@ -106,13 +105,14 @@ export default function PremiumNavigation() {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                   
-                  className="!bg-transparent cursor-pointer text-slate-200 hover:text-blue-300 p-2 border-none shadow-none hover:bg-blue-800/30 rounded-lg transition-all duration-300 group">
-                    <span className="flex items-center gap-2">
+                  className="!bg-transparent cursor-pointer text-slate-200   p-2 border-none shadow-none  rounded-lg transition-all duration-300 group"
+                  >
+                    <span className="flex items-center hover:text-blue-300  gap-2">
                       Shop
       
                     </span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md border border-blue-500/20 rounded-xl shadow-2xl">
+                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md   shadow-2xl">
                     <NavigationMenuLink
                            onClick={()=>router.push("/shop")}
                     className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
@@ -134,9 +134,10 @@ export default function PremiumNavigation() {
 
             {/* About */}
             <NavigationMenu>
-              <NavigationMenuLink className="block cursor-pointer px-4 py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300 hover:bg-blue-800/30 relative group">
+              <NavigationMenuLink 
+                    onClick={()=>router.push("/about")}
+              className="block cursor-pointer px-4 py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300   relative group">
                 <span className="relative z-10">About</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </NavigationMenuLink>
             </NavigationMenu>
 
@@ -144,13 +145,13 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="!bg-transparent cursor-pointer text-slate-200 hover:text-blue-300 p-2 border-none shadow-none hover:bg-blue-800/30 rounded-lg transition-all duration-300 group">
-                    <span className="flex items-center gap-2">
+                  <NavigationMenuTrigger className="!bg-transparent  cursor-pointer text-slate-200 hover:text-blue-300 p-2 border-none shadow-none hover:bg-blue-800/30 rounded-lg transition-all duration-300 group">
+                    <span className="flex items-center hover:text-blue-300  gap-2">
                       Services
                     
                     </span>
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md border border-blue-500/20 rounded-xl shadow-2xl">
+                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md   shadow-2xl">
                     <NavigationMenuLink
                       onClick={()=>router.push("/custom-room")}
                     className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
@@ -232,13 +233,13 @@ export default function PremiumNavigation() {
               <NavigationMenu>
                 <NavigationMenuLink
                   onClick={()=>{router.push("/customer/our-reviews"), setMenuOpen(!menuOpen)}}
-                className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300">
+                className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300">
                   Our Reviews
                 </NavigationMenuLink>
               </NavigationMenu>
 
               <NavigationMenu>
-                       <NavigationMenuList>
+               <NavigationMenuList>
 
                  
                 <NavigationMenuItem>
@@ -266,7 +267,9 @@ export default function PremiumNavigation() {
               </NavigationMenu>
 
               <NavigationMenu>
-                <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300">
+                <NavigationMenuLink
+                              onClick={()=>{router.push("/about"), setMenuOpen(!menuOpen)}}
+                className="block cursor-pointer px-4 py-3 text-sm text-slate-200   hover:text-blue-300 rounded-lg transition-all duration-300">
                   About
                 </NavigationMenuLink>
               </NavigationMenu>

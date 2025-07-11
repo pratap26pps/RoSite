@@ -184,14 +184,15 @@ const router= useRouter()
   ].map((feature, index) => {
     const Icon = feature.icon;
     return (
-      <div
-        key={index}
-        className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-300/20 hover:border-cyan-300/40 transition-all duration-300"
-      >
-        <Icon className="w-6 h-6 text-cyan-300 mb-2" />
-        <h3 className="text-white font-semibold">{feature.title}</h3>
-        <p className="text-cyan-200 text-sm">{feature.desc}</p>
-      </div>
+     <div
+  key={index}
+  className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-300/20 hover:border-cyan-300/40 transition-all duration-300 flex flex-col items-center md:items-start text-center md:text-left"
+>
+  <Icon className="w-6 h-6 text-cyan-300 mb-2" />
+  <h3 className="text-white font-semibold">{feature.title}</h3>
+  <p className="text-cyan-200 text-sm">{feature.desc}</p>
+</div>
+
     );
   })}
 </div>

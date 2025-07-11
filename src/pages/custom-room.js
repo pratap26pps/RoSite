@@ -198,22 +198,13 @@ export default function BuildPage() {
     }
   };
 
-  const handleSaveConfig = () => {
-    const config = {
-      id: Date.now(),
-      name: `Custom RO Build ${savedConfigs.length + 1}`,
-      components: selectedComponents,
-      totalPrice: finalPrice,
-      date: new Date().toISOString()
-    };
-    setSavedConfigs(prev => [...prev, config]);
-  };
+ 
 
   const renderStepContent = () => {
     if (currentStepId === "review") {
       return (
         <div className="space-y-6">
-          <div className="  rounded-xl p-6 shadow-lg">
+          <div className="bg-gray-800  rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold   mb-4">
               Your Custom RO Configuration
             </h3>
@@ -222,7 +213,7 @@ export default function BuildPage() {
                 <div key={category} className="flex items-center justify-between p-4   rounded-lg">
                   <div>
                     <h4 className="font-medium  ">{component.name}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{component.description}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-400">{component.description}</p>
                   </div>
                   <span className="font-semibold text-blue-600 dark:text-blue-400">
                     ₹{component.price.toLocaleString()}
@@ -258,22 +249,30 @@ export default function BuildPage() {
             </p>
           </div>
 
-          <div className="flex gap-4">
-            <Button 
-            onClick={()=>router.push("/customer/billingorder") }
-            variant="water" size="lg" className="flex-1 cursor-pointer hover:text-green-500">
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              Proceed to Checkout
-            </Button>
-            <Button variant="outline" size="lg" onClick={handleSaveConfig}>
-              <Save className="h-5 w-5 mr-2" />
-              Save Configuration
-            </Button>
-            <Button variant="outline" size="lg">
-              <Share2 className="h-5 w-5 mr-2" />
-              Share
-            </Button>
-          </div>
+      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+  {/* Previous Button - aligned to left */}
+  <Button
+    variant="outline"
+    onClick={handlePrevious}
+    disabled={currentStep === 0}
+    className="cursor-pointer"
+  >
+    <ArrowLeft className="h-4 w-4 mr-2" />
+    Previous
+  </Button>
+
+  {/* Checkout Button - aligned to right */}
+  <div className="w-full sm:w-auto sm:ml-auto">
+    <Button
+      onClick={() => router.push("/customer/billingorder")}
+      className="w-full sm:w-64 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 transition-all duration-300 rounded-xl px-6 py-4 text-base font-semibold flex items-center justify-center gap-2 shadow-lg"
+    >
+      <ShoppingCart className="w-5 h-5" />
+      Proceed to Checkout
+    </Button>
+  </div>
+</div>
+
         </div>
       );
     }
@@ -336,17 +335,19 @@ export default function BuildPage() {
             variant="outline"
             onClick={handlePrevious}
             disabled={currentStep === 0}
+            className="cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4  mr-2" />
             Previous
           </Button>
           <Button
-            variant="water"
+            variant="outline"
             onClick={handleNext}
+             className="cursor-pointer"
             disabled={!selectedComponents[currentStepId]}
           >
             Next
-            <ArrowRight className="h-4 w-4 ml-2" />
+            <ArrowRight className="h-4   w-4 ml-2" />
           </Button>
         </div>
       </div>

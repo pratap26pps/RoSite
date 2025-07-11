@@ -104,6 +104,8 @@ export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 20000]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [addedToCart, setAddedToCart] = useState([]);
+
  const dispatch = useDispatch()
   const filteredProducts = dummyProducts.filter((product) => {
     const matchSearch =
@@ -131,6 +133,8 @@ export default function ShopPage() {
     dispatch(addToCart(product));
     toast.success(`${product.name} is added`);
     console.log(`Added ${product.name} to cart`);
+
+      setAddedToCart((prev) => [...prev, id]);
   };
 
   return (
@@ -287,14 +291,21 @@ export default function ShopPage() {
                     </div>
                   </div>
                   
-                  <button
+                    <button
                     onClick={() => carthandler(product.id)}
-                   
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2"
-                  >
+                    disabled={addedToCart.includes(product.id)}
+                    className={`w-full ${
+                    addedToCart.includes(product.id)
+                    ? "bg-green-700 text-white cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
+                    } font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform ${
+                    addedToCart.includes(product.id) ? "" : "hover:scale-105"
+                    } shadow-lg flex items-center justify-center gap-2`}
+                    >
                     <ShoppingCart className="w-5 h-5" />
-                    Add to Cart
-                  </button>
+                    {addedToCart.includes(product.id) ? "Added" : "Add to Cart"}
+                    </button>
+
                 </CardContent>
               </Card>
             ))}

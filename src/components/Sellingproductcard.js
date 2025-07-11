@@ -25,7 +25,7 @@ const topSellingProducts = [
     image: "/images/image copy.png",
     description: "Best-selling RO purifier with advanced 7-stage filtration.",
     rank: 1,
-    price: "$399",
+    price: 399,
     rating: 4.8,
     soldCount: "2.5K+",
   },
@@ -35,7 +35,7 @@ const topSellingProducts = [
     image: "/images/image copy 2.png",
     description: "High-efficiency water cooler loved by institutions.",
     rank: 2,
-    price: "$299",
+    price: 299,
     rating: 4.7,
     soldCount: "1.8K+",
   },
@@ -45,7 +45,7 @@ const topSellingProducts = [
     image: "/images/image copy 3.png",
     description: "Compact, powerful RO pump with silent operation.",
     rank: 3,
-    price: "$129",
+    price: 129,
     rating: 4.6,
     soldCount: "1.2K+",
   },
@@ -55,7 +55,7 @@ const topSellingProducts = [
     image: "/images/image copy 4.png",
     description: "Smart RO with app control and TDS monitor.",
     rank: 4,
-    price: "$549",
+    price: 549,
     rating: 4.9,
     soldCount: "980+",
   },
@@ -65,7 +65,7 @@ const topSellingProducts = [
     image: "/images/image copy 5.png",
     description: "Premium smart RO with advanced monitoring.",
     rank: 5,
-    price: "$649",
+    price: 649,
     rating: 4.8,
     soldCount: "750+",
   },
@@ -75,45 +75,22 @@ const topSellingProducts = [
     image: "/images/image copy 8.png",
     description: "Ultimate smart RO with AI-powered features.",
     rank: 6,
-    price: "$749",
+    price: 749,
     rating: 4.9,
     soldCount: "650+",
   },
 ];
-
-const getRankIcon = (rank) => {
-  switch (rank) {
-    case 1:
-      return <Trophy className="w-4 h-4 text-yellow-500" />;
-    case 2:
-      return <Medal className="w-4 h-4 text-gray-400" />;
-    case 3:
-      return <Award className="w-4 h-4 text-amber-600" />;
-    default:
-      return <span className="text-xs font-bold text-blue-600">#{rank}</span>;
-  }
-};
-
-const getRankBadgeColor = (rank) => {
-  switch (rank) {
-    case 1:
-      return "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white";
-    case 2:
-      return "bg-gradient-to-r from-gray-300 to-gray-500 text-white";
-    case 3:
-      return "bg-gradient-to-r from-amber-400 to-amber-600 text-white";
-    default:
-      return "bg-gradient-to-r from-blue-500 to-blue-700 text-white";
-  }
-};
+ 
 
 export default function TopSellingProductsAndDressStyle() {
   const dispatch = useDispatch();
-  
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    toast.success(`${product.name} added to cart!`);
-  };
+  const [addedToCartIds, setAddedToCartIds] = useState([]);
+
+ const handleAddToCart = (product) => {
+  dispatch(addToCart(product));
+  toast.success(`${product.name} added to cart!`);
+  setAddedToCartIds((prev) => [...prev, product.id]);
+};
 
   return (
     <>
@@ -165,8 +142,8 @@ export default function TopSellingProductsAndDressStyle() {
                         />
                         
                         {/* Price Badge */}
-                        <div className="absolute bottom-3 flex right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold z-20 shadow-lg">
-                          <IndianRupee className="w-5 h-5" /> {product.price}  {product.price}
+                        <div className="absolute  top-4 flex right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold z-20 shadow-lg">
+                          <IndianRupee className="w-5 h-5" />    {product.price}
                         </div>
                       </div>
 
@@ -195,12 +172,18 @@ export default function TopSellingProductsAndDressStyle() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-auto">
-                          <button
-                            onClick={() => handleAddToCart(product)}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg"
-                          >
-                            Add to Cart
-                          </button>
+                        <button
+  onClick={() => handleAddToCart(product)}
+  disabled={addedToCartIds.includes(product.id)}
+  className={`flex-1 px-4 py-2.5 rounded-xl font-medium text-sm sm:text-base shadow-md transition-all duration-200 transform active:scale-95 ${
+    addedToCartIds.includes(product.id)
+      ? "bg-green-700 text-white cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 hover:shadow-lg"
+  }`}
+>
+  {addedToCartIds.includes(product.id) ? "Added" : "Add to Cart"}
+</button>
+
                           <button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg">
                             Buy Now
                           </button>

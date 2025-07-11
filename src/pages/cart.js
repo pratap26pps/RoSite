@@ -18,8 +18,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { removeFromCart } from "../redux/slices/cartSlice";
-
+import { removeFromCart ,increaseQty,decreaseQty} from "../redux/slices/cartSlice";
+import { IndianRupee } from "lucide-react";
 const ShoppingCart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -121,33 +121,35 @@ const ShoppingCart = () => {
                       <h4 className="text-lg font-bold">{item.name}</h4>
                       <p className="text-sm text-gray-400">Category: {item.category}</p>
                       <div className="flex items-center gap-2">
-                        <span className={`font-semibold ${theme.accent}`}>${item.price.toFixed(2)}</span>
+                        <span className={`font-semibold flex ${theme.accent}`}> <IndianRupee className="w-5 h-5" /> {item.price.toFixed(2)}</span>
                         {item.originalPrice > item.price && (
-                          <span className="line-through text-sm text-gray-400">${item.originalPrice.toFixed(2)}</span>
+                          <span className="line-through text-sm text-gray-400">  <IndianRupee className="w-5 h-5" /> {item.originalPrice.toFixed(2)}</span>
                         )}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => item.quantity > 1 && toast("Update logic pending")}
-                        className="bg-gray-600 p-1 rounded"
-                      >
-                        <MinusIcon className="h-4 w-4 text-white" />
-                      </button>
-                      <span>{item.quantity}</span>
-                      <button
-                        onClick={() => toast("Update logic pending")}
-                        className="bg-gray-600 p-1 rounded"
-                      >
-                        <PlusIcon className="h-4 w-4 text-white" />
-                      </button>
+                    <button
+  onClick={() => dispatch(decreaseQty(item.id))}
+  className="bg-gray-600 p-1 rounded disabled:opacity-50"
+  disabled={item.quantity === 1}
+>
+  <MinusIcon className="h-4 w-4 text-white" />
+</button>
+
+<span className="w-6 text-center">{item.quantity}</span>
+
+<button
+  onClick={() => dispatch(increaseQty(item.id))}
+  className="bg-gray-600 p-1 rounded"
+>
+  <PlusIcon className="h-4 w-4 text-white" />
+</button>
+
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button>
-                        <HeartIcon className="h-5 w-5 text-pink-500" />
-                      </button>
+                      
                       <button onClick={() => handleRemove(item.id)}>
                         <TrashIcon className="h-5 w-5 text-red-500" />
                       </button>
@@ -155,31 +157,7 @@ const ShoppingCart = () => {
                   </div>
                 ))
               )}
-
-              {/* Promo */}
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center gap-3">
-                  <GiftIcon className="h-5 w-5 text-blue-500" />
-                  <input
-                    type="text"
-                    placeholder="Enter promo code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="flex-1 p-2 rounded border border-gray-300"
-                  />
-                  <button
-                    onClick={handlePromoApply}
-                    className="bg-blue-600 text-white px-4 py-2 rounded"
-                  >
-                    Apply
-                  </button>
-                </div>
-                {appliedPromo && (
-                  <div className="text-green-400 text-sm">
-                    Promo Applied: {appliedPromo.code} - {appliedPromo.discount}% OFF
-                  </div>
-                )}
-              </div>
+ 
             </div>
           </div>
 
@@ -226,10 +204,7 @@ const ShoppingCart = () => {
                 <CreditCardIcon className="h-5 w-5" />
                 Proceed to Checkout
               </button>
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white w-full py-3 rounded flex justify-center items-center gap-2">
-                <BoltIcon className="h-5 w-5" />
-                Express Checkout
-              </button>
+             
             </div>
 
             <div className="mt-6 space-y-2 text-sm text-gray-400">

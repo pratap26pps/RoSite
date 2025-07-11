@@ -68,13 +68,7 @@ const ReviewsComponent = () => {
     }
   ];
 
-  // Trigger animation on component mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimationKey(prev => prev + 1);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+  
 
   // Star Rating Component
   const StarRating = ({ rating }) => {
@@ -156,49 +150,7 @@ const ReviewsComponent = () => {
 
   return (
     <div className="relative top-7 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
-      {/* Animated Background Bubbles - Dark Blue Theme */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className={`absolute rounded-full opacity-10 animate-pulse ${
-              i % 3 === 0 ? 'bg-gradient-to-r from-blue-500 to-indigo-600' : 
-              i % 3 === 1 ? 'bg-gradient-to-r from-cyan-500 to-blue-600' : 
-              'bg-gradient-to-r from-indigo-500 to-purple-600'
-            }`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 300 + 150}px`,
-              height: `${Math.random() * 300 + 150}px`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${Math.random() * 4 + 3}s`,
-              filter: 'blur(50px)',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Enhanced Floating Elements */}
-      <div className="absolute inset-0">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className={`absolute rounded-full opacity-40 animate-bounce ${
-              i % 2 === 0 ? 'bg-blue-400' : 'bg-cyan-400'
-            }`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 6 + 2}px`,
-              height: `${Math.random() * 6 + 2}px`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${Math.random() * 3 + 2}s`,
-            }}
-          />
-        ))}
-      </div>
-
+      
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -226,9 +178,7 @@ const ReviewsComponent = () => {
           {reviews.map((review, index) => (
             <div
               key={review.id}
-              className={`transform transition-all duration-700 ${
-                animationKey > 0 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-              }`}
+              className="transform transition-all duration-700 "
               style={{
                 animationDelay: `${index * 150}ms`,
               }}
@@ -254,11 +204,9 @@ const ReviewsComponent = () => {
                       src={review.avatar}
                       alt={review.name}
                       size={70}
-                      colorScheme={review.color}
+                     
                     />
-                    <div 
-                      className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-r ${review.color} ring-2 ring-slate-800 shadow-lg`}
-                    />
+                   
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-xl text-white mb-1">{review.name}</h3>
