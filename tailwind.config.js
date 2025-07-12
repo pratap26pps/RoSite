@@ -11,6 +11,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+       keyframes: {
+      scroll: {
+        "0%": { transform: "translateX(0)" },
+        "100%": { transform: "translateX(-50%)" },
+      },
+    },
+    animation: {
+      "scroll-horizontal-fast": "scroll 40s linear infinite",
+    },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         inter: ["Inter", "sans-serif"],

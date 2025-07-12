@@ -132,6 +132,15 @@ export default function PremiumNavigation() {
               </NavigationMenuList>
             </NavigationMenu>
 
+   <NavigationMenu>
+ <NavigationMenuLink
+                      onClick={()=>router.push("/custom-room")}
+                    className="block cursor-pointer px-4 py-3 text-sm text-slate-200   hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                      Custom Room
+                    </NavigationMenuLink>
+   </NavigationMenu>
+             
+
             {/* About */}
             <NavigationMenu>
               <NavigationMenuLink 

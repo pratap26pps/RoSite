@@ -156,17 +156,17 @@ export default function AuthPage() {
           <CardContent className="space-y-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid grid-cols-2 bg-white/10">
-                <TabsTrigger value="login" className="data-[state=active]:bg-white/20 text-white">Login</TabsTrigger>
-                <TabsTrigger value="signup" className="data-[state=active]:bg-white/20 text-white">Sign Up</TabsTrigger>
+                <TabsTrigger value="login" className="data-[state=active]:bg-white/20 text-white cursor-pointer">Login</TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-white/20 text-white cursor-pointer">Sign Up</TabsTrigger>
               </TabsList>
 
               <motion.div className="mt-6">
                 <Button
                   onClick={handleGoogleSignIn}
                   variant="outline"
-                  className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 cursor-pointer"
                 >
-                  <Chrome className="w-5 h-5 mr-2" /> Continue with Google
+                  <Chrome className="w-5 h-5 mr-2 " /> Continue with Google
                 </Button>
               </motion.div>
 
@@ -183,7 +183,7 @@ export default function AuthPage() {
                 <TabsContent value="login">
                   <motion.form onSubmit={handleLogin} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
                     <div>
-                      <Label htmlFor="email" className="text-white">Email</Label>
+                      <Label htmlFor="email" className="text-white pb-1">Email</Label>
                       <Input
                         type="email"
                         name="email"
@@ -194,7 +194,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="relative">
-                      <Label htmlFor="password" className="text-white">Password</Label>
+                      <Label htmlFor="password" className="text-white pb-1">Password</Label>
                       <Input
                         type={showPassword ? "text" : "password"}
                         name="password"
@@ -206,13 +206,13 @@ export default function AuthPage() {
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute right-2 top-9 text-white/60"
+                        className="absolute right-2 top-7 text-white/60"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                      <Link href='/forgotpassword'>
-              <label htmlFor="password" className="block mt-1 text-xs sm:text-sm hover:underline cursor-pointer font-medium text-gray-200">
+              <label htmlFor="password" className="block mt-1 pb-3  text-xs sm:text-sm hover:underline cursor-pointer font-medium text-gray-200">
                 Forgot Password
               </label>
             </Link>
