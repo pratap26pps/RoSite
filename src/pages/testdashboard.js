@@ -13,7 +13,7 @@ const AdminDashboard = () => {
     const router = useRouter();
   const [confirm, setConfirm] = useState("");
   const [collapsed, setCollapsed] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState('overview');

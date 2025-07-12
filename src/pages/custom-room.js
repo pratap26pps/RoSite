@@ -9,32 +9,11 @@ import {
   Settings,
   Shield,
   Monitor,
-  Save,
-  Share2,
-  ShoppingCart,
   CheckCircle,
-  Info,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  ShoppingCart
 } from "lucide-react";
- 
- 
-
-const component = {
-  id: "component-123",
-  name: "Power Battery X",
-  description: "High-performance battery for EVs.",
-  price: 4999,
-  image: "/images/battery-x.jpg",
-  category: "Battery",
-  features: [
-    "Long lifespan",
-    "Fast charging",
-    "Lightweight",
-    "Eco-friendly"
-  ],
-  isRecommended: true,  
-};
 
 const components = {
   filters: [
@@ -166,15 +145,13 @@ const steps = [
   { id: "uv", name: "UV Protection", icon: Shield },
   { id: "review", name: "Review", icon: CheckCircle }
 ];
-
 export default function BuildPage() {
-
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedComponents, setSelectedComponents] = useState({});
   const [savedConfigs, setSavedConfigs] = useState([]);
-  const router= useRouter();
+  const router = useRouter();
   const currentStepId = steps[currentStep].id;
-  const currentComponents = components[currentStepId ] || [];
+  const currentComponents = components[currentStepId] || [];
 
   const totalPrice = Object.values(selectedComponents).reduce((sum, component) => sum + component.price, 0);
   const installationPrice = 999;
@@ -199,38 +176,36 @@ export default function BuildPage() {
     }
   };
 
- 
-
   const renderStepContent = () => {
     if (currentStepId === "review") {
       return (
         <div className="space-y-6">
-          <div className=" bg-gray-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold   mb-4">
+          <div className="bg-white rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Your Custom RO Configuration
             </h3>
-            <div className=" space-y-4">
+            <div className="space-y-4">
               {Object.entries(selectedComponents).map(([category, component]) => (
-                <div key={category} className="flex items-center justify-between p-4  rounded-lg">
+                <div key={category} className="flex items-center justify-between p-4 rounded-lg">
                   <div>
-                    <h4 className="font-medium  ">{component.name}</h4>
-                    <p className="text-sm text-gray-400 dark:text-gray-400">{component.description}</p>
+                    <h4 className="font-medium text-gray-800">{component.name}</h4>
+                    <p className="text-sm text-gray-600">{component.description}</p>
                   </div>
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="font-semibold text-blue-600">
                     ₹{component.price.toLocaleString()}
                   </span>
                 </div>
               ))}
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Installation</span>
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="text-gray-700">Installation</span>
+                  <span className="font-semibold text-blue-600">
                     ₹{installationPrice.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-lg font-bold mt-2">
                   <span>Total Price</span>
-                  <span className="text-blue-600 dark:text-blue-400">
+                  <span className="text-blue-600">
                     ₹{finalPrice.toLocaleString()}
                   </span>
                 </div>
@@ -238,296 +213,278 @@ export default function BuildPage() {
             </div>
           </div>
 
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-6">
+          <div className="bg-green-50 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <CheckCircle className="h-6 w-6 text-green-600" />
-              <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
+              <h3 className="text-lg font-semibold text-green-800">
                 Free Installation Included!
               </h3>
             </div>
-            <p className="text-green-700 dark:text-green-300">
+            <p className="text-green-700">
               Your custom RO system will be professionally installed by our certified technicians at no additional cost.
             </p>
           </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
-  {/* Previous Button - aligned to left */}
-  <Button
-    variant="outline"
-    onClick={handlePrevious}
-    disabled={currentStep === 0}
-    className="cursor-pointer"
-  >
-    <ArrowLeft className="h-4 w-4 mr-2" />
-    Previous
-  </Button>
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              className="cursor-pointer text-gray-100"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2 " />
+              Previous
+            </Button>
 
-  {/* Checkout Button - aligned to right */}
-  <div className="w-full sm:w-auto sm:ml-auto">
-    <Button
-      onClick={() => router.push("/customer/billingorder")}
-      className="w-full sm:w-64 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 transition-all duration-300 rounded-xl px-6 py-4 text-base font-semibold flex items-center justify-center gap-2 shadow-lg"
-    >
-      <ShoppingCart className="w-5 h-5" />
-      Proceed to Checkout
-    </Button>
-  </div>
-</div>
-
+            <div className="w-full sm:w-auto sm:ml-auto">
+              <Button
+                onClick={() => router.push("/customer/billingorder")}
+                className="w-full cursor-pointer sm:w-64 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 transition-all duration-300 rounded-xl px-6 py-4 text-base font-semibold flex items-center justify-center gap-2 shadow-lg"
+              >
+                <ShoppingCart className="w-5 h-5 " />
+                Proceed to Checkout
+              </Button>
+            </div>
+          </div>
         </div>
       );
     }
+return (
+  <div className="space-y-6">
+    <div className="bg-white rounded-xl shadow-lg">
+      <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        Select {steps[currentStep].name}
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentComponents.map((component) => (
+          <motion.div
+            key={component.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all ${
+              selectedComponents[component.category]?.id === component.id
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-200 hover:border-blue-300"
+            }`}
+            onClick={() => handleComponentSelect(component)}
+          >
+            {component.isRecommended && (
+              <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                Recommended
+              </div>
+            )}
 
-    return (
-      <div className="space-y-6">
-        <div className=" rounded-xl shadow-lg">
-          <h3 className="text-xl font-semibold   mb-4">
-            Select {steps[currentStep].name}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentComponents.map((component) => (
-              <motion.div
-                key={component.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all ${
-                  selectedComponents[component.category]?.id === component.id
-                    ? "border-blue-500 bg-blue-900 dark:bg-blue-900/20"
-                    : "border-gray-200 dark:border-slate-600  hover:border-gray-300"
-                }`}
-                onClick={() => handleComponentSelect(component)}
-              >
-                {component.isRecommended && (
-                  <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                    Recommended
+            <div className="h-32 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-lg mb-4 flex items-center justify-center">
+              <div className="text-4xl text-blue-600">💧</div>
+            </div>
+
+            <h4 className="font-semibold mb-2 text-green-700">
+              {component.name}
+            </h4>
+            <p className="text-sm text-gray-600 mb-3">
+              {component.description}
+            </p>
+
+            <div className="space-y-2 mb-4">
+              {component.features.map((feature) => (
+                <div
+                  key={feature}
+                  className="flex items-center gap-2 text-xs text-gray-500"
+                >
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                  {feature}
+                </div>
+              ))}
+            </div>
+
+            {/* <div className="text-xl font-bold text-blue-700">
+              ₹{component.price.toLocaleString()}
+            </div> */}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+
+    <div className="flex justify-between">
+      <Button
+        variant="outline"
+        onClick={handlePrevious}
+        disabled={currentStep === 0}
+        className="cursor-pointer text-gray-100"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Previous
+      </Button>
+      <Button
+        variant="outline"
+        onClick={handleNext}
+        className="cursor-pointer text-gray-100"
+        disabled={!selectedComponents[currentStepId]}
+      >
+        Next
+        <ArrowRight className="h-4 w-4 ml-2" />
+      </Button>
+    </div>
+  </div>
+);
+
+  };
+
+ return (
+  <div className="min-h-screen relative bg-white text-gray-800">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28">
+
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          Build Your Custom RO System
+        </h1>
+        <p className="text-lg text-gray-600">
+          Design your perfect water purification system with our modular components
+        </p>
+      </div>
+
+      {/* Progress Steps */}
+      <div className="mb-8">
+        {/* Mobile Layout */}
+        <div className="block lg:hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
+            {steps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = index === currentStep;
+              const isCompleted = index < currentStep;
+              return (
+                <div key={step.id} className="flex items-center">
+                  <div
+                    className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
+                      isActive
+                        ? "border-blue-500 bg-blue-500 text-white"
+                        : isCompleted
+                        ? "border-green-500 bg-green-500 text-white"
+                        : "border-gray-300 text-gray-400"
+                    }`}
+                  >
+                    {isCompleted ? (
+                      <CheckCircle className="h-6 w-6" />
+                    ) : (
+                      <StepIcon className="h-6 w-6" />
+                    )}
                   </div>
-                )}
-
-                <div className="h-32 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 rounded-lg mb-4 flex items-center justify-center">
-                  <div className="text-4xl text-blue-300 dark:text-blue-600">💧</div>
-                </div>
-
-                <h4 className="font-semibold mb-2 text-green-700">
-                  {component.name}
-                </h4>
-                <p className="text-sm text-gray-300 dark:text-gray-400 mb-3">
-                  {component.description}
-                </p>
-
-                <div className="space-y-2 mb-4">
-                  {component.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-400">
-                      <CheckCircle className="h-3 w-3 text-green-500" />
-                      {feature}
+                  <div className="ml-3">
+                    <div
+                      className={`text-sm font-medium ${
+                        isActive
+                          ? "text-blue-600"
+                          : isCompleted
+                          ? "text-green-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {step.name}
                     </div>
-                  ))}
+                  </div>
                 </div>
-
-                <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                  ₹{component.price.toLocaleString()}
-                </div>
-              </motion.div>
-            ))}
+              );
+            })}
+          </div>
+          <div className="flex flex-wrap mt-6 gap-4 items-center justify-center">
+            {steps.map((_, index) =>
+              index < steps.length - 1 ? (
+                <div
+                  key={index}
+                  className={`flex-1 h-0.5 max-w-[60px] ${
+                    index < currentStep ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                />
+              ) : null
+            )}
           </div>
         </div>
 
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-            className="cursor-pointer"
-          >
-            <ArrowLeft className="h-4 w-4  mr-2" />
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleNext}
-             className="cursor-pointer"
-            disabled={!selectedComponents[currentStepId]}
-          >
-            Next
-            <ArrowRight className="h-4   w-4 ml-2" />
-          </Button>
+        {/* Large Screen Layout */}
+        <div className="hidden lg:block">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = index === currentStep;
+              const isCompleted = index < currentStep;
+              return (
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
+                        isActive
+                          ? "border-blue-500 bg-blue-500 text-white"
+                          : isCompleted
+                          ? "border-green-500 bg-green-500 text-white"
+                          : "border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="h-6 w-6" />
+                      ) : (
+                        <StepIcon className="h-6 w-6" />
+                      )}
+                    </div>
+                    <div className="mt-2 text-center">
+                      <div
+                        className={`text-sm font-medium whitespace-nowrap ${
+                          isActive
+                            ? "text-blue-600"
+                            : isCompleted
+                            ? "text-green-600"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {step.name}
+                      </div>
+                    </div>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className="flex-1 -mt-5 mx-4">
+                      <div
+                        className={`h-0.5 w-full transition-colors ${
+                          index < currentStep ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    );
-  };
 
-  return (
-    <div className="min-h-screen  relative">
-  
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28">
-   
-        {/* Header */}
-        <div className="mb-8">
-          
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-200 mb-4">
-            Build Your Custom RO System
-          </h1>
-          <p className="text-lg text-gray-400 dark:text-gray-300">
-            Design your perfect water purification system with our modular components
-          </p>
-        </div>
+      {/* Step Content */}
+      {renderStepContent()}
 
-   {/* Progress Steps */}
-<div className="mb-8">
-  {/* Mobile/Tablet Layout - Vertical Stack */}
-  <div className="block lg:hidden">
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-      {steps.map((step, index) => {
-        const StepIcon = step.icon;
-        const isActive = index === currentStep;
-        const isCompleted = index < currentStep;
-        return (
-          <div key={step.id} className="flex items-center">
-            {/* Step Icon */}
-            <div
-              className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
-                isActive
-                  ? "border-blue-500 bg-blue-500 text-white"
-                  : isCompleted
-                  ? "border-green-500 bg-green-500 text-white"
-                  : "border-gray-300 dark:border-slate-600 text-gray-400"
-              }`}
-            >
-              {isCompleted ? (
-                <CheckCircle className="h-6 w-6" />
-              ) : (
-                <StepIcon className="h-6 w-6" />
-              )}
-            </div>
-            {/* Step Label */}
-            <div className="ml-3">
-              <div
-                className={`text-sm font-medium ${
-                  isActive
-                    ? "text-blue-600 dark:text-blue-400"
-                    : isCompleted
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-gray-500 dark:text-gray-400"
-                }`}
-              >
-                {step.name}
+      {/* Price Summary */}
+      {currentStepId !== "review" && Object.keys(selectedComponents).length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 bg-white border border-gray-200 rounded-xl p-6 shadow-lg"
+        >
+          <h3 className="text-lg font-semibold mb-4">Current Configuration</h3>
+          <div className="space-y-2">
+            {Object.entries(selectedComponents).map(([category, component]) => (
+              <div key={category} className="flex justify-between text-sm">
+                <span className="text-gray-600">{component.name}</span>
+                <span className="font-medium">₹{component.price.toLocaleString()}</span>
+              </div>
+            ))}
+            <div className="border-t pt-2 mt-4">
+              <div className="flex justify-between font-semibold">
+                <span>Subtotal</span>
+                <span className="text-blue-600">₹{totalPrice.toLocaleString()}</span>
               </div>
             </div>
           </div>
-        );
-      })}
-    </div>
-    {/* Progress Bars for Mobile/Tablet */}
-    <div className="flex flex-wrap mt-6 gap-4 items-center justify-center">
-      {steps.map((_, index) =>
-        index < steps.length - 1 ? (
-          <div
-            key={index}
-            className={`flex-1 h-0.5 max-w-[60px] ${
-              index < currentStep
-                ? "bg-green-500"
-                : "bg-gray-300 dark:bg-slate-600"
-            }`}
-          />
-        ) : null
+        </motion.div>
       )}
     </div>
   </div>
+);
 
-  {/* Large Screen Layout - Single Line */}
-  <div className="hidden lg:block">
-    <div className="flex items-center justify-between">
-      {steps.map((step, index) => {
-        const StepIcon = step.icon;
-        const isActive = index === currentStep;
-        const isCompleted = index < currentStep;
-        return (
-          <div key={step.id} className="flex  items-center flex-1">
-            {/* Step Container */}
-            <div className="flex flex-col items-center">
-              {/* Step Icon */}
-              <div
-                className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
-                  isActive
-                    ? "border-blue-500 bg-blue-500 text-white"
-                    : isCompleted
-                    ? "border-green-500 bg-green-500 text-white"
-                    : "border-gray-300 dark:border-slate-600 text-gray-400"
-                }`}
-              >
-                {isCompleted ? (
-                  <CheckCircle className="h-6 w-6" />
-                ) : (
-                  <StepIcon className="h-6 w-6" />
-                )}
-              </div>
-              {/* Step Label */}
-              <div className="mt-2 text-center">
-                <div
-                  className={`text-sm font-medium whitespace-nowrap ${
-                    isActive
-                      ? "text-blue-600 dark:text-blue-400"
-                      : isCompleted
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-gray-300 dark:text-gray-400"
-                  }`}
-                >
-                  {step.name}
-                </div>
-              </div>
-            </div>
-            
-            {/* Progress Line */}
-            {index < steps.length - 1 && (
-              <div className="flex-1 -mt-5 mx-4">
-                <div
-                  className={`h-0.5 w-full transition-colors ${
-                    index < currentStep
-                      ? "bg-green-500"
-                      : "bg-gray-300 dark:bg-slate-600"
-                  }`}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  </div>
-</div>
-         
-
-        {/* Current Step Content */}
-        {renderStepContent()}
-
-        {/* Price Summary */}
-        {currentStepId !== "review" && Object.keys(selectedComponents).length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8  bg-blue-900 rounded-xl p-6 shadow-lg"
-          >
-            <h3 className="text-lg font-semibold  mb-4">
-              Current Configuration
-            </h3>
-            <div className="space-y-2">
-              {Object.entries(selectedComponents).map(([category, component]) => (
-                <div key={category} className="flex justify-between text-sm">
-                  <span className="text-gray-400 dark:text-gray-400">{component.name}</span>
-                  <span className="font-medium">₹{component.price.toLocaleString()}</span>
-                </div>
-              ))}
-              <div className="border-t pt-2 mt-4">
-                <div className="flex justify-between font-semibold">
-                  <span>Subtotal</span>
-                  <span className="text-white dark:text-blue-400">
-                    ₹{totalPrice.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
 }

@@ -195,11 +195,7 @@ export default function TopSellingProductsAndDressStyle() {
               ))}
             </CarouselContent>
 
-            {/* Navigation Buttons */}
-            <div className="hidden sm:block">
-              <CarouselPrevious className="absolute -left-20 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-blue-100 hover:border-blue-300 text-blue-600 hover:text-blue-700 w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" />
-              <CarouselNext className="absolute -right-20 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-blue-100 hover:border-blue-300 text-blue-600 hover:text-blue-700 w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" />
-            </div>
+             
 
             {/* Mobile Navigation Dots */}
             <div className="flex justify-center mt-6 sm:hidden">
@@ -217,8 +213,6 @@ export default function TopSellingProductsAndDressStyle() {
            
        
 
-          <DressStyleCarousel  />
-          <YoutubeTrust/>
       
    
         </div>

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BackgroundBeams } from '@/components/ui/backgrounds';
-import { GridPattern } from '@/components/ui/backgrounds';
+
 const ReviewsComponent = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Sample reviews data with high-quality reviewer images
   const reviews = [
     {
       id: 1,
@@ -68,252 +66,71 @@ const ReviewsComponent = () => {
     }
   ];
 
-  
+  const StarRating = ({ rating }) => (
+    <div className="flex gap-1 mb-4">
+      {[...Array(5)].map((_, i) => (
+        <svg
+          key={i}
+          className={`w-5 h-5 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  );
 
-  // Star Rating Component
-  const StarRating = ({ rating }) => {
-    return (
-      <div className="flex gap-1 mb-4">
-        {[...Array(5)].map((_, i) => (
-          <svg
-            key={i}
-            className={`w-5 h-5 transition-colors duration-300 ${
-              i < rating ? 'text-yellow-400' : 'text-slate-600'
-            }`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        ))}
-      </div>
-    );
-  };
+  const Avatar = ({ src, alt, size = 70 }) => (
+    <div className="rounded-full overflow-hidden border-2 border-blue-300" style={{ width: size, height: size }}>
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
 
-  // Avatar Component with enhanced styling
-  const Avatar = ({ src, alt, size = 70, colorScheme }) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
-
-    return (
-      <div 
-        className="relative overflow-hidden rounded-full ring-4 ring-blue-500/30 shadow-2xl bg-gradient-to-br from-slate-700 to-slate-800 transition-all duration-300"
-        style={{ width: size, height: size }}
-      >
-        {!imageError && (
-          <img
-            src={src}
-            alt={alt}
-            className={`w-full h-full object-cover transition-opacity duration-500 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        )}
-        {(imageError || !imageLoaded) && (
-          <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-r ${colorScheme} text-white font-bold text-xl`}>
-            {alt ? alt.split(' ').map(n => n[0]).join('').toUpperCase() : '?'}
-          </div>
-        )}
-        {imageLoaded && !imageError && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        )}
-      </div>
-    );
-  };
-
-  // Button Component with dark theme
-  const Button = ({ children, variant = 'primary', size = 'medium', onClick, className = '' }) => {
-    const baseClasses = "font-semibold rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900";
-    
-    const variantClasses = {
-      primary: "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-blue-500/25 focus:ring-blue-500",
-      secondary: "bg-slate-800/80 text-slate-300 border-2 border-slate-600 hover:border-slate-500 hover:bg-slate-700/80 shadow-md hover:shadow-lg focus:ring-slate-400 backdrop-blur-sm"
-    };
-    
-    const sizeClasses = {
-      small: "px-4 py-2 text-sm",
-      medium: "px-6 py-3 text-base",
-      large: "px-8 py-4 text-lg"
-    };
-    
-    return (
-      <button
-        onClick={onClick}
-        className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      >
-        {children}
-      </button>
-    );
-  };
+  const Button = ({ children }) => (
+    <button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300">
+      {children}
+    </button>
+  );
 
   return (
-    <div className="relative top-7 min-h-scree overflow-hidden">
- 
-      <GridPattern/>
-
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        {/* Header */}
+    <div className="bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-24">
         <div className="text-center mb-16">
-           
-          
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Don't just take our word for it
-          </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Don't just take our word for it</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Hear from some of our amazing customers who are building faster.
           </p>
         </div>
 
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {reviews.map((review, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {reviews.map((review) => (
             <div
               key={review.id}
-              className="transform transition-all duration-700 "
-              style={{
-                animationDelay: `${index * 150}ms`,
-              }}
-              onMouseEnter={() => setHoveredCard(review.id)}
-              onMouseLeave={() => setHoveredCard(null)}
+              className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow hover:shadow-lg transition-all duration-300"
             >
-              <div
-                className={`relative h-full p-6 rounded-2xl backdrop-blur-lg border border-slate-700/50 shadow-2xl transition-all duration-500 transform hover:-translate-y-3 ${
-                  hoveredCard === review.id ? 'scale-105 shadow-blue-500/20' : 'scale-100'
-                }`}
-                style={{
-                  background: hoveredCard === review.id 
-                    ? `linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%)` 
-                    : 'rgba(30, 41, 59, 0.8)',
-                  backdropFilter: 'blur(20px)',
-                  borderColor: hoveredCard === review.id ? 'rgba(59, 130, 246, 0.3)' : 'rgba(71, 85, 105, 0.3)',
-                }}
-              >
-                {/* Profile Section */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="relative">
-                    <Avatar
-                      src={review.avatar}
-                      alt={review.name}
-                      size={70}
-                     
-                    />
-                   
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-xl text-white mb-1">{review.name}</h3>
-                    <p className="text-slate-300 text-sm font-medium">{review.role}</p>
-                    <p className="text-slate-400 text-xs">{review.company}</p>
-                  </div>
+              <div className="flex items-center gap-4 mb-6">
+                <Avatar src={review.avatar} alt={review.name} />
+                <div>
+                  <h3 className="font-semibold text-lg">{review.name}</h3>
+                  <p className="text-gray-500 text-sm">{review.role}</p>
+                  <p className="text-gray-400 text-xs">{review.company}</p>
                 </div>
-
-                {/* Rating */}
-                <StarRating rating={review.rating} />
-
-                {/* Review Text */}
-                <p className="text-slate-200 leading-relaxed text-base font-medium">
-                  "{review.review}"
-                </p>
-
-                {/* Hover Effect Overlay */}
-                <div 
-                  className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${review.color} opacity-0 transition-opacity duration-300 pointer-events-none ${
-                    hoveredCard === review.id ? 'opacity-5' : ''
-                  }`}
-                />
-
-                {/* Subtle Inner Glow */}
-                <div 
-                  className={`absolute inset-0 rounded-2xl ring-1 ring-inset transition-all duration-300 pointer-events-none ${
-                    hoveredCard === review.id ? 'ring-blue-400/20' : 'ring-transparent'
-                  }`}
-                />
               </div>
+              <StarRating rating={review.rating} />
+              <p className="text-gray-700 italic">"{review.review}"</p>
             </div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <Button variant="primary" size="large" className="shadow-2xl shadow-blue-500/20">
-            Join thousands of satisfied customers
-          </Button>
+          <Button>Join thousands of satisfied customers</Button>
         </div>
       </div>
-
-      {/* Enhanced CSS Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
-        }
-        
-        @keyframes pulse-glow {
-          0%, 100% { opacity: 0.1; }
-          50% { opacity: 0.2; }
-        }
-        
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        
-        .animate-float {
-          animation: float 4s ease-in-out infinite;
-        }
-        
-        .animate-pulse-glow {
-          animation: pulse-glow 3s ease-in-out infinite;
-        }
-        
-        .animate-shimmer {
-          animation: shimmer 2s ease-in-out infinite;
-        }
-        
-        .backdrop-blur-lg {
-          backdrop-filter: blur(16px);
-        }
-        
-        .card-shimmer::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.1),
-            transparent
-          );
-          transition: left 0.5s;
-        }
-        
-        .card-shimmer:hover::before {
-          left: 100%;
-        }
-        
-        /* Custom scrollbar for dark theme */
-        ::-webkit-scrollbar {
-          width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-          background: rgba(30, 41, 59, 0.3);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-          background: rgba(59, 130, 246, 0.5);
-          border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(59, 130, 246, 0.7);
-        }
-      `}</style>
     </div>
   );
 };

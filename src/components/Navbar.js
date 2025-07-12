@@ -42,33 +42,10 @@ export default function PremiumNavigation() {
 
   return (
     <>
-      {/* Background Animation */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900"></div>
-        
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 left-0 w-full h-full">
-          {/* Floating Orbs */}
-          <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl animate-bounce"></div>
-          <div className="absolute bottom-40 left-1/4 w-20 h-20 bg-blue-600/10 rounded-full blur-xl animate-ping"></div>
-          
-          {/* Gradient Mesh */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-cyan-500/5 animate-pulse"></div>
-          
-          {/* Animated Lines */}
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent animate-pulse"></div>
-        </div>
-      </div>
+     
 
-      <nav className="fixed w-full z-50 backdrop-blur-md bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-slate-900/80 border-b border-blue-500/20 shadow-2xl">
-        {/* Animated top border */}
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent animate-pulse"></div>
-        
-        {/* Glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-cyan-500/5 to-blue-500/5 animate-pulse"></div>
-
+      <nav className="fixed w-full z-50 backdrop-blur-md  bg-gray-500 border-b border-blue-500/20 shadow-2xl">
+      
         <div className="relative flex justify-between lg:justify-around items-center px-6 py-4">
           {/* Logo */}
           <div className="flex items-center">
@@ -90,52 +67,29 @@ export default function PremiumNavigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex items-center gap-8">
-            {/* Reviews */}
+            {/* home  */}
             <NavigationMenu>
               <NavigationMenuLink
-                onClick={()=>router.push("/customer/our-reviews")}
-              className="block cursor-pointer px-4 py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
-                <span className="relative z-10">Reviews</span>
+                onClick={()=>router.push("/")}
+              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Home</span>
               </NavigationMenuLink>
             </NavigationMenu>
 
             {/* Shop Menu */}
+            {/* Reviews */}
             <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                  
-                  className="!bg-transparent cursor-pointer text-slate-200   p-2 border-none shadow-none  rounded-lg transition-all duration-300 group"
-                  >
-                    <span className="flex items-center hover:text-blue-300  gap-2">
-                      Shop
-      
-                    </span>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md   shadow-2xl">
-                    <NavigationMenuLink
-                           onClick={()=>router.push("/shop")}
-                    className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Shop
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Shop Details
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Checkout
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Price Block
-                    </NavigationMenuLink>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
+              <NavigationMenuLink
+                onClick={()=>router.push("/shop")}
+              className="block cursor-pointer py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Shop</span>
+              </NavigationMenuLink>
             </NavigationMenu>
 
-   <NavigationMenu>
- <NavigationMenuLink
+<NavigationMenu>
+<NavigationMenuLink
                       onClick={()=>router.push("/custom-room")}
-                    className="block cursor-pointer px-4 py-3 text-sm text-slate-200   hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
+                    className="block cursor-pointer  py-3 text-sm text-slate-200   hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
                       Custom Room
                     </NavigationMenuLink>
    </NavigationMenu>
@@ -145,36 +99,28 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink 
                     onClick={()=>router.push("/about")}
-              className="block cursor-pointer px-4 py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300   relative group">
+              className="block cursor-pointer  py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300   relative group">
                 <span className="relative z-10">About</span>
               </NavigationMenuLink>
             </NavigationMenu>
 
-            {/* Services Menu */}
+           
+            {/* Reviews */}
             <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="!bg-transparent  cursor-pointer text-slate-200 hover:text-blue-300 p-2 border-none shadow-none hover:bg-blue-800/30 rounded-lg transition-all duration-300 group">
-                    <span className="flex items-center hover:text-blue-300  gap-2">
-                      Services
-                    
-                    </span>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="min-w-[180px] py-2 bg-slate-800/95 backdrop-blur-md   shadow-2xl">
-                    <NavigationMenuLink
-                      onClick={()=>router.push("/custom-room")}
-                    className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Custom Room
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Certifications
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                      Our Reviews
-                    </NavigationMenuLink>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
+              <NavigationMenuLink
+                onClick={()=>router.push("/customer/our-reviews")}
+              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Reviews</span>
+              </NavigationMenuLink>
+            </NavigationMenu>
+
+            {/* Certifications */}
+            <NavigationMenu>
+              <NavigationMenuLink
+                onClick={()=>router.push("/cartification")}
+              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Certifications</span>
+              </NavigationMenuLink>
             </NavigationMenu>
           </div>
 

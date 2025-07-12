@@ -5,47 +5,45 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   ShoppingCartIcon,
   TrashIcon,
-  HeartIcon,
   CreditCardIcon,
-  BoltIcon,
   ShieldCheckIcon,
   TruckIcon,
-  GiftIcon,
-  MoonIcon,
-  SunIcon,
   MinusIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { removeFromCart ,increaseQty,decreaseQty} from "../redux/slices/cartSlice";
+import {
+  removeFromCart,
+  increaseQty,
+  decreaseQty,
+} from "../redux/slices/cartSlice";
 import { IndianRupee } from "lucide-react";
+
 const ShoppingCart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const user = useSelector((state) => state.auth.user);
-  const [isDark, setIsDark] = useState(true);
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const router = useRouter();
 
-  const theme = isDark
-    ? {
-        bg: "bg-gradient-to-br from-gray-800 via-gray-900 to-black",
-        card: "bg-gray-900 text-white",
-        text: "text-white",
-        accent: "text-blue-400",
-      }
-    : {
-        bg: "bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-100",
-        card: "bg-white text-black",
-        text: "text-black",
-        accent: "text-blue-600",
-      };
+  const theme = {
+    bg: "bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50",
+    card: "bg-white text-black",
+    text: "text-black",
+    accent: "text-blue-600",
+  };
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const savings = cartItems.reduce((acc, item) => acc + (item.originalPrice - item.price) * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+  const savings = cartItems.reduce(
+    (acc, item) => acc + (item.originalPrice - item.price) * item.quantity,
+    0
+  );
   const shipping = subtotal > 100 ? 0 : 15.99;
   const tax = subtotal * 0.08;
   const discount = appliedPromo ? subtotal * 0.1 : 0;
@@ -62,13 +60,10 @@ const ShoppingCart = () => {
       router.push("/authpage");
       return;
     }
-
     if (user.role !== "customer") {
       toast.error("Only customers can checkout");
-     
       return;
     }
-
     router.push("/customer/billingorder");
   };
 
@@ -82,26 +77,23 @@ const ShoppingCart = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme.bg} pt-20 px-4`}>
+    <div className={`min-h-screen ${theme.bg} pt-24 px-4`}>
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 rounded-xl backdrop-blur-md bg-white/10">
+        <div className="flex justify-between items-center p-6 rounded-xl bg-white shadow">
           <div className="flex items-center gap-4">
-            <div className="bg-blue-500 p-3 rounded-full">
+            <div className="bg-blue-600 p-3 rounded-full">
               <ShoppingCartIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Shopping Cart</h2>
-              <p className="text-white/80">{cartItems.length} items in your cart</p>
+              <h2 className="text-2xl font-bold text-black">Shopping Cart</h2>
+              <p className="text-gray-600">{cartItems.length} items in your cart</p>
             </div>
           </div>
-          
         </div>
 
-        <div className="grid grid-cols-1 relative lg:grid-cols-3 gap-6">
-          {/* Cart Items */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className={`rounded-xl shadow-xl p-6 ${theme.card}`}>
+            <div className={`rounded-xl shadow p-6 ${theme.card}`}>
               <h3 className="text-xl font-semibold mb-6">Your Items</h3>
 
               {cartItems.length === 0 ? (
@@ -110,7 +102,7 @@ const ShoppingCart = () => {
                 cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className={`flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 rounded-lg shadow-sm hover:scale-[1.01] transition-transform duration-300 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
+                    className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 rounded-lg shadow-sm bg-gray-100"
                   >
                     <img
                       src={item.image}
@@ -119,59 +111,52 @@ const ShoppingCart = () => {
                     />
                     <div className="flex-1 space-y-2">
                       <h4 className="text-lg font-bold">{item.name}</h4>
-                      <p className="text-sm text-gray-400">Category: {item.category}</p>
+                      <p className="text-sm text-gray-500">Category: {item.category}</p>
                       <div className="flex items-center gap-2">
-                        <span className={`font-semibold flex ${theme.accent}`}> <IndianRupee className="w-5 h-5" /> {item.price.toFixed(2)}</span>
+                        <span className="font-semibold flex text-blue-600">
+                          <IndianRupee className="w-5 h-5" /> {item.price.toFixed(2)}
+                        </span>
                         {item.originalPrice > item.price && (
-                          <span className="line-through text-sm text-gray-400">  <IndianRupee className="w-5 h-5" /> {item.originalPrice.toFixed(2)}</span>
+                          <span className="line-through text-sm text-gray-400">
+                            <IndianRupee className="w-5 h-5" /> {item.originalPrice.toFixed(2)}
+                          </span>
                         )}
                       </div>
                     </div>
-
                     <div className="flex items-center gap-2">
-                    <button
-  onClick={() => dispatch(decreaseQty(item.id))}
-  className="bg-gray-600 p-1 rounded disabled:opacity-50"
-  disabled={item.quantity === 1}
->
-  <MinusIcon className="h-4 w-4 text-white" />
-</button>
-
-<span className="w-6 text-center">{item.quantity}</span>
-
-<button
-  onClick={() => dispatch(increaseQty(item.id))}
-  className="bg-gray-600 p-1 rounded"
->
-  <PlusIcon className="h-4 w-4 text-white" />
-</button>
-
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      
-                      <button onClick={() => handleRemove(item.id)}>
-                        <TrashIcon className="h-5 w-5 text-red-500" />
+                      <button
+                        onClick={() => dispatch(decreaseQty(item.id))}
+                        className="bg-blue-100 p-1 rounded disabled:opacity-50"
+                        disabled={item.quantity === 1}
+                      >
+                        <MinusIcon className="h-4 w-4 text-blue-600" />
+                      </button>
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => dispatch(increaseQty(item.id))}
+                        className="bg-blue-100 p-1 rounded"
+                      >
+                        <PlusIcon className="h-4 w-4 text-blue-600" />
                       </button>
                     </div>
+                    <button onClick={() => handleRemove(item.id)}>
+                      <TrashIcon className="h-5 w-5 text-red-500" />
+                    </button>
                   </div>
                 ))
               )}
- 
             </div>
           </div>
 
-          {/* Order Summary */}
-          <div className={`rounded-xl shadow-xl p-6 ${theme.card}`}>
+          <div className={`rounded-xl shadow p-6 ${theme.card}`}>
             <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
-
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
               {savings > 0 && (
-                <div className="flex justify-between text-green-400">
+                <div className="flex justify-between text-green-600">
                   <span>You saved</span>
                   <span>-${savings.toFixed(2)}</span>
                 </div>
@@ -185,35 +170,34 @@ const ShoppingCart = () => {
                 <span>${tax.toFixed(2)}</span>
               </div>
               {discount > 0 && (
-                <div className="flex justify-between text-green-400">
+                <div className="flex justify-between text-green-600">
                   <span>Discount</span>
                   <span>-${discount.toFixed(2)}</span>
                 </div>
               )}
               <div className="border-t pt-3 mt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span className={theme.accent}>${total.toFixed(2)}</span>
+                <span className="text-blue-600">${total.toFixed(2)}</span>
               </div>
             </div>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6">
               <button
                 onClick={() => setIsCheckoutOpen(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white w-full py-3 rounded flex justify-center items-center gap-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded flex justify-center items-center gap-2"
               >
                 <CreditCardIcon className="h-5 w-5" />
                 Proceed to Checkout
               </button>
-             
             </div>
 
-            <div className="mt-6 space-y-2 text-sm text-gray-400">
+            <div className="mt-6 text-sm text-gray-500 space-y-2">
               <div className="flex items-center gap-2">
-                <ShieldCheckIcon className="h-4 w-4 text-green-400" />
+                <ShieldCheckIcon className="h-4 w-4 text-green-500" />
                 Secure 256-bit SSL encryption
               </div>
               <div className="flex items-center gap-2">
-                <TruckIcon className="h-4 w-4 text-blue-400" />
+                <TruckIcon className="h-4 w-4 text-blue-500" />
                 Free shipping on orders over $100
               </div>
             </div>
@@ -221,12 +205,11 @@ const ShoppingCart = () => {
         </div>
       </div>
 
-      {/* Checkout Modal */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex justify-center items-center">
-          <div className={`p-6 rounded-xl max-w-md w-full ${theme.card}`}>
+          <div className="p-6 rounded-xl max-w-md w-full bg-white">
             <h2 className="text-xl font-bold mb-3">Confirm Checkout</h2>
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-sm text-gray-600 mb-6">
               You’ll be redirected to the secure payment page.
             </p>
             <div className="flex justify-end gap-3">
@@ -242,7 +225,7 @@ const ShoppingCart = () => {
                   setIsCheckoutOpen(false);
                   handleCheckout();
                 }}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded"
               >
                 Continue
               </button>

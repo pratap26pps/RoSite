@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Tabs,
   TabsContent,
@@ -29,7 +28,6 @@ import {
 } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { BackgroundBeams, Spotlight, GridPattern } from "@/components/ui/backgrounds";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -134,10 +132,8 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 font-inter">
-      <BackgroundBeams />
-      <GridPattern />
-      <Spotlight />
+    <div className="min-h-screen bg-gray-600 relative flex items-center justify-center p-4 font-inter">
+      
 
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.95 }}

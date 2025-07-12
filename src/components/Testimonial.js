@@ -1,99 +1,79 @@
 "use client";
+import { Quote } from "lucide-react";
+
 const testimonials = [
   {
-    name: "Alice Johnson",
-    title: "CEO, ExampleCorp",
-    quote: "This service exceeded my expectations. Highly recommended!",
+    name: "Cameron Williamson",
+    title: "Designer",
+    quote:
+      "Searches for multiplexes, property comparisons, and the loan estimator. Works great. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     avatar: "https://randomuser.me/api/portraits/women/44.jpg",
   },
   {
-    name: "Bob Smith",
-    title: "CTO, TechWorld",
-    quote: "A seamless experience from start to finish.",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Esther Howard",
+    title: "Marketing",
+    quote:
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
+    avatar: "https://randomuser.me/api/portraits/men/34.jpg",
   },
   {
-    name: "Carla Gomez",
-    title: "Designer, Creatives",
-    quote: "Beautiful design and great support. Love it!",
+    name: "Devon Lane",
+    title: "Developer",
+    quote:
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia magni dolores eos qui ratione.",
     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-  },
-  {
-    name: "David Lee",
-    title: "Developer, CodeBase",
-    quote: "The animations and UI are top-notch.",
-    avatar: "https://randomuser.me/api/portraits/men/76.jpg",
-  },
-  {
-    name: "Emily Clark",
-    title: "Manager, AquaFlow",
-    quote: "Professional, clean and very reliable service.",
-    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
   },
 ];
 
-export default function TestimonialSection() {
+export default function ModernTestimonials() {
   return (
-    <section className="relative overflow-hidden pb-20 -mt-20 text-white w-full">
-       
-      {/* Heading */}
-      <h2 className="text-2xl sm:text-4xl font-bold text-center text-blue-100 py-8 font-sans tracking-tight z-10 relative">
-         What Our Clients Say
-      </h2>
+    <section className="py-16 bg-white text-gray-800 font-sans">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header Row */}
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-12">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+              What our customers are saying us?
+            </h2>
+          </div>
+          <div className="flex items-center gap-8 mt-6 lg:mt-0 text-gray-600 text-sm">
+            <div className="text-center">
+              <div className="text-xl font-bold text-black">10M+</div>
+              Happy People
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-black">4.88</div>
+              Overall rating
+              <div className="text-yellow-500 text-lg">★★★★★</div>
+            </div>
+          </div>
+        </div>
 
-      {/* Scrolling Testimonials */}
- <div className="w-screen overflow-hidden">
-  <div className="group flex w-max animate-scroll-horizontal-fast hover:[animation-play-state:paused]">
-    {[...testimonials, ...testimonials].map((t, idx) => (
-      <div
-        key={idx}
-        className="min-w-[320px] bg-white/10 backdrop-blur-xl text-white rounded-2xl shadow-lg p-6 flex flex-col items-center transition hover:scale-[1.03] hover:shadow-xl mx-2"
-      >
-        <img
-          src={t.avatar}
-          alt={t.name}
-          className="w-16 h-16 rounded-full border-4 border-blue-400 shadow-lg mb-4"
-        />
-        <p className="text-sm italic text-center mb-4 max-w-xs">“{t.quote}”</p>
-        <div className="text-center">
-          <div className="font-semibold text-blue-300">{t.name}</div>
-          <div className="text-xs text-gray-300">{t.title}</div>
+        {/* Testimonial Cards */}
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t, idx) => (
+            <div
+              key={idx}
+              className="bg-gray-200 border border-gray-100 shadow-sm hover:shadow-md rounded-2xl p-6 transition-all duration-300"
+            >
+              <div className="flex items-center mb-4">
+                <img
+                  src={t.avatar}
+                  alt={t.name}
+                  className="w-14 h-14 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                    {t.name} <Quote className="w-4 h-4 text-gray-400" />
+                  </h4>
+                  <p className="text-sm text-gray-500">{t.title}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed">{t.quote}</p>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
-
-
-
-      {/* Animations */}
-      <style jsx>{`
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-
-        .animate-scroll-horizontal-fast {
-          animation: scroll-left 30s linear infinite;
-        }
-
-        @keyframes scroll-left {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </section>
   );
 }

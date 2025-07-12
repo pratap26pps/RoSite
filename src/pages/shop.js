@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,7 +21,7 @@ import { Search, Filter, DollarSign, Star, ShoppingCart } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { GridPattern } from "@/components/ui/backgrounds";
+ 
 const dummyProducts = [
   {
     id: 1,
@@ -139,17 +139,17 @@ export default function ShopPage() {
   };
 
   return (
-    <div className=" min-h-screen">
+    <div className="bg-gray-200 min-h-screen">
 
-      <GridPattern/>
+ 
       {/* Header Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative  overflow-hidden">
        
        
         {/* Heading */}
         <div className="relative z-40 pt-32  text-center">
          
-          <p className="text-slate-300 text-lg max-w-2xl mx-auto px-4">
+          <p className="text-black text-lg max-w-2xl mx-auto px-4">
             Discover our collection of high-quality water purification systems
           </p>
         </div>
@@ -162,7 +162,7 @@ export default function ShopPage() {
             
             {/* Search */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-blue-400 mb-3">
+              <div className="flex items-center gap-2 text-white mb-3">
                 <Search className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Search Products</h3>
               </div>
@@ -181,7 +181,7 @@ export default function ShopPage() {
 
             {/* Category */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-blue-400 mb-3">
+              <div className="flex items-center gap-2 text-white mb-3">
                 <Filter className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Filter by Category</h3>
               </div>
@@ -203,7 +203,7 @@ export default function ShopPage() {
 
             {/* Price Slider */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-blue-400 mb-3">
+              <div className="flex items-center gap-2 text-white mb-3">
                 <DollarSign className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Price Range</h3>
               </div>
@@ -229,7 +229,7 @@ export default function ShopPage() {
 
             {/* Reviews */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-blue-400 mb-3">
+              <div className="flex items-center gap-2 text-white mb-3">
                 <Star className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Recent Reviews</h3>
               </div>
@@ -260,51 +260,60 @@ export default function ShopPage() {
         <div className="w-full md:w-3/4">
           <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {paginatedProducts.map((product) => (
-              <Card key={product.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-2 hover:border-blue-500/50">
-                <div className="relative overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm rounded-full px-3 py-1 text-blue-300 text-sm font-medium">
-                    {product.category}
-                  </div>
-                </div>
-                
-                <CardContent className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-slate-100 font-bold text-xl group-hover:text-blue-400 transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-slate-400 text-sm bg-slate-700/30 rounded-lg px-3 py-1 inline-block">
-                      SQ: {product.sqNumber}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                        ₹{product.price.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  
-                    <button
-                    onClick={() => carthandler(product.id)}
-                    disabled={addedToCart.includes(product.id)}
-                    className={`w-full ${
-                    addedToCart.includes(product.id)
-                    ? "bg-green-700 text-white cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
-                    } font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform ${
-                    addedToCart.includes(product.id) ? "" : "hover:scale-105"
-                    } shadow-lg flex items-center justify-center gap-2`}
-                    >
-                    <ShoppingCart className="w-5 h-5" />
-                    {addedToCart.includes(product.id) ? "Added" : "Add to Cart"}
-                    </button>
+             <Card
+  key={product.id}
+  className="group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 mx-5"
+>
+  <div className="relative overflow-hidden">
+    <img
+      src={product.image}
+      alt={product.name}
+      className="w-full h-42 object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full shadow">
+      {product.category}
+    </div>
+  </div>
 
-                </CardContent>
-              </Card>
+  <CardContent className="p-6 space-y-1">
+    <div className="space-y-2">
+      <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
+      <p className="text-sm text-gray-500">SQ: {product.sqNumber}</p>
+      <div className="text-xl font-semibold text-blue-600">
+        ₹{product.price.toLocaleString()}
+      </div>
+    </div>
+
+    <button
+    
+    >
+    
+      {addedToCart.includes(product.id) ? "Added" : "Add to Cart"}
+    </button>
+
+    {/* Store Icons */}
+    <div className="space-y-4 mt-auto">
+                          <button className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
+                            View
+                          </button>
+  
+                          <div className="flex items-center justify-center gap-4">
+                              <ShoppingCart
+                                onClick={() => carthandler(product.id)}
+      disabled={addedToCart.includes(product.id)}
+      className={`t scale-200 ${
+        addedToCart.includes(product.id)
+          ? "bg-green-600 text-white cursor-not-allowed"
+          : "text-blue-600  hover:text-blue-700"
+      } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
+                             />
+                            <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer" alt="Amazon" width={36} height={36} />
+                            <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer" alt="Flipkart" width={36} height={36} />
+                          </div>
+                        </div>
+  </CardContent>
+</Card>
+
             ))}
 
             {paginatedProducts.length === 0 && (
@@ -346,7 +355,7 @@ export default function ShopPage() {
                           onClick={() => handlePageChange(i + 1)}
                           className={`px-4 py-2 rounded-xl transition-all duration-300 ${
                             currentPage === i + 1
-                              ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg"
+                              ? "  text-white shadow-lg"
                               : "text-slate-300 hover:bg-slate-700 hover:text-blue-400"
                           }`}
                         >
@@ -364,7 +373,7 @@ export default function ShopPage() {
                         className={`px-4 py-2 rounded-xl transition-all duration-300 ${
                           currentPage === totalPages
                             ? "text-slate-500 cursor-not-allowed"
-                            : "text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                            : "text-slate-300 hover:bg-slate-700  "
                         }`}
                       >
                         →
