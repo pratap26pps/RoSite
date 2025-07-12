@@ -1,6 +1,7 @@
  
 import React, { useState, useEffect } from 'react';
 import { Youtube, Droplets, Shield, Zap, Award, Users, Phone, Mail } from 'lucide-react';
+import { GridPattern } from '@/components/ui/backgrounds';
 
 const AboutPage = () => {
   const [isVisible, setIsVisible] = useState({});
@@ -23,50 +24,7 @@ const AboutPage = () => {
     return () => observer.disconnect();
   }, []);
 
-  const brands = [
-    {
-      name: "KENT",
-      logo:  <Award className="w-10 h-10 text-blue-400 mx-auto mb-4" />,
-      description: "Pioneer in water purification technology with innovative RO+UV+UF systems.",
-      features: [
-        "Advanced RO+UV+UF Technology",
-        "TDS Controller for Essential Minerals",
-        "UV LED Purification",
-        "Smart Digital Display",
-        "Food Grade Plastic Construction"
-      ],
-      topModel: "Kent Grand Plus",
-      modelFeatures: "11-stage purification, 8L storage, Zero Water Wastage"
-    },
-    {
-      name: "AQUAGUARD",
-      logo: <Droplets className="w-10 h-10 text-cyan-300 mx-auto mb-4" />,
-      description: "India's most trusted water purifier brand with 30+ years of excellence.",
-      features: [
-        "Biotron Technology",
-        "Active Copper Technology",
-        "Mineral Guard Technology",
-        "e-boiling+ Technology",
-        "Smart Plus Technology"
-      ],
-      topModel: "Aquaguard Blaze",
-      modelFeatures: "Hot, Warm & Normal Water, 7L storage, Copper + Zinc"
-    },
-    {
-      name: "LIVPURE",
-      logo:<Zap className="w-10 h-10 text-yellow-400 mx-auto mb-4" />,
-      description: "Modern water purification with cutting-edge technology and sleek design.",
-      features: [
-        "7-Stage Purification Process",
-        "Copper 29 Technology",
-        "In-Tank UV Sterilization",
-        "Smart Indicators",
-        "Taste Enhancer Technology"
-      ],
-      topModel: "Livpure Glo Pro++",
-      modelFeatures: "7-stage purification, 7L storage, Copper + Minerals"
-    }
-  ];
+ 
 
   const services = [
     {
@@ -92,28 +50,14 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white overflow-x-hidden">
-      {/* Animated Background Particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        {[...Array(50)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-400 rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen   text-white overflow-x-hidden">
+  <GridPattern/>
+     
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <div className="mb-8">
+          <div className="">
             <Droplets className="w-16 h-16 mx-auto mb-4 text-blue-400 animate-bounce" />
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
               RO Technical Experts
@@ -181,54 +125,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Brand Showcase */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-            Featured Brands & Top Models
-          </h2>
-          
-          <div className="grid lg:grid-cols-3 gap-8">
-            {brands.map((brand, index) => (
-              <div
-                key={brand.name}
-                id={`brand-${index}`}
-                data-animate
-                className={`group bg-gradient-to-br from-blue-900/40 to-cyan-900/40 backdrop-blur-sm rounded-3xl p-8 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 ${
-                  isVisible[`brand-${index}`] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}
-                style={{ transitionDelay: `${index * 200}ms` }}
-              >
-                <div className="text-center mb-6">
-                  <div className="text-4xl mb-4">{brand.logo}</div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-blue-400 group-hover:text-cyan-300 transition-colors">
-                    {brand.name}
-                  </h3>
-                </div>
-                
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  {brand.description}
-                </p>
-
-                <div className="bg-gradient-to-r from-cyan-600/20 to-blue-600/20 rounded-2xl p-6 mb-6 border border-cyan-500/30">
-                  <h4 className="font-bold text-cyan-400 mb-2">Top Model: {brand.topModel}</h4>
-                  <p className="text-gray-300 text-sm">{brand.modelFeatures}</p>
-                </div>
-                
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-blue-400 mb-3">Key Features:</h4>
-                  {brand.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-300 text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* YouTube Section */}
       <section className="py-20 px-4">

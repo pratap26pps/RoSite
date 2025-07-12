@@ -17,7 +17,8 @@ import {
   ArrowLeft,
   ArrowRight
 } from "lucide-react";
-import Link from "next/link";
+ 
+ 
 
 const component = {
   id: "component-123",
@@ -204,13 +205,13 @@ export default function BuildPage() {
     if (currentStepId === "review") {
       return (
         <div className="space-y-6">
-          <div className="bg-gray-800  rounded-xl p-6 shadow-lg">
+          <div className=" bg-gray-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold   mb-4">
               Your Custom RO Configuration
             </h3>
-            <div className="space-y-4">
+            <div className=" space-y-4">
               {Object.entries(selectedComponents).map(([category, component]) => (
-                <div key={category} className="flex items-center justify-between p-4   rounded-lg">
+                <div key={category} className="flex items-center justify-between p-4  rounded-lg">
                   <div>
                     <h4 className="font-medium  ">{component.name}</h4>
                     <p className="text-sm text-gray-400 dark:text-gray-400">{component.description}</p>
@@ -291,7 +292,7 @@ export default function BuildPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all ${
                   selectedComponents[component.category]?.id === component.id
-                    ? "border-blue-500 bg-blue-200 dark:bg-blue-900/20"
+                    ? "border-blue-500 bg-blue-900 dark:bg-blue-900/20"
                     : "border-gray-200 dark:border-slate-600  hover:border-gray-300"
                 }`}
                 onClick={() => handleComponentSelect(component)}
@@ -309,13 +310,13 @@ export default function BuildPage() {
                 <h4 className="font-semibold mb-2 text-green-700">
                   {component.name}
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                <p className="text-sm text-gray-300 dark:text-gray-400 mb-3">
                   {component.description}
                 </p>
 
                 <div className="space-y-2 mb-4">
                   {component.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                    <div key={feature} className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-400">
                       <CheckCircle className="h-3 w-3 text-green-500" />
                       {feature}
                     </div>
@@ -356,14 +357,16 @@ export default function BuildPage() {
 
   return (
     <div className="min-h-screen  relative">
+  
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28">
+   
         {/* Header */}
         <div className="mb-8">
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-200 mb-4">
             Build Your Custom RO System
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-400 dark:text-gray-300">
             Design your perfect water purification system with our modular components
           </p>
         </div>
@@ -465,7 +468,7 @@ export default function BuildPage() {
                       ? "text-blue-600 dark:text-blue-400"
                       : isCompleted
                       ? "text-green-600 dark:text-green-400"
-                      : "text-gray-500 dark:text-gray-400"
+                      : "text-gray-300 dark:text-gray-400"
                   }`}
                 >
                   {step.name}
@@ -501,9 +504,9 @@ export default function BuildPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8   rounded-xl p-6 shadow-lg"
+            className="mt-8  bg-blue-900 rounded-xl p-6 shadow-lg"
           >
-            <h3 className="text-lg font-semibold   mb-4">
+            <h3 className="text-lg font-semibold  mb-4">
               Current Configuration
             </h3>
             <div className="space-y-2">
@@ -516,7 +519,7 @@ export default function BuildPage() {
               <div className="border-t pt-2 mt-4">
                 <div className="flex justify-between font-semibold">
                   <span>Subtotal</span>
-                  <span className="text-blue-600 dark:text-blue-400">
+                  <span className="text-white dark:text-blue-400">
                     ₹{totalPrice.toLocaleString()}
                   </span>
                 </div>

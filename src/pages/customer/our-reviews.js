@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-
+import { BackgroundBeams } from '@/components/ui/backgrounds';
+import { GridPattern } from '@/components/ui/backgrounds';
 const ReviewsComponent = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
-  const [animationKey, setAnimationKey] = useState(0);
 
   // Sample reviews data with high-quality reviewer images
   const reviews = [
@@ -149,15 +149,9 @@ const ReviewsComponent = () => {
   };
 
   return (
-    <div className="relative top-7 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
-      
-      {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }} />
-      </div>
+    <div className="relative top-7 min-h-scree overflow-hidden">
+ 
+      <GridPattern/>
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-16">

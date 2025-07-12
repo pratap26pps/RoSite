@@ -21,6 +21,7 @@ import { Search, Filter, DollarSign, Star, ShoppingCart } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { GridPattern } from "@/components/ui/backgrounds";
 const dummyProducts = [
   {
     id: 1,
@@ -138,16 +139,12 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 min-h-screen">
+    <div className=" min-h-screen">
+
+      <GridPattern/>
       {/* Header Section */}
       <section className="relative overflow-hidden">
-        {/* Animated background particles */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-1 h-1 bg-cyan-400 rounded-full animate-ping"></div>
-          <div className="absolute top-60 left-1/4 w-1.5 h-1.5 bg-blue-300 rounded-full animate-bounce"></div>
-        </div>
-
+       
        
         {/* Heading */}
         <div className="relative z-40 pt-32  text-center">
@@ -160,7 +157,7 @@ export default function ShopPage() {
 
       <div className="flex flex-col md:flex-row gap-8 px-4 py-10 z-30 relative">
         {/* Sidebar */}
-        <aside className="w-full md:w-1/4 space-y-6">
+        <aside className="w-full sticky top-20 self-start   md:w-1/4 space-y-6">
           <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
             
             {/* Search */}
