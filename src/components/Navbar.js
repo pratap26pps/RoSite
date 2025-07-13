@@ -117,7 +117,7 @@ export default function PremiumNavigation() {
             {/* Certifications */}
             <NavigationMenu>
               <NavigationMenuLink
-                onClick={()=>router.push("/cartification")}
+                onClick={()=>router.push("/certificates")}
               className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Certifications</span>
               </NavigationMenuLink>
@@ -252,7 +252,7 @@ export default function PremiumNavigation() {
             {/* Certifications */}
             <NavigationMenu>
               <NavigationMenuLink
-                onClick={()=>{router.push("/cartification"),setMenuOpen(false)}}
+                onClick={()=>{router.push("/certificates"),setMenuOpen(false)}}
               className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Certifications</span>
               </NavigationMenuLink>
