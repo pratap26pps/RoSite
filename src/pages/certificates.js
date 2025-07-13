@@ -108,7 +108,7 @@ export default function Certifications() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen pt-16 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       {/* Hero Section with Background Image */}
       <section className="relative w-full min-h-[60vh] overflow-hidden">
         {/* Background Image */}

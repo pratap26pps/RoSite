@@ -22,6 +22,8 @@ import { Search, Filter, DollarSign, Star, ShoppingCart } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+ 
  
 const dummyProducts = [
   {
@@ -107,7 +109,7 @@ export default function ShopPage() {
   const [priceRange, setPriceRange] = useState([0, 20000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [addedToCart, setAddedToCart] = useState([]);
-
+const router=useRouter()
  const dispatch = useDispatch()
   const filteredProducts = dummyProducts.filter((product) => {
     const matchSearch =
@@ -288,9 +290,11 @@ export default function ShopPage() {
     
     {/* Store Icons */}
     <div className="space-y-4 mt-auto">
-                          <button className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
-                            View
-                          </button>
+                         <button
+                           onClick={() => router.push(`/${product.id}`)}
+                        className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
+                          View
+                        </button>
   
                           <div className="flex items-center justify-center gap-4">
                               <ShoppingCart 

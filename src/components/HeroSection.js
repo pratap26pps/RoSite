@@ -41,7 +41,7 @@ export default function HeroSection() {
         {/* Tagline */}
         <div className="inline-block bg-blue-100 border border-blue-200 rounded-full px-4 sm:px-6 py-1.5 sm:py-2">
           <p className="text-blue-600 font-semibold text-xs sm:text-sm tracking-wide text-center sm:text-left">
-            ✨ India's Most Trusted Custom RO Experts – Since 1999
+             India's Most Trusted Custom RO Technical Xperts – Since 1999
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function HeroSection() {
             className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex items-center gap-2 shadow-md transition text-sm sm:text-base"
           >
             <Settings className="w-5 h-5" />
-            Custom Your RO
+            Customize Your RO
           </button>
           <button
             onClick={() => router.push("/shop")}

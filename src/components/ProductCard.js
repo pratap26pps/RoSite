@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { IndianRupee, ShoppingCart } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useState } from "react";
+import { useRouter } from "next/router";
 import {
   Carousel,
   CarouselContent,
@@ -66,6 +67,7 @@ const products = [
 ];
 
 export function CarouselSize() {
+  const router=useRouter();
   const dispatch = useDispatch();
   const [addedToCartIds, setAddedToCartIds] = useState([]);
   const [addedToCart, setAddedToCart] = useState([]);
@@ -143,7 +145,9 @@ export function CarouselSize() {
 
                       {/* Action Section */}
                       <div className="space-y-4 mt-auto">
-                        <button className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
+                        <button
+                           onClick={() => router.push(`/${product.id}`)}
+                        className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
                           View
                         </button>
 

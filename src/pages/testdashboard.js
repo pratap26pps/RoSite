@@ -7,6 +7,11 @@ import { setUser } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
 import { clearUser } from '../redux/slices/authSlice';
+import ProductHistory from './admin/products/productlist';
+import AddCategoryProduct from './admin/products/addcategoryproduct';
+import CustomerManagement from './admin/userlist';
+import OrderManagement from './admin/order/orderlist';
+import OverviewContent from './admin/overviewcontent';
 const AdminDashboard = () => {
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
@@ -45,57 +50,9 @@ const AdminDashboard = () => {
   }
 }, [user]);
 
-  // Sample data
-  const [dashboardData, setDashboardData] = useState({
-    totalOrders: 1247,
-    totalRevenue: 98450,
-    activeUsers: 3421,
-    deliveredOrders: 1089,
-    pendingOrders: 158,
-    orderGrowth: 12.5,
-    revenueGrowth: 8.3,
-    userGrowth: 15.2
-  });
- 
 
-  const [orders, setOrders] = useState([
-    {
-      id: 'ORD-001',
-      customer: 'Alice Johnson',
-      product: 'Wireless Headphones',
-      amount: '$129.99',
-      status: 'delivered',
-      date: '2024-01-14',
-      address: '123 Main St, New York'
-    },
-    {
-      id: 'ORD-002',
-      customer: 'Bob Smith',
-      product: 'Smart Watch',
-      amount: '$299.99',
-      status: 'pending',
-      date: '2024-01-15',
-      address: '456 Oak Ave, Los Angeles'
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Carol Davis',
-      product: 'Laptop Stand',
-      amount: '$49.99',
-      status: 'shipped',
-      date: '2024-01-13',
-      address: '789 Pine Rd, Chicago'
-    },
-    {
-      id: 'ORD-004',
-      customer: 'David Wilson',
-      product: 'Bluetooth Speaker',
-      amount: '$89.99',
-      status: 'processing',
-      date: '2024-01-15',
-      address: '321 Elm St, Miami'
-    }
-  ]);
+
+
 
   const [recentActivity, setRecentActivity] = useState([
     { id: 1, action: 'New order received', time: '2 minutes ago', type: 'order' },
@@ -110,8 +67,7 @@ const AdminDashboard = () => {
     { key: 'customers', label: 'Customers', icon: '👥' },
     { key: 'Add Category/Product', label: 'Add Category/Product', icon: '⊍' },
     { key: 'Product-History', label: 'Product-History', icon: '👥' },
-    { key: 'deliveries', label: 'Deliveries', icon: '🚚' },
-    { key: 'settings', label: 'Settings', icon: '⚙️' },
+   
   ];
     const CustomerItems = [
     { key: 'overview', label: 'Overview', icon: '📊' },
@@ -205,52 +161,46 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const OrderRow = ({ order }) => (
-    <tr className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-        {order.customer}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-        {order.product}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-          {getStatusIcon(order.status)} {order.status.toUpperCase()}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-        {order.date}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm">
-        <div className="flex space-x-2">
-          <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
-          <button className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">✏️</button>
-          <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">🗑️</button>
-        </div>
-      </td>
-    </tr>
-  );
+  const [orders, setOrders] = useState([
+    {
+      id: 'ORD-001',
+      customer: 'Alice Johnson',
+      product: 'Wireless Headphones',
+      amount: '$129.99',
+      status: 'delivered',
+      date: '2024-01-14',
+      address: '123 Main St, New York'
+    },
+    {
+      id: 'ORD-002',
+      customer: 'Bob Smith',
+      product: 'Smart Watch',
+      amount: '$299.99',
+      status: 'pending',
+      date: '2024-01-15',
+      address: '456 Oak Ave, Los Angeles'
+    },
+    {
+      id: 'ORD-003',
+      customer: 'Carol Davis',
+      product: 'Laptop Stand',
+      amount: '$49.99',
+      status: 'shipped',
+      date: '2024-01-13',
+      address: '789 Pine Rd, Chicago'
+    },
+    {
+      id: 'ORD-004',
+      customer: 'David Wilson',
+      product: 'Bluetooth Speaker',
+      amount: '$89.99',
+      status: 'processing',
+      date: '2024-01-15',
+      address: '321 Elm St, Miami'
+    }
+  ]);
 
-  const ActivityItem = ({ activity }) => (
-    <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors">
-      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-        {activity.type === 'order' && '🛒'}
-        {activity.type === 'user' && '👤'}
-        {activity.type === 'payment' && '💳'}
-        {activity.type === 'shipping' && '🚚'}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-900 dark:text-gray-100">{activity.action}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
-      </div>
-    </div>
-  );
+
 
 
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -297,86 +247,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
  
 
 
-  const OverviewContent = () => (
-    <div className="space-y-6 animate-fade-in">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Orders"
-          value={dashboardData.totalOrders}
-          icon="🛒"
-          growth={dashboardData.orderGrowth}
-          color="text-green-600"
-        />
-        <StatCard
-          title="Total Revenue"
-          value={dashboardData.totalRevenue}
-          icon="💰"
-          growth={dashboardData.revenueGrowth}
-          color="text-blue-600"
-        />
-        <StatCard
-          title="Active Users"
-          value={dashboardData.activeUsers}
-          icon="👥"
-          growth={dashboardData.userGrowth}
-          color="text-purple-600"
-        />
-        <StatCard
-          title="Delivered Orders"
-          value={dashboardData.deliveredOrders}
-          icon="✅"
-          color="text-green-600"
-        />
-      </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders */}
-        <div className="lg:col-span-2">
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Orders</h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900/50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {orders.slice(0, 5).map(order => (
-                    <OrderRow key={order.id} order={order} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div>
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Activity</h3>
-            </div>
-            <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
-              {recentActivity.map(activity => (
-                <ActivityItem key={activity.id} activity={activity} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderContent = () => {
     // Customer-specific content
@@ -609,67 +480,21 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         return <OverviewContent />;
       case 'orders':
         return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">All Orders</h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-900/50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {orders.map(order => (
-                    <OrderRow key={order.id} order={order} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+         <OrderManagement/>
         );
       case 'customers':
         return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Customer Management</h3>
-            <p className="text-gray-600 dark:text-gray-400">Customer management interface coming soon...</p>
-          </div>
+          <CustomerManagement/>
         );
       case 'Add Category/Product':
         return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Add Category/Product</h3>
-            <p className="text-gray-600 dark:text-gray-400">Product and category management interface coming soon...</p>
-          </div>
+          <AddCategoryProduct/>
         );
       case 'Product-History':
         return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Product History</h3>
-            <p className="text-gray-600 dark:text-gray-400">Product history and analytics interface coming soon...</p>
-          </div>
+            <ProductHistory/>        
         );
-      case 'deliveries':
-        return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Delivery Management</h3>
-            <p className="text-gray-600 dark:text-gray-400">Delivery tracking and management interface...</p>
-          </div>
-        );
-      case 'settings':
-        return (
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">System Settings</h3>
-            <p className="text-gray-600 dark:text-gray-400">System configuration and settings...</p>
-          </div>
-        );
+     
       default:
         return <OverviewContent />;
     }
@@ -719,7 +544,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   );
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen pb-24 pt-5 ${darkMode ? 'dark' : ''}`}>
 
       {/* Animated Background */}
       <div className="fixed  inset-0 overflow-hidden pointer-events-none">
@@ -845,12 +670,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <span className="text-xl">{darkMode ? '🌙' : '☀️'}</span>
-              </button>
+              
               <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">
                 <span className="text-xl">🔔</span>
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>

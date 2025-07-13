@@ -15,6 +15,7 @@ import axios from "axios";
 import { signOut } from "next-auth/react";
 import { clearUser } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/authSlice";
+import Image from "next/image";
 
 export default function PremiumNavigation() {
 
@@ -48,12 +49,15 @@ export default function PremiumNavigation() {
         <div className="relative flex justify-between lg:justify-around items-center px-6 py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <div
-            onClick={()=>router.push("/")}
-            className="text-2xl font-bold  bg-clip-text text-black   transition-all duration-300 cursor-pointer">
-              ROTECX
-            </div>
-          </div>
+      <Image
+        src="/images/rologo.png"  
+        alt="RO Logo"
+        width={70}
+        height={70}
+        className="cursor-pointer transition-all duration-300"
+        onClick={() => router.push("/")}
+      />
+    </div>
 
           {/* Hamburger Menu (Mobile) */}
           <button
@@ -75,7 +79,7 @@ export default function PremiumNavigation() {
             </NavigationMenu>
 
             {/* Shop Menu */}
-            {/* Reviews */}
+            
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/shop")}
@@ -84,13 +88,6 @@ export default function PremiumNavigation() {
               </NavigationMenuLink>
             </NavigationMenu>
 
-<NavigationMenu>
-<NavigationMenuLink
-                      onClick={()=>router.push("/custom-room")}
-                    className="block cursor-pointer  py-2 text-sm text-slate-900   hover:text-blue-300 rounded-lg transition-all duration-300 relative group">
-                      Custom Room
-                    </NavigationMenuLink>
-   </NavigationMenu>
              
 
             {/* About */}
@@ -102,6 +99,13 @@ export default function PremiumNavigation() {
               </NavigationMenuLink>
             </NavigationMenu>
 
+<NavigationMenu>
+<NavigationMenuLink
+                      onClick={()=>router.push("/custom-room")}
+                    className="block cursor-pointer  py-2 text-sm text-slate-900   hover:text-blue-300 rounded-lg transition-all duration-300 relative group">
+                      Custom Room
+                    </NavigationMenuLink>
+   </NavigationMenu>
            
             {/* Reviews */}
             <NavigationMenu>
@@ -118,6 +122,15 @@ export default function PremiumNavigation() {
                 onClick={()=>router.push("/certificates")}
               className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Certifications</span>
+              </NavigationMenuLink>
+            </NavigationMenu>
+
+               {/* Amc-enquiry */}
+            <NavigationMenu>
+              <NavigationMenuLink
+                onClick={()=>router.push("/amc-enquiry")}
+              className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Amc-enquiry</span>
               </NavigationMenuLink>
             </NavigationMenu>
           </div>
@@ -140,13 +153,13 @@ export default function PremiumNavigation() {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="!bg-transparent cursor-pointer p-0 border-none shadow-none hover:bg-transparent">
-                      <div className="flex items-center gap-3 hover:bg-blue-800/30 rounded-lg p-2 transition-all duration-300">
+                      <div className="flex items-center cursor-pointer gap-3 rounded-lg p-2 transition-all duration-300">
                         <img
                           src={user?.image || "images/avatar.png"}
                           alt="User"
                           className="w-8 h-8 rounded-full border-2 border-blue-400/50"
                         />
-                        <p className="text-sm text-slate-200">Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}</p>
+                        <p className="text-sm text-slate-900">Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}</p>
                       </div>
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[140px] py-2 bg-slate-800/95 backdrop-blur-md border border-blue-500/20 rounded-xl shadow-2xl">
@@ -255,6 +268,16 @@ export default function PremiumNavigation() {
                 <span className="relative z-10">Certifications</span>
               </NavigationMenuLink>
             </NavigationMenu>
+
+            {/* Amc-enquiry */}
+            <NavigationMenu>
+              <NavigationMenuLink
+                onClick={()=>{router.push("/amc-enquiry",setMenuOpen(false))}}
+              className="block cursor-pointer  py-2 text-sm text-slate-100  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+                <span className="relative z-10">Amc-enquiry</span>
+              </NavigationMenuLink>
+            </NavigationMenu>
+            
       </div>
 
       {/* Auth Section */}
@@ -283,6 +306,7 @@ export default function PremiumNavigation() {
                       alt="User"
                       className="w-8 h-8 rounded-full border-2 border-blue-400/50"
                     />
+                    <p className="text-sm text-slate-200">Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}</p>
                   </div>
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="min-w-[140px] py-2 bg-slate-700/95 backdrop-blur-md border border-blue-500/20 rounded-xl">
