@@ -127,7 +127,7 @@ export default function PremiumNavigation() {
           <div className="hidden sm:flex items-center gap-6 relative">
             {/* Cart */}
             <div className="relative group">
-              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-bounce border-2 border-slate-900">
+              <div className="absolute -top-4 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold   border-2 border-slate-900">
                 {totalItems}
               </div>
               <ShoppingCart
