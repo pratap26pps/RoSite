@@ -115,8 +115,8 @@ const AdminDashboard = () => {
   ];
     const CustomerItems = [
     { key: 'overview', label: 'Overview', icon: '📊' },
-    { key: 'orders history', label: 'Orders', icon: '🛒' },
-    { key: 'my Cart', label: 'Customers', icon: '👥' },
+    { key: 'orders', label: 'My Orders', icon: '🛒' },
+    { key: 'cart', label: 'My Cart', icon: '🛍️' },
     { key: 'deliveries', label: 'Deliveries', icon: '🚚' },
     { key: 'settings', label: 'Settings', icon: '⚙️' },
   ];
@@ -379,6 +379,231 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   );
 
   const renderContent = () => {
+    // Customer-specific content
+    if (user.role === "customer") {
+      switch (selectedMenuItem) {
+        case 'overview':
+          return (
+            <div className="space-y-6 animate-fade-in">
+              {/* Customer Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                  title="My Orders"
+                  value={5}
+                  icon="🛒"
+                  color="text-blue-600"
+                />
+                <StatCard
+                  title="Total Spent"
+                  value={1250}
+                  icon="💰"
+                  color="text-green-600"
+                />
+                <StatCard
+                  title="Active Orders"
+                  value={2}
+                  icon="📦"
+                  color="text-purple-600"
+                />
+                <StatCard
+                  title="Delivered"
+                  value={3}
+                  icon="✅"
+                  color="text-green-600"
+                />
+              </div>
+
+              {/* Customer Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Recent Orders */}
+                <div className="lg:col-span-2">
+                  <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
+                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Recent Orders</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-900/50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                          {orders.slice(0, 3).map(order => (
+                            <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                {order.product}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+                                  {getStatusIcon(order.status)} {order.status.toUpperCase()}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                {order.date}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div>
+                  <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
+                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors">
+                        <span className="text-xl">🛒</span>
+                        <span className="font-medium">Place New Order</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 transition-colors">
+                        <span className="text-xl">📞</span>
+                        <span className="font-medium">Contact Support</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 transition-colors">
+                        <span className="text-xl">📋</span>
+                        <span className="font-medium">View All Orders</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        case 'orders':
+          return (
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Orders</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-900/50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {orders.map(order => (
+                      <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                          {order.product}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+                            {getStatusIcon(order.status)} {order.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                          {order.date}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <div className="flex space-x-2">
+                            <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
+                            <button className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">📞</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        case 'cart':
+          return (
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">My Shopping Cart</h3>
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🛒</div>
+                <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">Start shopping to add items to your cart</p>
+                <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                  Browse Products
+                </button>
+              </div>
+            </div>
+          );
+        case 'deliveries':
+          return (
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">My Deliveries</h3>
+              <div className="space-y-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">Order ORD-001</h4>
+                    <span className="text-sm text-green-600">Delivered</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Delivered on 2024-01-14</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Address: 123 Main St, New York</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">Order ORD-002</h4>
+                    <span className="text-sm text-yellow-600">In Transit</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Expected delivery: 2024-01-16</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Address: 456 Oak Ave, Los Angeles</p>
+                </div>
+              </div>
+            </div>
+          );
+        case 'settings':
+          return (
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Account Settings</h3>
+              <div className="space-y-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Profile Information</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Manage your personal information and preferences</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Notification Settings</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Configure how you receive notifications</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Security Settings</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Update your password and security preferences</p>
+                </div>
+              </div>
+            </div>
+          );
+        default:
+          return <OverviewContent />;
+      }
+    }
+
+    // Admin-specific content
     switch (selectedMenuItem) {
       case 'overview':
         return <OverviewContent />;
@@ -415,6 +640,20 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Customer Management</h3>
             <p className="text-gray-600 dark:text-gray-400">Customer management interface coming soon...</p>
+          </div>
+        );
+      case 'Add Category/Product':
+        return (
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Add Category/Product</h3>
+            <p className="text-gray-600 dark:text-gray-400">Product and category management interface coming soon...</p>
+          </div>
+        );
+      case 'Product-History':
+        return (
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Product History</h3>
+            <p className="text-gray-600 dark:text-gray-400">Product history and analytics interface coming soon...</p>
           </div>
         );
       case 'deliveries':
@@ -598,7 +837,10 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 <span className="text-xl">{collapsed ? '☰' : '✕'}</span>
               </button>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {AdminItems.find(item => item.key === selectedMenuItem)?.label}
+                {user.role === "admin" 
+                  ? AdminItems.find(item => item.key === selectedMenuItem)?.label
+                  : CustomerItems.find(item => item.key === selectedMenuItem)?.label
+                }
               </h1>
             </div>
             
