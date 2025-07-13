@@ -44,8 +44,8 @@ export default function PremiumNavigation() {
     <>
      
 
-      <nav className="fixed w-full z-50 backdrop-blur-md bg-gray-500 border-b border-blue-500/20 shadow-2xl overflow-x-hidden">
-        <div className="relative flex justify-between lg:justify-around items-center px-2 sm:px-4 md:px-6 py-4 max-w-full overflow-x-hidden">
+      <nav className="fixed w-full z-50 backdrop-blur-md  bg-gray-500 border-b border-blue-500/20 shadow-2xl">
+        <div className="relative flex justify-between lg:justify-around items-center px-6 py-4">
           {/* Logo */}
           <div className="flex items-center">
             <div
@@ -189,7 +189,7 @@ export default function PremiumNavigation() {
     />
 
     {/* Right Drawer */}
-    <div className="absolute top-0 right-0 h-full w-[90vw] max-w-xs bg-slate-900/90 backdrop-blur-md border-l border-blue-500/30 px-4 py-6 space-y-6 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-x-hidden">
+    <div className="absolute top-0 right-0 h-full w-[75vw] max-w-xs bg-slate-900/90 backdrop-blur-md border-l border-blue-500/30 px-6 py-6 space-y-6 shadow-2xl transform transition-transform duration-300 translate-x-0">
       {/* Close Button */}
       <div className="flex justify-end">
         <button
