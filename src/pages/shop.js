@@ -157,7 +157,7 @@ export default function ShopPage() {
 
       <div className="flex flex-col md:flex-row gap-8 px-4 py-10 z-30 relative">
         {/* Sidebar */}
-        <aside className="w-full sticky top-20 self-start   md:w-1/4 space-y-6">
+        <aside className="w-full lg:sticky top-20 self-start   md:w-1/4 space-y-6">
           <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
             
             {/* Search */}
