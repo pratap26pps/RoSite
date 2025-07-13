@@ -95,12 +95,12 @@ export default function Chatbot() {
       {/* Floating Chat Button */}
       <button
         onClick={() => setShow(!show)}
-        className={`fixed bottom-6 right-6 z-50 ${
+        className={`fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6 ${
           show ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <div className="relative">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl">
             💬
           </div>
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
@@ -109,15 +109,15 @@ export default function Chatbot() {
 
       {/* Chat Window */}
       {show && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-0 left-0 right-0 mx-auto z-50 w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl h-[70vh] sm:w-96 sm:right-6 sm:left-auto sm:bottom-6 sm:mx-0 sm:h-[500px] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl">
+          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 sm:p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center text-xl">
                 🤖
               </div>
               <div>
-                <h3 className="font-semibold">AquaBot Assistant</h3>
+                <h3 className="font-semibold text-sm sm:text-base">AquaBot Assistant</h3>
                 <p className="text-xs text-blue-100">Online • Ready to help</p>
               </div>
             </div>
@@ -132,30 +132,28 @@ export default function Chatbot() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto bg-gray-50 p-2 sm:p-4 space-y-3 sm:space-y-4">
             {messages.map((msg, i) => (
               <div
                 key={i}
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                                 <div
-                   className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${
-                     msg.role === "user"
-                       ? "bg-blue-500 text-black rounded-br-md"
-                       : "bg-white text-black rounded-bl-md border border-gray-200"
-                   }`}
-                 >
-                   <p className="text-sm leading-relaxed">{msg.content}</p>
-                   <p className={`text-xs mt-2 ${
-                     msg.role === "user" ? "text-black" : "text-gray-600"
-                   }`}>
-                     {formatTime(msg.timestamp)}
-                   </p>
-                 </div>
+                <div
+                  className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 shadow-sm ${
+                    msg.role === "user"
+                      ? "bg-blue-500 text-black rounded-br-md"
+                      : "bg-white text-black rounded-bl-md border border-gray-200"
+                  }`}
+                >
+                  <p className="text-sm sm:text-base leading-relaxed">{msg.content}</p>
+                  <p className={`text-xs mt-2 ${
+                    msg.role === "user" ? "text-black" : "text-gray-600"
+                  }`}>
+                    {formatTime(msg.timestamp)}
+                  </p>
+                </div>
               </div>
             ))}
-
-            
 
             {/* Quick Replies */}
             {messages.length === 1 && !isLoading && (
@@ -169,7 +167,7 @@ export default function Chatbot() {
                         setInput(reply);
                         setTimeout(() => sendMessage(), 100);
                       }}
-                      className="text-xs text-gray-700 bg-white border border-gray-200 rounded-full px-3 py-2 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+                      className="text-xs sm:text-sm text-gray-700 bg-white border border-gray-200 rounded-full px-3 py-2 hover:bg-blue-50 hover:border-blue-200 transition-colors"
                     >
                       {reply}
                     </button>
@@ -182,8 +180,8 @@ export default function Chatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-gray-200">
-            <div className="flex items-center space-x-3">
+          <div className="p-2 sm:p-4 bg-white border-t border-gray-200">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="flex-1 relative">
                 <input
                   ref={inputRef}
@@ -192,19 +190,19 @@ export default function Chatbot() {
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                   placeholder="Type your message..."
                   disabled={isLoading}
-                  className="w-full px-4 py-3 text-black border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 sm:px-4 sm:py-3 text-black border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                 />
-                                 {isLoading && (
-                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                     <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                   </div>
-                 )}
+                {isLoading && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                  </div>
+                )}
               </div>
-                             <button
-                 onClick={sendMessage}
-                 disabled={!input.trim() || isLoading}
-                 className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-               >
+              <button
+                onClick={sendMessage}
+                disabled={!input.trim() || isLoading}
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
