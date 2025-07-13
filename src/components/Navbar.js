@@ -44,16 +44,15 @@ export default function PremiumNavigation() {
     <>
      
 
-      <nav className="fixed w-full z-50 backdrop-blur-md  bg-gray-500 border-b border-blue-500/20 shadow-2xl">
+      <nav className="fixed w-full z-50 backdrop-blur-md  bg-white   ">
         <div className="relative flex justify-between lg:justify-around items-center px-6 py-4">
           {/* Logo */}
           <div className="flex items-center">
             <div
             onClick={()=>router.push("/")}
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 cursor-pointer">
+            className="text-2xl font-bold  bg-clip-text text-black   transition-all duration-300 cursor-pointer">
               ROTECX
             </div>
-            <div className="ml-2 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           </div>
 
           {/* Hamburger Menu (Mobile) */}
@@ -70,7 +69,7 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/")}
-              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+              className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Home</span>
               </NavigationMenuLink>
             </NavigationMenu>
@@ -80,7 +79,7 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/shop")}
-              className="block cursor-pointer py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+              className="block cursor-pointer py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Shop</span>
               </NavigationMenuLink>
             </NavigationMenu>
@@ -88,7 +87,7 @@ export default function PremiumNavigation() {
 <NavigationMenu>
 <NavigationMenuLink
                       onClick={()=>router.push("/custom-room")}
-                    className="block cursor-pointer  py-2 text-sm text-slate-200   hover:text-blue-300 rounded-lg transition-all duration-300 relative group">
+                    className="block cursor-pointer  py-2 text-sm text-slate-900   hover:text-blue-300 rounded-lg transition-all duration-300 relative group">
                       Custom Room
                     </NavigationMenuLink>
    </NavigationMenu>
@@ -98,7 +97,7 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink 
                     onClick={()=>router.push("/about")}
-              className="block cursor-pointer  py-2 text-sm text-slate-200 hover:text-blue-300 rounded-lg transition-all duration-300   relative group">
+              className="block cursor-pointer  py-2 text-sm text-slate-900 hover:text-blue-300 rounded-lg transition-all duration-300   relative group">
                 <span className="relative z-10">About</span>
               </NavigationMenuLink>
             </NavigationMenu>
@@ -108,7 +107,7 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/customer/our-reviews")}
-              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+              className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Reviews</span>
               </NavigationMenuLink>
             </NavigationMenu>
@@ -117,7 +116,7 @@ export default function PremiumNavigation() {
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>router.push("/certificates")}
-              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
+              className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
                 <span className="relative z-10">Certifications</span>
               </NavigationMenuLink>
             </NavigationMenu>
@@ -127,12 +126,12 @@ export default function PremiumNavigation() {
           <div className="hidden sm:flex items-center gap-6 relative">
             {/* Cart */}
             <div className="relative group">
-              <div className="absolute -top-4 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold   border-2 border-slate-900">
+              <div className="absolute -top-4 -right-2  text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold   border-2 border-slate-900">
                 {totalItems}
               </div>
               <ShoppingCart
                 onClick={() => router.push("/cart")}
-                className="text-slate-200 hover:text-blue-300 w-6 h-6 cursor-pointer transition-all duration-300 group-hover:scale-110"
+                className="text-slate-900 w-6 h-6 cursor-pointer transition-all duration-300 group-hover:scale-110"
               />
             </div>
 

@@ -27,7 +27,7 @@ export default function HeroSection() {
 <section className="relative w-full mt-20 min-h-screen overflow-hidden">
   {/* 🔹 Background Image with Right-Bottom Cut */}
   <div
-    className="absolute inset-0 h-[80vh] bg-cover bg-center brightness-95 mr-1 ml-1"
+    className="absolute inset-0 h-[80vh] bg-cover bg-center brightness-95 mt-1 mr-5 ml-5 rounded-2xl"
     style={{
       backgroundImage: "url('/images/waterfamily.png')",
       clipPath: "polygon(0 0, 100% 0, 100% 80%, 100% 100%, 50% 100%, 0 100%)",
@@ -76,7 +76,7 @@ export default function HeroSection() {
         </div>
 
         {/* 🔹 Mobile: Stats inside card */}
-        <div className="flex sm:hidden flex-col items-center justify-between gap-6 pt-6 border-t border-gray-300 mt-4">
+        <div className="flex sm:hidden flex-col items-center justify-between gap-6 pt-6 border-t border-gray-300 mt-4 ">
           {[
             { count: "680", label: "Award Winning" },
             { count: "8K+", label: "Happy Customers" },
@@ -93,8 +93,8 @@ export default function HeroSection() {
   </div>
 
   {/* 🔹 Desktop: Stats floating on bottom right */}
-  <div className="absolute bottom-36 right-0 z-20 hidden sm:block w-[40%]">
-    <div className="bg-white/90 backdrop-blur-md rounded-tl-3xl py-6 px-6 flex flex-row justify-around items-center gap-6 shadow-xl">
+  <div className="absolute bottom-32 right-5 z-20 hidden sm:block w-[40%]">
+    <div className="bg-white/90 backdrop-blur-md rounded-tl-3xl py-6 px-6 flex flex-row justify-around items-center gap-6 shadow-xl ">
       {[
         { count: "680", label: "Award Winning" },
         { count: "8K+", label: "Happy Customers" },
@@ -116,11 +116,11 @@ export default function HeroSection() {
           {/* Image */}
           <div className="w-full md:w-1/2 flex justify-center">
             <img
-              src="https://wavio.peerduck.com/wp-content/uploads/2020/12/Group-69-7.png"
+              src="https://ubtpro.in/img/International-Courier.jpg"
               alt="Water Delivery"
               width={500}
               height={500}
-              className="rounded-full object-cover shadow-xl"
+              className="rounded-2xl shadow-xl"
             />
           </div>
 

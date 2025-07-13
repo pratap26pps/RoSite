@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { IndianRupee } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -139,7 +140,7 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="bg-gray-200 min-h-screen">
+    <div className="bg-white min-h-screen">
 
  
       {/* Header Section */}
@@ -158,11 +159,11 @@ export default function ShopPage() {
       <div className="flex flex-col md:flex-row gap-8 px-4 py-10 z-30 relative">
         {/* Sidebar */}
         <aside className="w-full lg:sticky top-20 self-start   md:w-1/4 space-y-6">
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+          <div className="bg-white text-black rounded-2xl p-6 border-2">
             
             {/* Search */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-white mb-3">
+              <div className="flex items-center gap-2 mb-3">
                 <Search className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Search Products</h3>
               </div>
@@ -171,9 +172,9 @@ export default function ShopPage() {
                   placeholder="Name or SQ number"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20 pl-4 pr-4 py-3 rounded-xl"
+                  className="bg-slate-800/50 border-slate-600   placeholder:text-slate-100   pl-4 pr-4 py-3 rounded-xl"
                 />
-                <Search className="absolute right-3 top-3 w-5 h-5 text-slate-400" />
+                <Search className="absolute right-3 top-3 w-5 h-5 text-slate-100" />
               </div>
             </div>
 
@@ -181,17 +182,17 @@ export default function ShopPage() {
 
             {/* Category */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-white mb-3">
+              <div className="flex items-center gap-2   mb-3">
                 <Filter className="w-5 h-5" />
-                <h3 className="text-lg font-semibold">Filter by Category</h3>
+                <h3 className="text-lg font-semibold ">Filter by Category</h3>
               </div>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl h-12">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600 rounded-xl">
+                <SelectContent className="bg-slate-800 text-slate-100 border-slate-600 rounded-xl">
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category} className="text-slate-100 hover:bg-slate-700 focus:bg-slate-700">
+                    <SelectItem key={category} value={category} className=" hover:bg-slate-700 focus:bg-slate-700">
                       {category}
                     </SelectItem>
                   ))}
@@ -203,8 +204,8 @@ export default function ShopPage() {
 
             {/* Price Slider */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-white mb-3">
-                <DollarSign className="w-5 h-5" />
+              <div className="flex items-center gap-2   mb-3">
+                <IndianRupee className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Price Range</h3>
               </div>
               <Slider
@@ -216,10 +217,10 @@ export default function ShopPage() {
                 className="mb-4"
               />
               <div className="flex justify-between text-sm">
-                <span className="bg-slate-700/50 px-3 py-1 rounded-lg text-slate-300">
+                <span className="bg-slate-700/50 px-3 py-1 rounded-lg  ">
                   ₹{priceRange[0].toLocaleString()}
                 </span>
-                <span className="bg-slate-700/50 px-3 py-1 rounded-lg text-slate-300">
+                <span className="bg-slate-700/50 px-3 py-1 rounded-lg ">
                   ₹{priceRange[1].toLocaleString()}
                 </span>
               </div>
@@ -229,7 +230,7 @@ export default function ShopPage() {
 
             {/* Reviews */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-white mb-3">
+              <div className="flex items-center gap-2   mb-3">
                 <Star className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Recent Reviews</h3>
               </div>
@@ -246,9 +247,9 @@ export default function ShopPage() {
                           <Star key={i} className="w-3 h-3 fill-current" />
                         ))}
                       </div>
-                      <span className="text-slate-300 text-sm font-medium">{review.name}</span>
+                      <span className="text-slate-900 text-sm font-medium">{review.name}</span>
                     </div>
-                    <p className="text-slate-400 text-sm">"{review.review}"</p>
+                    <p className="text-slate-500 text-sm">"{review.review}"</p>
                   </div>
                 ))}
               </div>
@@ -262,20 +263,20 @@ export default function ShopPage() {
             {paginatedProducts.map((product) => (
              <Card
   key={product.id}
-  className="group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 mx-5"
+  className=" bg-white border border-gray-200 pb-4 pt-0 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 transform  mx-5"
 >
   <div className="relative overflow-hidden">
     <img
       src={product.image}
       alt={product.name}
-      className="w-full h-42 object-cover transition-transform duration-300 group-hover:scale-105"
+      className="w-full h-48 object-cover transition-transform duration-300 "
     />
     <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full shadow">
       {product.category}
     </div>
   </div>
 
-  <CardContent className="p-6 space-y-1">
+  <CardContent className="space-y-1">
     <div className="space-y-2">
       <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
       <p className="text-sm text-gray-500">SQ: {product.sqNumber}</p>
@@ -284,13 +285,7 @@ export default function ShopPage() {
       </div>
     </div>
 
-    <button
     
-    >
-    
-      {addedToCart.includes(product.id) ? "Added" : "Add to Cart"}
-    </button>
-
     {/* Store Icons */}
     <div className="space-y-4 mt-auto">
                           <button className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
@@ -298,17 +293,17 @@ export default function ShopPage() {
                           </button>
   
                           <div className="flex items-center justify-center gap-4">
-                              <ShoppingCart
+                              <ShoppingCart 
                                 onClick={() => carthandler(product.id)}
       disabled={addedToCart.includes(product.id)}
-      className={`t scale-200 ${
+      className={` border-2  h-[50px] w-[50px] rounded-lg ${
         addedToCart.includes(product.id)
-          ? "bg-green-600 text-white cursor-not-allowed"
+          ? "  bg-green-400  cursor-not-allowed"
           : "text-blue-600  hover:text-blue-700"
       } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
                              />
-                            <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer" alt="Amazon" width={36} height={36} />
-                            <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer" alt="Flipkart" width={36} height={36} />
+                            <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
+                            <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
                           </div>
                         </div>
   </CardContent>
