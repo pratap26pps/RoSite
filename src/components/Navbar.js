@@ -48,13 +48,13 @@ export default function PremiumNavigation() {
       <nav className="fixed w-full z-50 backdrop-blur-md  bg-white   ">
         <div className="relative flex justify-between lg:justify-around items-center px-6 py-4">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex relative items-center">
       <Image
         src="/images/rologo.png"  
         alt="RO Logo"
         width={70}
-        height={70}
-        className="cursor-pointer transition-all duration-300"
+        height={50}
+        className="cursor-pointer transition-all  -mt-4 duration-300"
         onClick={() => router.push("/")}
       />
     </div>

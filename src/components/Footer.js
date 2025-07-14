@@ -33,8 +33,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-300 text-gray-800 px-4 pt-16 pb-10 relative">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 gap-16">
+    <footer className="bg-gray-300 text-gray-800 px-2 sm:px-4 pt-16 pb-10 relative w-full max-w-[100vw] overflow-x-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col gap-16 w-full">
         {/* FAQs */}
         <div>
           <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b-2 border-blue-500 pb-2">
@@ -48,7 +48,7 @@ export default function Footer() {
                 className="bg-white p-4 rounded-lg shadow border border-gray-200 cursor-pointer transition-all duration-300"
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-base text-gray-800">{faq.question}</h3>
+                  <h3 className="font-semibold text-base text-gray-800 break-words max-w-full">{faq.question}</h3>
                   {activeIndex === i ? (
                     <FaChevronUp className="text-gray-500" />
                   ) : (
@@ -68,65 +68,63 @@ export default function Footer() {
         </div>
 
         {/* Footer Main Content */}
-        <div className=" flex flex-col lg:flex-row lg:justify-between  gap-10">
+        <div className="flex flex-col md:flex-row md:gap-x-12  gap-y-8 md:gap-y-0 w-full">
           {/* Contact Info */}
-          <div className="space-y-3  text-sm">
+          <div className="space-y-3 text-sm flex-1 min-w-0">
             <h3 className="text-base font-semibold text-gray-900 border-b border-blue-500 pb-2">
               Contact Information
             </h3>
-            <p>📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
-            <p>📞 <strong>Phone:</strong> +91-9876543210, +91-9998887776</p>
-            <p>📧 <strong>Email:</strong> support@rotechnicalxperts.com</p>
-            <p>📺 <strong>YouTube:</strong>{" "}
+            <p className="break-words max-w-full">📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
+            <p className="break-words max-w-full">📞 <strong>Phone:</strong> +91-9876543210, +91-9998887776</p>
+            <p className="break-words max-w-full">📧 <strong>Email:</strong> support@rotechnicalxperts.com</p>
+            <p className="break-words max-w-full">📺 <strong>YouTube:</strong>{" "}
               <a
                 href="https://youtube.com/@rotechnicalxperts"
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-600 underline"
+                className="text-blue-600 underline break-words max-w-full"
               >
                 RO TECHNICAL XPERTS
               </a>
             </p>
           </div>
 
-        <div className="flex gap-20 scale-125 mt-6 mr-0 ml-16 lg:ml-0 lg:mr-7">
+          <div className="flex flex-col sm:flex-row gap-y-8 gap-x-12 flex-1 min-w-0">
             {/* Company Links */}
-          <div className="space-y-2 text-sm">
-            <h3 className="text-base font-semibold text-gray-900">Company</h3>
-            <ul className="text-gray-600 space-y-1">
-              <li><a href="/about">About</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">Certifications</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
+            <div className="space-y-2 text-sm min-w-0">
+              <h3 className="text-base font-semibold text-gray-900">Company</h3>
+              <ul className="text-gray-600 space-y-1">
+                <li><a href="/about" className="break-words max-w-full">About</a></li>
+                <li><a href="#" className="break-words max-w-full">Services</a></li>
+                <li><a href="#" className="break-words max-w-full">Certifications</a></li>
+                <li><a href="#" className="break-words max-w-full">Contact</a></li>
+              </ul>
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-2 text-sm min-w-0">
+              <h3 className="text-base font-semibold text-gray-900">Social</h3>
+              <ul className="text-gray-600 space-y-1">
+                <li><a href="#" className="break-words max-w-full">Facebook</a></li>
+                <li><a href="#" className="break-words max-w-full">LinkedIn</a></li>
+                <li><a href="#" className="break-words max-w-full">Twitter</a></li>
+                <li>
+                  <a
+                    href="https://youtube.com/@rotechnicalxperts"
+                    className="text-blue-600 underline break-words max-w-full"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    YouTube
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-
-          {/* Social Links */}
-          <div className="space-y-2 text-sm">
-            <h3 className="text-base font-semibold text-gray-900">Social</h3>
-            <ul className="text-gray-600 space-y-1">
-              <li><a href="#">Facebook</a></li>
-              <li><a href="#">LinkedIn</a></li>
-              <li><a href="#">Twitter</a></li>
-              <li>
-                <a
-                  href="https://youtube.com/@rotechnicalxperts"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  YouTube
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-12 text-center text-gray-500 text-sm border-t border-gray-300 pt-6">
+        <div className="mt-12 text-center text-gray-500 text-sm border-t border-gray-300 pt-6 w-full break-words max-w-full">
           &copy; {new Date().getFullYear()} RO TECHNICAL XPERTS. All rights reserved.
         </div>
       </div>
