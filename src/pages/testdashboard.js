@@ -18,7 +18,6 @@ const AdminDashboard = () => {
     const router = useRouter();
   const [confirm, setConfirm] = useState("");
   const [collapsed, setCollapsed] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState('overview');
@@ -50,17 +49,7 @@ const AdminDashboard = () => {
   }
 }, [user]);
 
-
-
-
-
-  const [recentActivity, setRecentActivity] = useState([
-    { id: 1, action: 'New order received', time: '2 minutes ago', type: 'order' },
-    { id: 2, action: 'User registered', time: '5 minutes ago', type: 'user' },
-    { id: 3, action: 'Payment processed', time: '10 minutes ago', type: 'payment' },
-    { id: 4, action: 'Order shipped', time: '15 minutes ago', type: 'shipping' }
-  ]);
-
+ 
   const AdminItems = [
     { key: 'overview', label: 'Overview', icon: '📊' },
     { key: 'orders', label: 'Orders', icon: '🛒' },
@@ -102,13 +91,17 @@ const AdminDashboard = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log("Form data before submit:", profileForm);
+      const payload = {
+  ...profileForm,
+  email: user.email,  
+};
+      console.log("Form data before submit:", payload);
 
-      const res = await axios.patch("/api/auth/update-profile", profileForm,);
+      const res = await axios.patch("/api/auth/update-profile", payload,);
       toast.success(res.data.message || "Profile updated!");
       const updatedUser = {
         ...res.data.user,
-        name: `${formData.firstName} ${formData.lastName}`,
+        name: `${profileForm.firstName} ${profileForm.lastName}`
       };
       dispatch(setUser(updatedUser));
     } catch (err) {
@@ -501,10 +494,14 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   };
 
  
-   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfileForm((prev) => ({ ...prev, [name]: value }));
-  };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setProfileForm((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -528,7 +525,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     } catch (err) {
       console.error("Image upload failed:", err);
     
-    }finally {
+    } finally {
       setLoading2(false);
     }
   };
@@ -544,7 +541,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   );
 
   return (
-    <div className={`min-h-screen pb-24 pt-5 ${darkMode ? 'dark' : ''}`}>
+    <div className='min-h-screen pb-24 pt-5'>
 
       {/* Animated Background */}
       <div className="fixed  inset-0 overflow-hidden pointer-events-none">
@@ -705,13 +702,14 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             {loading2 && (
               <div className="mt-2 text-blue-600">Uploading image...</div>
             )}
-            {profileForm.image && (
-              <img
-                src={profileForm?.image || user?.image || "/images/avatar.png"}
-                alt="Profile Preview"
-                className="mt-4 w-24 h-24 rounded-full object-cover border border-gray-300 shadow-md"
-              />
-            )}
+            {profileForm.image && typeof profileForm.image === "string" && (
+           <img
+         src={profileForm.image}
+         alt="Profile Preview"
+          className="mt-4 w-24 h-24 rounded-full object-cover border border-gray-300 shadow-md"
+        />
+         )}
+
           </div>
 
           <div>
@@ -721,37 +719,40 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                   name="firstName" 
               value={profileForm.firstName}
                  onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500  text-gray-500"
               placeholder={user?.firstName || ""}
             />
           </div>
+
            <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
+
             <input
               type="text"
                   name="lastName" 
               value={profileForm.lastName}
                onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              placeholder={user?.firstName || ""}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
+            placeholder={user?.lastName || ""}
             />
           </div>
  
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+            <label className="block text-sm font-medium text-gray-700   mb-1">Phone</label>
             <input
               type="tel"
                   name="mobile" 
               value={profileForm.mobile}
                  onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              className="w-full px-3 py-2 border  border-gray-600 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500    text-gray-500"
               placeholder={user.phone}
             />
           </div>
+
           <div className="flex justify-end space-x-3 pt-4">
             <button
               onClick={() => setProfileModalVisible(false)}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+              className="px-4 py-2 text-gray-600   hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
             >
               Cancel
             </button>
@@ -759,7 +760,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
               onClick={handleProfileUpdate}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              Update Profile
+            {loading ? "Updating...":"Update Profile"}  
             </button>
           </div>
         </div>

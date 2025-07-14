@@ -26,4 +26,4 @@ const orderSchema = new mongoose.Schema({
     deliveredAt: { type: Date }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Order', orderSchema);
+export default mongoose.models.Order || mongoose.model('Order', orderSchema);

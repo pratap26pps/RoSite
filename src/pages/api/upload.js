@@ -29,6 +29,7 @@ const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
         400,             
         "auto"          
       );
+      
 
       return res.status(200).json({ url: result.secure_url });
     } catch (error) {

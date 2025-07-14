@@ -10,7 +10,7 @@ export default function OrderManagement() {
       customer: 'Alice Johnson',
       product: 'Wireless Headphones',
       quantity: 2,
-      amount: '$129.99',
+      amount: '129.99',
       status: 'delivered',
       date: '2024-01-14',
       address: '123 Main St, New York',
@@ -27,7 +27,7 @@ export default function OrderManagement() {
       customer: 'Bob Smith',
       product: 'Smart Watch',
       quantity: 1,
-      amount: '$299.99',
+      amount: '299.99',
       status: 'pending',
       date: '2024-01-15',
       address: '456 Oak Ave, Los Angeles',
@@ -42,7 +42,7 @@ export default function OrderManagement() {
       customer: 'Carol Davis',
       product: 'Laptop Stand',
       quantity: 3,
-      amount: '$49.99',
+      amount: '49.99',
       status: 'shipped',
       date: '2024-01-13',
       address: '789 Pine Rd, Chicago',
@@ -58,7 +58,7 @@ export default function OrderManagement() {
       customer: 'David Wilson',
       product: 'Bluetooth Speaker',
       quantity: 1,
-      amount: '$89.99',
+      amount: '89.99',
       status: 'processing',
       date: '2024-01-15',
       address: '321 Elm St, Miami',
@@ -227,8 +227,7 @@ export default function OrderManagement() {
             >
               <span role="img" aria-label="Tracking">📊</span>
             </button>
-            
-            {/* Edit Tracking Address Button */}
+             {/* Edit Tracking Address Button */}
             <button 
               onClick={() => {
                 setEditTrackingAddress(order);
@@ -240,6 +239,7 @@ export default function OrderManagement() {
               <span role="img" aria-label="Edit Tracking">✏️</span>
             </button>
 
+            
             {/* View Order Button */}
             <Dialog open={!!viewOrder && viewOrder.id === order.id} onOpenChange={(open) => setViewOrder(open ? order : null)}>
               <DialogTrigger asChild>
@@ -265,40 +265,7 @@ export default function OrderManagement() {
               </DialogContent>
             </Dialog>
 
-            {/* Edit Order Button */}
-            <Dialog open={!!editOrder && editOrder.id === order.id} onOpenChange={(open) => {
-              setEditOrder(open ? order : null);
-              setEditForm(open ? { ...order } : {});
-            }}>
-              <DialogTrigger asChild>
-                <button className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300" title="Edit">
-                  <span role="img" aria-label="Edit">✏️</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                <DialogHeader>
-                  <DialogTitle className="text-yellow-600 dark:text-yellow-300">Edit Order</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Product</label>
-                    <input type="text" value={editForm.product || ""} onChange={e => handleEditChange('product', e.target.value)} className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Quantity</label>
-                    <input type="number" min="1" value={editForm.quantity || 1} onChange={e => handleEditChange('quantity', e.target.value)} className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Amount</label>
-                    <input type="text" value={editForm.amount || ""} onChange={e => handleEditChange('amount', e.target.value)} className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700" />
-                  </div>
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button variant="outline" onClick={() => setEditOrder(null)} className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">Cancel</Button>
-                    <Button onClick={handleEditSave} className="bg-yellow-500 text-white hover:bg-yellow-600">Save</Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+           
 
             {/* Delete Order Button */}
             <Dialog open={!!deleteOrder && deleteOrder.id === order.id} onOpenChange={(open) => setDeleteOrder(open ? order : null)}>
@@ -344,7 +311,7 @@ export default function OrderManagement() {
                     </span>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{entry.location}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{entry.timestamp}</p>
+                      <p className="text-xs  text-gray-400">{entry.timestamp}</p>
                     </div>
                   </div>
                 ))}
@@ -366,7 +333,7 @@ export default function OrderManagement() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Order ID</label>
+              <label className="block text-sm text-gray-700 font-medium mb-1">Order ID</label>
               <p className="text-sm text-gray-600 dark:text-gray-400">{editTrackingAddress?.id}</p>
             </div>
             <div>
@@ -403,25 +370,25 @@ export default function OrderManagement() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Order ID</label>
+              <label className="block text-sm text-gray-800 font-medium mb-1">Order ID</label>
               <p className="text-sm text-gray-600 dark:text-gray-400">{trackingOrder?.id}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Location</label>
+              <label className="block text-sm text-gray-800 font-medium mb-1">Location</label>
               <input 
                 type="text" 
                 value={newTrackingEntry.location} 
                 onChange={(e) => setNewTrackingEntry({...newTrackingEntry, location: e.target.value})}
-                className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                className="w-full border rounded px-2 py-1 dark:bg-gray-800 text-gray-600 dark:border-gray-700"
                 placeholder="Enter location or status update"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+              <label className="block text-sm text-gray-800 font-medium mb-1">Status</label>
               <select 
                 value={newTrackingEntry.status} 
                 onChange={(e) => setNewTrackingEntry({...newTrackingEntry, status: e.target.value})}
-                className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                className="w-full border rounded px-2 py-1 dark:bg-gray-800 text-gray-600 dark:border-gray-700"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="processing">Processing</option>

@@ -7,9 +7,10 @@ export default async function handler(req, res) {
  await connectDB();
  const profileForm = req.body;
  console.log("profileForm",profileForm)
- if(!profileForm){
-  return res.status(401).json({ message: "Unauthorized" });
- }
+if (!profileForm || !profileForm.email) {
+  return res.status(400).json({ message: "Email is required" });
+}
+
   try {
    const updatedUser = await User.findOneAndUpdate(
       { email: profileForm.email },
