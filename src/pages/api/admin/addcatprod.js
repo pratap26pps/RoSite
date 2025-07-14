@@ -1,6 +1,8 @@
-import dbConnect from '@/src/lib/dbConnect';
-import Category from '@/src/models/Category';
+ import connectDB from '@/src/lib/dbConnect';
+ 
+
 import Product from '@/src/models/Product';
+ import Category from '@/src/models/Category';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -8,7 +10,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        await dbConnect();
+        await connectDB();
 
         const { categories, products } = req.body;
 
