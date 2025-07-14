@@ -1,11 +1,11 @@
-import connectDB from "@/src/lib/dbConnect";
- import users from "@/src/models/users";
-import Otp from "@/src/models/Otp";
-import { sendOTPEmail } from "@/src/lib/nodemailer";
-import { signupSchema } from "@/src/lib/zodSchemas/userSchema";
+import dbConnect from '../../../lib/dbConnect';
+import users from '../../../models/users';
+import Otp from '../../../models/Otp';
+import { sendOTPEmail } from '../../../lib/nodemailer';
+import { signupSchema } from '../../../lib/zodSchemas/userSchema';
 
 export default async function handler(req, res) {
-  await connectDB();
+  await dbConnect();
 
   if (req.method === "POST") {
     const parsed = signupSchema.safeParse(req.body);

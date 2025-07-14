@@ -1,10 +1,10 @@
 // PATCH method to update name, mobile, photo
-import connectDB from "@/src/lib/dbConnect";
-import User from "@/src/models/users";
+import dbConnect from '../../../lib/dbConnect';
+import User from '../../../models/users';
  
 export default async function handler(req, res) {
   if (req.method !== "PATCH") return res.status(405).json({ message: "Method not allowed" });
- await connectDB();
+ await dbConnect();
  const profileForm = req.body;
  console.log("profileForm",profileForm)
 if (!profileForm || !profileForm.email) {

@@ -1,11 +1,11 @@
-import connectDB from "@/src/lib/dbConnect";
-import User from "@/src/models/users";
-import ResetToken from "@/src/models/ResetToken";
-import { sendResetEmail } from "@/src/lib/nodemailpass";
+import dbConnect from '../../../lib/dbConnect';
+import User from '../../../models/users';
+import ResetToken from '../../../models/ResetToken';
+import { sendResetEmail } from '../../../lib/nodemailpass';
 import crypto from "crypto";
 
 export default async function handler(req, res) {
-  await connectDB();
+  await dbConnect();
 
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });

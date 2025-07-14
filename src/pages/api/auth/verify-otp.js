@@ -1,11 +1,11 @@
-import connectDB from "@/src/lib/dbConnect";
+import dbConnect from '../../../lib/dbConnect';
 import bcrypt from 'bcrypt';
-import Otp from "@/src/models/Otp";
-import users from "@/src/models/users";
-import { signupSchema } from "@/src/lib/zodSchemas/userSchema";
+import Otp from '../../../models/Otp';
+import users from '../../../models/users';
+import { signupSchema } from '../../../lib/zodSchemas/userSchema';
 import { serialize } from "cookie";
 export default async function handler(req, res) {
-  await connectDB();
+  await dbConnect();
 
   if (req.method === "POST") {
     const { code, ...formData } = req.body;

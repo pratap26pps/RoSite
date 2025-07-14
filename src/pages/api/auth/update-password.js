@@ -1,5 +1,5 @@
-import connectDB from "@/src/lib/dbConnect";
-import User from "@/src/models/users";
+import dbConnect from '../../../lib/dbConnect';
+import User from '../../../models/users';
 import bcrypt from "bcryptjs";
 import { parse } from "cookie";
 
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const { customUser } = parse(req.headers.cookie || "");
     if (!customUser) return res.status(401).json({ message: "Unauthorized" });
 
-    await connectDB();
+    await dbConnect();
     const { currentPassword, newPassword } = req.body;
     const userData = JSON.parse(customUser);
 

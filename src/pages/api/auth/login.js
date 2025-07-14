@@ -1,9 +1,9 @@
-import connectDB from "@/src/lib/dbConnect";
-import users from "@/src/models/users";
+import dbConnect from '../../../lib/dbConnect';
+import users from '../../../models/users';
 import bcrypt from "bcryptjs";
 import { serialize } from "cookie";
 export default async function handler(req, res) {
-  await connectDB();
+  await dbConnect();
 
   if (req.method !== "POST") return res.status(405).json({ message: "Method not allowed" });
 

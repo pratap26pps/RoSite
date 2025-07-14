@@ -1,7 +1,7 @@
  
 
-import connectDB from "@/src/lib/dbConnect";
-import User from "@/src/models/users";
+import dbConnect from '../../../lib/dbConnect';
+import User from '../../../models/users';
 import { getServerSession } from "next-auth/next";
 import Nextauth from "./[...nextauth]";
 import { parse } from "cookie";
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   if (req.method !== "DELETE")
     return res.status(405).json({ message: "Method not allowed" });
 
-  await connectDB();
+  await dbConnect();
 
   const session = await getServerSession(req, res, Nextauth);
   const cookies = parse(req.headers.cookie || "");

@@ -1,9 +1,9 @@
 import { parse } from "cookie";
-import connectDB from "@/src/lib/dbConnect";
-import users from "@/src/models/users";
+import dbConnect from '../../../lib/dbConnect';
+import users from '../../../models/users';
 
 export default async function handler(req, res) {
-  await connectDB();
+  await dbConnect();
 
   const { customUser } = parse(req.headers.cookie || "");
 

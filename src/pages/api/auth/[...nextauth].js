@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import connectDB from "@/src/lib/dbConnect";
-import users from "@/src/models/users";
+import dbConnect from "../../../lib/dbConnect";
+import users from "../../../models/users";
 export default NextAuth({
   providers: [
     GoogleProvider({
@@ -14,7 +14,7 @@ export default NextAuth({
   callbacks: {
     async signIn({ user, profile }) {
       try {
-        await connectDB();
+        await dbConnect();
         const existingUser = await users.findOne({ email: user.email });
 
         if (!existingUser) {
