@@ -62,7 +62,7 @@ export default function AddCategoryProduct() {
     const formData = new FormData();
     files.forEach(file => formData.append('image', file));
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/uploadproductimages', {
         method: 'POST',
         body: formData,
       });
@@ -89,6 +89,7 @@ export default function AddCategoryProduct() {
     try {
       // Prepare data for API
       const categoriesData = categories.map(cat => ({
+        id: cat.id,
         name: cat.name,
         description: cat.description
       }));

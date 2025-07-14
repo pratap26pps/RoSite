@@ -1,7 +1,7 @@
 import dbConnect from '../../../lib/dbConnect';
 import Category from '../../../models/Category';
 import Product from '../../../models/Product';
-
+import { generateProductCode } from '@/src/lib/generateProductCode';
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
@@ -50,6 +50,16 @@ export default async function handler(req, res) {
                 const savedCategory = await category.save();
                 results.categories.push(savedCategory);
 
+
+                const slugify = (text) => {
+                    return text
+                      .toString()                   // Ensure it's a string
+                      .toLowerCase()                // Convert to lowercase
+                      .trim()                       // Remove whitespace from both ends
+                      .replace(/[\s\W-]+/g, '-')    // Replace spaces & non-word chars with dash
+                      .replace(/^-+|-+$/g, '');     // Trim starting and ending dashes
+                  };
+
                 // Process products for this category
                 if (products && products[categoryData.id] && Array.isArray(products[categoryData.id])) {
                     for (const productData of products[categoryData.id]) {
@@ -62,7 +72,9 @@ export default async function handler(req, res) {
                             }
                             // Create product
                             const product = new Product({
-                                name: productData.name,
+                                 name: productData.name,
+                                 slug: slugify(productData.name),
+                                skuid: await generateProductCode(),
                                 price: parseFloat(productData.price),
                                 quantity: parseInt(productData.quantity),
                                 description: productData.description || '',

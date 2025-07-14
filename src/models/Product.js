@@ -1,6 +1,16 @@
 import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema({
+    skuid: {
+    type: String,
+    unique: true,
+    required: true,
+    },
+    slug: {
+    type: String,
+    unique: true,
+    required: true,
+    },
     name: { 
         type: String, 
         required: true,
