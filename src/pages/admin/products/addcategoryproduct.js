@@ -14,10 +14,12 @@ export default function AddCategoryProduct() {
     name: "",
     price: "",
     quantity:"",
-    image: null,
+    images: [],
     description: "",
   });
   const [products, setProducts] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   // Add a new category
   const handleAddCategory = (e) => {
