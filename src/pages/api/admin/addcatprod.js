@@ -1,6 +1,6 @@
-import dbConnect from '../../../lib/dbConnect';
-import Category from '../../../models/Category';
-import Product from '../../../models/Product';
+import dbConnect from '@/src/lib/dbConnect';
+import Category from '@/src/models/Category';
+import Product from '@/src/models/Product';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
