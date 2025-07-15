@@ -23,27 +23,17 @@ import {
     AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { Pencil, Trash2 } from "lucide-react";
-import { useSelector } from "react-redux";
-
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { useSelector, useDispatch } from "react-redux";
+import { setProducts,updateProduct,removeProduct } from "@/src/redux/slices/productSlice";
+ 
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const categoriesList = ["RO Purifier", "Water Supply"];
 
-// const initialData = useSelector((state) => state.product.products);
- 
-
-
 export default function ProductHistory() {
-
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
+    const products = useSelector((state) => state.product.products);
     const [searchTerm, setSearchTerm] = useState("");
     const [deleteId, setDeleteId] = useState(null);
     const [editProduct, setEditProduct] = useState(null);
@@ -56,14 +46,14 @@ export default function ProductHistory() {
                 const res = await fetch('/api/products');
                 const data = await res.json();
                 if (data.success && Array.isArray(data.products)) {
-                    setProducts(data.products);
+                    dispatch(setProducts(data.products));
                 }
             } catch (err) {
                  console.log(err);
             }
         }
         fetchProducts();
-    }, []);
+    }, [dispatch]);
 
     const filteredProducts = products.filter(
         (p) =>
@@ -71,56 +61,42 @@ export default function ProductHistory() {
             (p.category && p.category.name && p.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (deleteId) {
-            setProducts(products.filter((p) => p.id !== deleteId));
+            try {
+                const res = await fetch('/api/admin/deleteproduct', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: deleteId })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    dispatch(removeProduct(deleteId));
+                }
+            } catch (err) {
+                // Optionally handle error
+            }
             setDeleteId(null);
         }
     };
 
-    const handleUpdateProduct = () => {
+    const handleUpdateProduct = async () => {
         if (!editProduct?.id) return;
-        setProducts((prev) =>
-            prev.map((p) => (p.id === editProduct.id ? editProduct : p))
-        );
+        try {
+            const res = await fetch('/api/admin/editproduct', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editProduct)
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                dispatch(updateProduct(data.product));
+            }
+        } catch (err) {
+            // Optionally handle error
+        }
         setIsDialogOpen(false);
     };
-
-console.log("products",products)
-    // Modal component (copied and adapted from dashboard.js)
-    const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
-      React.useEffect(() => {
-        if (isOpen) {
-          document.body.style.overflow = "hidden";
-        } else {
-          document.body.style.overflow = "unset";
-        }
-        return () => (document.body.style.overflow = "unset");
-      }, [isOpen]);
-      if (!isOpen) return null;
-      return (
-        <div className={`fixed inset-0 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}
-      style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(8px)' }}>
-      <div
-        className="bg-white rounded-xl shadow-2xl ring-4 ring-blue-400/20 w-full max-w-lg transform transition-all overflow-hidden focus:outline-none"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
-        <div className="px-6 py-4 border-b flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900" id="modal-title">{title}</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-          >
-            ×
-          </button>
-        </div>
-        <div className="px-6 py-4 max-h-[80vh] overflow-y-auto">{children}</div>
-      </div>
-    </div>
-  );
-};
 
     return (
         <div className="w-full px-1 sm:px-4   min-h-screen transition-colors duration-300">
