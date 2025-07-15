@@ -155,21 +155,21 @@ const MyShoppingCart = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span className="flex"> <IndianRupee className="w-5 h-5" /> {subtotal.toFixed(2)}</span>
               </div>
               {savings > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>You saved</span>
-                  <span>-${savings.toFixed(2)}</span>
+                  <span className="flex"> <IndianRupee className="w-5 h-5" /> {savings.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                <span className="flex"> <IndianRupee className="w-5 h-5" />  {shipping === 0 ? "Free" : `${shipping.toFixed(2)}`}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax</span>
-                <span>${tax.toFixed(2)}</span>
+                <span className="flex"> <IndianRupee className="w-5 h-5" /> {tax.toFixed(2)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-green-600">
@@ -179,7 +179,7 @@ const MyShoppingCart = () => {
               )}
               <div className="border-t pt-3 mt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span className="text-blue-600">${total.toFixed(2)}</span>
+                <span className="text-blue-600 flex"> <IndianRupee className="w-5 " /> {total.toFixed(2)}</span>
               </div>
             </div>
 
