@@ -18,9 +18,9 @@ import {
   increaseQty,
   decreaseQty,
 } from "../redux/slices/cartSlice";
-import { IndianRupee } from "lucide-react";
+import { IndianRupee ,ShoppingCart} from "lucide-react";
 
-const ShoppingCart = () => {
+const MyShoppingCart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const user = useSelector((state) => state.auth.user);
@@ -67,14 +67,7 @@ const ShoppingCart = () => {
     router.push("/customer/billingorder");
   };
 
-  const handlePromoApply = () => {
-    if (promoCode.toLowerCase() === "save10") {
-      setAppliedPromo({ code: "SAVE10", discount: 10 });
-      toast.success("Promo code applied! 10% off");
-    } else {
-      toast.error("Invalid promo code");
-    }
-  };
+ 
 
   return (
     <div className={`min-h-screen ${theme.bg} pt-24 px-4`}>
@@ -97,12 +90,21 @@ const ShoppingCart = () => {
               <h3 className="text-xl font-semibold mb-6">Your Items</h3>
 
               {cartItems.length === 0 ? (
-                <div className="text-center py-16 opacity-70">Your cart is empty</div>
+                 <div className="text-center ">
+                                <div className="text-6xl mb-4 text-gray-400"><ShoppingCart className="w-24 h-24 mx-auto" /></div>
+                                <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
+                                <p className="text-gray-500 dark:text-gray-400 mb-6">Start shopping to add items to your cart</p>
+                                <button
+                                 onClick={() => router.push("/shop")}
+                                 className="bg-blue-600 text-white px-6 py-3 cursor-pointer rounded-lg hover:bg-blue-700 transition-colors">
+                                  Browse Products
+                                </button>
+                              </div>
               ) : (
                 cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 rounded-lg shadow-sm bg-gray-100"
+                    className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4  rounded-lg  mb-5 bg-gray-100"
                   >
                     <img
                       src={item.image}
@@ -126,7 +128,7 @@ const ShoppingCart = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => dispatch(decreaseQty(item.id))}
-                        className="bg-blue-100 p-1 rounded disabled:opacity-50"
+                        className="bg-blue-100 p-1 cursor-pointer rounded disabled:opacity-50"
                         disabled={item.quantity === 1}
                       >
                         <MinusIcon className="h-4 w-4 text-blue-600" />
@@ -134,13 +136,13 @@ const ShoppingCart = () => {
                       <span className="w-6 text-center">{item.quantity}</span>
                       <button
                         onClick={() => dispatch(increaseQty(item.id))}
-                        className="bg-blue-100 p-1 rounded"
+                        className="bg-blue-100 cursor-pointer p-1 rounded"
                       >
                         <PlusIcon className="h-4 w-4 text-blue-600" />
                       </button>
                     </div>
                     <button onClick={() => handleRemove(item.id)}>
-                      <TrashIcon className="h-5 w-5 text-red-500" />
+                      <TrashIcon className="h-5 w-5 cursor-pointer text-red-500" />
                     </button>
                   </div>
                 ))
@@ -237,4 +239,4 @@ const ShoppingCart = () => {
   );
 };
 
-export default ShoppingCart;
+export default MyShoppingCart;

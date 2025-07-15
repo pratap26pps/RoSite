@@ -19,7 +19,11 @@ function NavigationMenu({
         "group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
         className
       )}
-      {...props}>
+      // Disable hover open globally
+      onPointerEnter={undefined}
+      onPointerLeave={undefined}
+      {...props}
+    >
       {children}
       {viewport && <NavigationMenuViewport />}
     </NavigationMenuPrimitive.Root>
@@ -59,11 +63,15 @@ function NavigationMenuTrigger({
   children,
   ...props
 }) {
+  // Remove hover logic: only open on click
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
       className={cn(navigationMenuTriggerStyle(), "group", className)}
-      {...props}>
+      onPointerEnter={undefined}
+      onPointerLeave={undefined}
+      {...props}
+    >
       {children}{" "}
       <ChevronDownIcon
         className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"

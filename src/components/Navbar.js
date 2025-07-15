@@ -8,6 +8,11 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -50,11 +55,11 @@ export default function PremiumNavigation() {
           {/* Logo */}
           <div className="flex relative items-center">
       <Image
-        src="/images/rologo.png"  
+        src="/icons/rologo.png"  
         alt="RO Logo"
-        width={70}
-        height={50}
-        className="cursor-pointer transition-all  -mt-4 duration-300"
+        width={40}
+        height={40}
+        className="cursor-pointer transition-all  rounded-full mt-2 duration-300"
         onClick={() => router.push("/")}
       />
     </div>
@@ -138,52 +143,55 @@ export default function PremiumNavigation() {
           {/* Auth/Login Buttons */}
           <div className="hidden sm:flex items-center gap-6 relative">
             {/* Cart */}
-            <div className="relative group">
+            <div className="relative cursor-pointer">
               <div className="absolute -top-4 -right-2  text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold   border-2 border-slate-900">
                 {totalItems}
               </div>
               <ShoppingCart
                 onClick={() => router.push("/cart")}
-                className="text-slate-900 w-6 h-6 cursor-pointer transition-all duration-300 group-hover:scale-110"
+                className="text-slate-900 w-6 h-6 transition-all duration-300"
               />
             </div>
 
             {user ? (
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="!bg-transparent cursor-pointer p-0 border-none shadow-none hover:bg-transparent">
-                      <div className="flex items-center cursor-pointer gap-3 rounded-lg p-2 transition-all duration-300">
-                        <img
-                          src={user?.image || "images/avatar.png"}
-                          alt="User"
-                          className="w-8 h-8 rounded-full border-2 border-blue-400/50"
-                        />
-                        <p className="text-sm text-slate-900">Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}</p>
-                      </div>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="min-w-[140px] py-2 bg-slate-800/95 backdrop-blur-md border border-blue-500/20 rounded-xl shadow-2xl">
-                      <NavigationMenuLink
-                            onClick={() => router.push("/testdashboard")}
-                      className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                        Dashboard
-                      </NavigationMenuLink>
-                      <NavigationMenuLink
-                       onClick={() => router.push("/cart")}
-                      className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2">
-                        My Cart
-                      </NavigationMenuLink>
-                      <NavigationMenuLink className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2" onClick={handleLogout}>
-                        Logout
-                      </NavigationMenuLink>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+              <Popover>
+      <PopoverTrigger asChild>
+        <div className="flex items-center gap-3 cursor-pointer rounded-lg p-2 transition-all duration-300">
+          <img
+            src={user?.image || "images/avatar.png"}
+            alt="User"
+            className="w-8 h-8 rounded-full border-2 border-blue-400/50"
+          />
+          <p className="text-sm text-slate-900">
+            Hi, {user?.name || `${user?.firstName} ${user?.lastName}`}
+          </p>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="max-w-[150px] py-2 bg-white border border-blue-500/20 rounded-xl ">
+        <div
+          onClick={() => router.push("/dashboard")}
+          className="block cursor-pointer px-4 py-3 text-sm  hover:text-blue-500 rounded-lg"
+        >
+          Dashboard
+        </div>
+        <div
+          onClick={() => router.push("/cart")}
+          className="block cursor-pointer px-4 py-3 text-sm  hover:text-blue-500 rounded-lg"
+        >
+          My Cart
+        </div>
+        <div
+          onClick={handleLogout}
+          className="block cursor-pointer px-4 py-3 text-sm  hover:text-blue-500 rounded-lg"
+        >
+          Logout
+        </div>
+      </PopoverContent>
+    </Popover>
             ) : (
               <button
                 onClick={() => router.push("/authpage")}
-                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
+                className="px-6 py-2 bg-blue-600 cursor-pointer text-white rounded-lg font-medium "
               >
                 Login
               </button>
@@ -312,7 +320,7 @@ export default function PremiumNavigation() {
                 <NavigationMenuContent className="min-w-[140px] py-2 bg-slate-700/95 backdrop-blur-md border border-blue-500/20 rounded-xl">
                   <NavigationMenuLink
                     onClick={() => {
-                      router.push("/testdashboard");
+                      router.push("/dashboard");
                       setMenuOpen(false);
                     }}
                     className="block cursor-pointer px-4 py-3 text-sm text-slate-200 hover:bg-blue-700/30 hover:text-blue-300 rounded-lg transition-all duration-300 mx-2"
@@ -344,7 +352,7 @@ export default function PremiumNavigation() {
               router.push("/authpage");
               setMenuOpen(false);
             }}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all duration-300 flex-1"
+            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600  text-white rounded-lg font-medium"
           >
             Login
           </button>

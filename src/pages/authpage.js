@@ -57,7 +57,7 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/testdashboard" });
+    signIn("google", { callbackUrl: "/dashboard" });
   };
 
   const handleSignup = async (e) => {
@@ -123,7 +123,7 @@ export default function AuthPage() {
 
       dispatch(setUser(data.user));
       toast.success("Login successful!");
-      router.push("/testdashboard");
+      router.push("/dashboard");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -132,7 +132,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-600 relative flex items-center justify-center p-4 font-inter">
+    <div className="min-h-screen bg-white py-20 relative flex items-center justify-center p-4 font-inter">
       
 
       <motion.div
@@ -141,10 +141,10 @@ export default function AuthPage() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative z-10 w-full max-w-xl"
       >
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl">
+        <Card className="backdrop-blur-xl bg-gray-700 border-white/20 shadow-2xl">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 font-poppins">
-              ROTECX
+              Ro Technical Xperts
             </CardTitle>
             <CardDescription className="text-white/70">Welcome to the future of authentication</CardDescription>
           </CardHeader>

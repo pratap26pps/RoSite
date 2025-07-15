@@ -60,7 +60,7 @@ const OTPPage = () => {
       if (response.status === 200) {
         toast.success("Email verified successfully!");
         dispatch(setUser(response.data.data));
-        router.push("/testdashboard");
+        router.push("/dashboard");
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);

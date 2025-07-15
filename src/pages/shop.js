@@ -18,7 +18,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import { Search, Filter, DollarSign, Star, ShoppingCart } from "lucide-react";
+import { Search, Filter, DollarSign, Star, ShoppingCart, Menu, X } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
@@ -109,6 +109,9 @@ export default function ShopPage() {
   const [priceRange, setPriceRange] = useState([0, 20000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [addedToCart, setAddedToCart] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [tempPriceRange, setTempPriceRange] = useState([0, 20000]); // default range
+
 const router=useRouter()
  const dispatch = useDispatch()
   const filteredProducts = dummyProducts.filter((product) => {
@@ -128,7 +131,13 @@ const router=useRouter()
     currentPage * PRODUCTS_PER_PAGE
   );
 
-  const handlePageChange = (page) => setCurrentPage(page);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Scroll to top of shop page after pagination
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const carthandler = async (id) => {
     const product = dummyProducts.find((product) => product.id === id);
@@ -142,26 +151,42 @@ const router=useRouter()
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen ">
+      {/* Mobile Hamburger Menu - always top left */}
+      <div className="md:hidden flex items-center px-4 pt-5">
+        <button onClick={() => setSidebarOpen(true)} className="mt-14  text-black">
+          <Menu className="w-7 h-7 text-black" />
+        </button>
+      
+      </div>
+   
 
- 
-      {/* Header Section */}
-      <section className="relative  overflow-hidden">
-       
-       
-        {/* Heading */}
-        <div className="relative z-40 pt-32  text-center">
+ {/* Heading */}
+        <div className="relative  lg:pt-32  text-center">
          
           <p className="text-black text-lg max-w-2xl mx-auto px-4">
             Discover our collection of high-quality water purification systems
           </p>
         </div>
-      </section>
+
 
       <div className="flex flex-col md:flex-row gap-8 px-4 py-10 z-30 relative">
         {/* Sidebar */}
-        <aside className="w-full lg:sticky top-20 self-start   md:w-1/4 space-y-6">
-          <div className="bg-white text-black rounded-2xl p-6 border-2">
+        <aside
+          className={`
+            fixed top-0 md:-mt-28 left-0 h-full w-5/5 max-w-xs bg-white text-black z-50 shadow-lg transform transition-transform duration-300
+            ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            md:static md:translate-x-0 md:w-1/4 md:max-w-none md:h-auto md:shadow-none md:bg-white md:text-black
+          `}
+        >
+          {/* Close button for mobile */}
+          <div className="flex md:hidden justify-between mt-16 items-center p-4 border-b border-gray-200">
+            <h3 className="text-lg font-bold text-black">Filters</h3>
+            <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-lg">
+              <X className="w-6 h-6 text-black" />
+            </button>
+          </div>
+          <div className="p-6 space-y-6 ">
             
             {/* Search */}
             <div className="space-y-3">
@@ -174,9 +199,9 @@ const router=useRouter()
                   placeholder="Name or SQ number"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="bg-slate-800/50 border-slate-600   placeholder:text-slate-100   pl-4 pr-4 py-3 rounded-xl"
+                  className="bg-slate-800/50 border-slate-600   placeholder:text-gray-600   pl-4 pr-4 py-3 rounded-xl"
                 />
-                <Search className="absolute right-3 top-3 w-5 h-5 text-slate-100" />
+                <Search onClick={() => setSidebarOpen(false)} className="absolute right-3 top-3 w-5 h-5 text-slate-100" />
               </div>
             </div>
 
@@ -188,13 +213,17 @@ const router=useRouter()
                 <Filter className="w-5 h-5" />
                 <h3 className="text-lg font-semibold ">Filter by Category</h3>
               </div>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl h-12">
-                  <SelectValue placeholder="Select Category" />
+              <Select value={selectedCategory}
+               onValueChange={(value) => {
+               setSelectedCategory(value);
+               setSidebarOpen(false);
+              }}  >
+                <SelectTrigger className="bg-slate-800/50  w-full rounded-xl h-12">
+                  <SelectValue  placeholder="Select Category" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 text-slate-100 border-slate-600 rounded-xl">
+                <SelectContent  className="bg-slate-800   text-slate-100 border-slate-600 rounded-xl">
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category} className=" hover:bg-slate-700 focus:bg-slate-700">
+                    <SelectItem  key={category} value={category}   className=" hover:bg-slate-700 focus:bg-slate-700">
                       {category}
                     </SelectItem>
                   ))}
@@ -204,34 +233,50 @@ const router=useRouter()
 
             <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
 
-            {/* Price Slider */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2   mb-3">
-                <IndianRupee className="w-5 h-5" />
-                <h3 className="text-lg font-semibold">Price Range</h3>
-              </div>
-              <Slider
-                value={priceRange}
-                onValueChange={setPriceRange}
-                min={0}
-                max={20000}
-                step={500}
-                className="mb-4"
-              />
-              <div className="flex justify-between text-sm">
-                <span className="bg-slate-700/50 px-3 py-1 rounded-lg  ">
-                  ₹{priceRange[0].toLocaleString()}
-                </span>
-                <span className="bg-slate-700/50 px-3 py-1 rounded-lg ">
-                  ₹{priceRange[1].toLocaleString()}
-                </span>
-              </div>
-            </div>
+       {/* Price Slider */}
+<div className="space-y-4">
+  <div className="flex items-center gap-2 mb-3">
+    <IndianRupee className="w-5 h-5" />
+    <h3 className="text-lg font-semibold">Price Range</h3>
+  </div>
+
+  {/* Temporary slider state */}
+  <Slider
+    value={tempPriceRange}
+    onValueChange={(value) => setTempPriceRange(value)}
+    min={0}
+    max={20000}
+    step={500}
+    className="mb-4"
+  />
+
+  {/* Min and Max Labels */}
+  <div className="flex justify-between text-sm">
+    <span className="bg-slate-700/50 px-3 py-1 rounded-lg">
+      ₹{tempPriceRange[0].toLocaleString()}
+    </span>
+    <span className="bg-slate-700/50 px-3 py-1 rounded-lg">
+      ₹{tempPriceRange[1].toLocaleString()}
+    </span>
+  </div>
+
+  {/* Apply Button */}
+  <button
+    onClick={() => {
+      setPriceRange(tempPriceRange);
+      setSidebarOpen(false);
+    }}
+    className="mt-2 bg-gray-500  text-white font-semibold px-4 cursor-pointer py-2 rounded-lg w-full"
+  >
+    Apply Price Filter
+  </button>
+</div>
+
 
             <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
 
             {/* Reviews */}
-            <div className="space-y-3">
+            <div className="space-y-3 hidden lg:block">
               <div className="flex items-center gap-2   mb-3">
                 <Star className="w-5 h-5" />
                 <h3 className="text-lg font-semibold">Recent Reviews</h3>
@@ -260,12 +305,12 @@ const router=useRouter()
         </aside>
 
         {/* Main Product Grid */}
-        <div className="w-full md:w-3/4">
-          <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="w-full md:w-3/4 md:ml-0">
+          <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 mb-12">
             {paginatedProducts.map((product) => (
              <Card
   key={product.id}
-  className=" bg-white border border-gray-200 pb-4 pt-0 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 transform  mx-5"
+  className=" bg-white border border-gray-200 pb-4 pt-0 rounded-2xl overflow-hidden  mx-5"
 >
   <div className="relative overflow-hidden">
     <img
@@ -273,7 +318,7 @@ const router=useRouter()
       alt={product.name}
       className="w-full h-48 object-cover transition-transform duration-300 "
     />
-    <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full shadow">
+    <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
       {product.category}
     </div>
   </div>
@@ -300,7 +345,7 @@ const router=useRouter()
                               <ShoppingCart 
                                 onClick={() => carthandler(product.id)}
       disabled={addedToCart.includes(product.id)}
-      className={` border-2  h-[50px] w-[50px] rounded-lg ${
+      className={` border-2  cursor-pointer h-[50px] w-[50px] rounded-lg ${
         addedToCart.includes(product.id)
           ? "  bg-green-400  cursor-not-allowed"
           : "text-blue-600  hover:text-blue-700"

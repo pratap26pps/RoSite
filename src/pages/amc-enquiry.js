@@ -40,32 +40,48 @@ export default function AmcEnquiry() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-20 px-2">
-      <form onSubmit={handleSubmit} className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 space-y-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">AMC Enquiry Form</h2>
-        {success && <div className="bg-green-100 text-green-800 px-4 py-2 rounded">{success}</div>}
-        {error && <div className="bg-red-100 text-red-800 px-4 py-2 rounded">{error}</div>}
-        <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Name<span className="text-red-500">*</span></label>
-          <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white" required />
+    <div className="relative min-h-screen flex items-center justify-center py-20 px-2 overflow-hidden">
+      {/* High-Quality Blurred Background Image with Overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: `linear-gradient(rgba(30, 41, 59, 0.45), rgba(30, 41, 59, 0.45)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(10px) brightness(0.95)',
+          opacity: 0.9,
+          transition: 'filter 0.3s',
+        }}
+      />
+      {/* Responsive Form Content */}
+      <form onSubmit={handleSubmit} className="relative z-10 w-full max-w-lg bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 backdrop-blur-md border border-blue-100 dark:border-gray-700">
+        <h2 className="text-2xl font-extrabold text-blue-700 dark:text-cyan-300 mb-2 text-center drop-shadow">AMC Enquiry Form</h2>
+        {success && <div className="bg-green-100 text-green-800 px-4 py-2 rounded text-center font-semibold">{success}</div>}
+        {error && <div className="bg-red-100 text-red-800 px-4 py-2 rounded text-center font-semibold">{error}</div>}
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Name<span className="text-red-500">*</span></label>
+            <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+          </div>
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email<span className="text-red-500">*</span></label>
+            <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+          </div>
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Address<span className="text-red-500">*</span></label>
+            <input type="text" name="address" value={form.address} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+          </div>
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Mobile<span className="text-red-500">*</span></label>
+            <input type="tel" name="mobile" value={form.mobile} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+          </div>
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Message (optional)</label>
+            <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" rows={3} />
+          </div>
         </div>
-        <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email<span className="text-red-500">*</span></label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white" required />
-        </div>
-        <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Address<span className="text-red-500">*</span></label>
-          <input type="text" name="address" value={form.address} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white" required />
-        </div>
-        <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Mobile<span className="text-red-500">*</span></label>
-          <input type="tel" name="mobile" value={form.mobile} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white" required />
-        </div>
-        <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Message (optional)</label>
-          <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white" rows={3} />
-        </div>
-        <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl transition disabled:opacity-60">
+        <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold py-2 px-4 rounded-xl transition disabled:opacity-60 shadow-lg">
           {loading ? 'Sending...' : 'Send Enquiry'}
         </button>
       </form>

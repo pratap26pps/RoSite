@@ -108,7 +108,7 @@ export default function Certifications() {
   };
 
   return (
-    <div className="min-h-screen pt-16 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       {/* Hero Section with Background Image */}
       <section className="relative w-full min-h-[60vh] overflow-hidden">
         {/* Background Image */}
@@ -125,7 +125,7 @@ export default function Certifications() {
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center min-h-[60vh] px-4">
           <div className="text-center text-white max-w-4xl">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/20  rounded-full px-6 py-2 mb-6">
               <Award className="w-5 h-5" />
               <span className="text-sm font-medium">Certified Excellence</span>
             </div>
@@ -268,7 +268,7 @@ export default function Certifications() {
                   
                   <div className="flex flex-wrap gap-2">
                     {cert.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+                      <Badge key={index} variant="outline" className="text-xs text-black">
                         {tag}
                       </Badge>
                     ))}
@@ -277,11 +277,11 @@ export default function Certifications() {
                   <Separator />
                   
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button size="sm"   className="flex-1">
                       <Download className="w-4 h-4 mr-2" />
                       Download
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" >
                       <ExternalLink className="w-4 h-4" />
                     </Button>
                   </div>

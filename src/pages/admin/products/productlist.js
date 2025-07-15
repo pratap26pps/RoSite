@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Table,
     TableBody,
@@ -38,78 +38,37 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 const categoriesList = ["RO Purifier", "Water Supply"];
 
 // const initialData = useSelector((state) => state.product.products);
-// Sample RO/Water Purifier product data
-const initialData = [
-    {
-        id: "1",
-        name: "AquaSure Delight",
-        category: "RO Purifier",
-        price: "8499",
-        items: 10,
-        dateAdded: "2025-07-01",
-        image: "/images/image copy 2.png",
-    },
-    {
-        id: "2",
-        name: "AquaSure Delight",
-        category: "RO Purifier",
-        price: "8499",
-        items: 10,
-        dateAdded: "2025-07-01",
-        image: "/images/image copy 2.png",
-    },
-    {
-        id: "3",
-        name: "AquaSure Delight",
-        category: "RO Purifier",
-        price: "8499",
-        items: 10,
-        dateAdded: "2025-07-01",
-        image: "/images/image copy 2.png",
-    },
-    {
-        id: "4",
-        name: "Kent Grand Plus",
-        category: "RO Purifier",
-        price: "14500",
-        items: 5,
-        dateAdded: "2025-07-03",
-        image: "/images/image copy 3.png",
-    },
-    {
-        id: "3",
-        name: "Livpure Glo",
-        category: "RO Purifier",
-        price: "9999",
-        items: 7,
-        dateAdded: "2025-07-04",
-        image: "/images/image copy 4.png",
-    },
-    {
-        id: "4",
-        name: "Aqua Fresh Swift",
-        category: "Water Supply",
-        price: "5999",
-        items: 12,
-        dateAdded: "2025-07-05",
-        image: "/images/image copy 6.png",
-    },
-];
+ 
 
 
 export default function ProductHistory() {
 
-    const [products, setProducts] = useState(initialData);
+    const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [deleteId, setDeleteId] = useState(null);
     const [editProduct, setEditProduct] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+    // Fetch all products from backend on mount
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const res = await fetch('/api/products');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.products)) {
+                    setProducts(data.products);
+                }
+            } catch (err) {
+                 console.log(err);
+            }
+        }
+        fetchProducts();
+    }, []);
 
     const filteredProducts = products.filter(
         (p) =>
             p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.category.toLowerCase().includes(searchTerm.toLowerCase())
+            (p.category && p.category.name && p.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const handleDelete = () => {
@@ -127,6 +86,41 @@ export default function ProductHistory() {
         setIsDialogOpen(false);
     };
 
+console.log("products",products)
+    // Modal component (copied and adapted from dashboard.js)
+    const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
+      React.useEffect(() => {
+        if (isOpen) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "unset";
+        }
+        return () => (document.body.style.overflow = "unset");
+      }, [isOpen]);
+      if (!isOpen) return null;
+      return (
+        <div className={`fixed inset-0 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}
+      style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(8px)' }}>
+      <div
+        className="bg-white rounded-xl shadow-2xl ring-4 ring-blue-400/20 w-full max-w-lg transform transition-all overflow-hidden focus:outline-none"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div className="px-6 py-4 border-b flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900" id="modal-title">{title}</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+        <div className="px-6 py-4 max-h-[80vh] overflow-y-auto">{children}</div>
+      </div>
+    </div>
+  );
+};
 
     return (
         <div className="w-full px-1 sm:px-4   min-h-screen transition-colors duration-300">
@@ -164,97 +158,30 @@ export default function ProductHistory() {
                                             <TableRow key={product.id} className="hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">
                                                     <img
-                                                        src={product.image}
-                                                        alt={product.name}
+                                                        src={product?.images[0]}
+                                                        alt={product?.name}
                                                         className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 dark:border-gray-700 mx-auto"
                                                     />
                                                 </TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product.name}</TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product.category}</TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">₹{product.price}</TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product.items}</TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product.dateAdded}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.name}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.category?.name || ""}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">₹{product?.price}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.quantity}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{new Date(product?.updatedAt).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800 text-center">
                                                     <div className="flex justify-center gap-2">
                                                         {/* edit conformation dialog */}
-                                                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                                            <DialogTrigger asChild>
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="outline"
-                                                                    onClick={() => {
-                                                                        setEditProduct(product);
-                                                                        setIsDialogOpen(true);
-                                                                    }}
-                                                                    className="flex items-center gap-1 border border-blue-400 text-blue-600 dark:border-cyan-400 dark:text-cyan-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:border-blue-500 dark:hover:border-cyan-500 transition-colors"
-                                                                >
-                                                                    <Pencil className="w-4 h-4" /> Edit
-                                                                </Button>
-                                                            </DialogTrigger>
-                                                            <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
-                                                                <DialogHeader>
-                                                                    <DialogTitle className="text-gray-900 dark:text-cyan-200">Edit Product</DialogTitle>
-                                                                </DialogHeader>
-                                                                <div className="space-y-4">
-                                                                    <div>
-                                                                        <Label className="mb-1 block text-gray-800 dark:text-cyan-200">Product Name</Label>
-                                                                        <Input
-                                                                            value={editProduct?.name || ""}
-                                                                            onChange={(e) =>
-                                                                                setEditProduct({ ...editProduct, name: e.target.value })
-                                                                            }
-                                                                            className="dark:bg-gray-900 dark:text-white dark:border-gray-700"
-                                                                        />
-                                                                    </div>
-                                                                    <div>
-                                                                        <Label className="mb-1 block text-gray-800 dark:text-cyan-200">Category</Label>
-                                                                        <Select
-                                                                            value={editProduct?.category}
-                                                                            onValueChange={(value) =>
-                                                                                setEditProduct({ ...editProduct, category: value })
-                                                                            }
-                                                                        >
-                                                                            <SelectTrigger className="dark:bg-gray-900 dark:text-white dark:border-gray-700">
-                                                                                <SelectValue placeholder="Select category" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent className="dark:bg-gray-900 dark:text-white dark:border-gray-700">
-                                                                                {categoriesList.map((cat) => (
-                                                                                    <SelectItem key={cat} value={cat}>
-                                                                                        {cat}
-                                                                                    </SelectItem>
-                                                                                ))}
-                                                                            </SelectContent>
-                                                                        </Select>
-                                                                    </div>
-                                                                    <div>
-                                                                        <Label className="mb-1 block text-gray-800 dark:text-cyan-200">Price (₹)</Label>
-                                                                        <Input
-                                                                            type="number"
-                                                                            value={editProduct?.price || ""}
-                                                                            onChange={(e) =>
-                                                                                setEditProduct({ ...editProduct, price: e.target.value })
-                                                                            }
-                                                                            className="dark:bg-gray-900 dark:text-white dark:border-gray-700"
-                                                                        />
-                                                                    </div>
-                                                                    <div>
-                                                                        <Label className="mb-1 block text-gray-800 dark:text-cyan-200">Items</Label>
-                                                                        <Input
-                                                                            type="number"
-                                                                            value={editProduct?.items || ""}
-                                                                            onChange={(e) =>
-                                                                                setEditProduct({ ...editProduct, items: e.target.value })
-                                                                            }
-                                                                            className="dark:bg-gray-900 dark:text-white dark:border-gray-700"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="flex justify-end gap-2 mt-4">
-                                                                    <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="dark:bg-gray-800 dark:text-cyan-200 dark:border-gray-700">Cancel</Button>
-                                                                    <Button onClick={handleUpdateProduct} className="bg-blue-600 dark:bg-cyan-700 text-white hover:bg-blue-700 dark:hover:bg-cyan-800">Save</Button>
-                                                                </div>
-                                                            </DialogContent>
-                                                        </Dialog>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            onClick={() => {
+                                                                setEditProduct(product);
+                                                                setIsDialogOpen(true);
+                                                            }}
+                                                            className="flex items-center gap-1 border border-blue-400 text-blue-600 bg-white cursor-pointer"
+                                                        >
+                                                            <Pencil className="w-4 h-4" /> Edit
+                                                        </Button>
                                                         {/* delete confirmation dialog */}
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
@@ -262,12 +189,12 @@ export default function ProductHistory() {
                                                                     size="sm"
                                                                     variant="outline"
                                                                     onClick={() => setDeleteId(product.id)}
-                                                                    className="flex items-center gap-1 border border-red-400 text-red-600 dark:border-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-800 hover:border-red-500 dark:hover:border-red-400 transition-colors"
+                                                                    className="flex items-center gap-1 border border-red-400 text-red-600  bg-red-100 cursor-pointer   "
                                                                 >
                                                                     <Trash2 className="w-4 h-4" /> Delete
                                                                 </Button>
                                                             </AlertDialogTrigger>
-                                                            <AlertDialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                                                            <AlertDialogContent className="bg-white border border-gray-200  ">
                                                                 <AlertDialogHeader>
                                                                     <AlertDialogTitle className="text-gray-900 dark:text-cyan-200">Delete Product</AlertDialogTitle>
                                                                     <AlertDialogDescription className="text-gray-600 dark:text-gray-300">
@@ -297,6 +224,69 @@ export default function ProductHistory() {
                     </div>
                 </div>
             </div>
+            {/* edit modal - custom, not Dialog */}
+            {isDialogOpen && (
+              <Modal isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title="Edit Product">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-1 block text-gray-800">Product Name</Label>
+                    <Input
+                      value={editProduct?.name || ""}
+                      className="text-gray-800"
+
+                      onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
+                    />
+                  </div>
+                  <div >
+                    <Label className="mb-1 block text-gray-800">Category</Label>
+                    <Select
+                      value={editProduct?.category}
+                      className="text-gray-800"
+
+                      onValueChange={(value) => setEditProduct({ ...editProduct, category: value })}
+                    >
+                      <SelectTrigger className="w-[100%]  ">
+                        <SelectValue className=" text-black" placeholder="Select category"  />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoriesList.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-1 block text-gray-800">Price (₹)</Label>
+                    <Input
+                      type="number"
+                      value={editProduct?.price || ""}
+                      className="text-gray-800"
+
+                      onChange={(e) => setEditProduct({ ...editProduct, price: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1 block text-gray-800">Items</Label>
+                    <Input
+                      type="number"
+                      value={editProduct?.quantity || ""}
+                      className="text-gray-800"
+                      onChange={(e) => setEditProduct({ ...editProduct, quantity: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleUpdateProduct} className="bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </Modal>
+            )}
         </div>
     );
 }

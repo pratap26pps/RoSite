@@ -12,6 +12,28 @@ import AddCategoryProduct from './admin/products/addcategoryproduct';
 import CustomerManagement from './admin/userlist';
 import OrderManagement from './admin/order/orderlist';
 import OverviewContent from './admin/overviewcontent';
+import { 
+  BarChart3, 
+  ShoppingCart, 
+  Users, 
+  Plus, 
+  Package, 
+  CheckCircle, 
+  Eye, 
+  Phone, 
+  Truck, 
+  Clock, 
+  ClipboardList,
+  Zap,
+  Edit,
+  Trash2,
+  AlertTriangle,
+  Menu,
+  X,
+  MapPin
+} from "lucide-react";
+import { useRef } from 'react';
+import MyShoppingCart from './cart';
 const AdminDashboard = () => {
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
@@ -21,6 +43,7 @@ const AdminDashboard = () => {
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
  
    const [profileForm, setProfileForm] = useState({
     firstName: "",
@@ -51,19 +74,18 @@ const AdminDashboard = () => {
 
  
   const AdminItems = [
-    { key: 'overview', label: 'Overview', icon: '📊' },
-    { key: 'orders', label: 'Orders', icon: '🛒' },
-    { key: 'customers', label: 'Customers', icon: '👥' },
-    { key: 'Add Category/Product', label: 'Add Category/Product', icon: '⊍' },
-    { key: 'Product-History', label: 'Product-History', icon: '👥' },
+    { key: 'overview', label: 'Overview', icon: <BarChart3 className="w-5 h-5" /> },
+    { key: 'orders', label: 'Orders', icon: <ShoppingCart className="w-5 h-5" /> },
+    { key: 'customers', label: 'Customers', icon: <Users className="w-5 h-5" /> },
+    { key: 'Add Category/Product', label: 'Add Category/Product', icon: <Plus className="w-5 h-5" /> },
+    { key: 'Product-History', label: 'Product-History', icon: <Package className="w-5 h-5" /> },
    
   ];
     const CustomerItems = [
-    { key: 'overview', label: 'Overview', icon: '📊' },
-    { key: 'orders', label: 'My Orders', icon: '🛒' },
-    { key: 'cart', label: 'My Cart', icon: '🛍️' },
-    { key: 'deliveries', label: 'Deliveries', icon: '🚚' },
-    { key: 'settings', label: 'Settings', icon: '⚙️' },
+    { key: 'overview', label: 'Overview', icon: <BarChart3 className="w-5 h-5" /> },
+    { key: 'orders', label: 'My Orders', icon: <ClipboardList className="w-5 h-5" /> },
+    { key: 'cart', label: 'My Cart', icon: <ShoppingCart className="w-5 h-5" /> },
+ 
   ];
 
   const getStatusColor = (status) => {
@@ -79,12 +101,12 @@ const AdminDashboard = () => {
 
   const getStatusIcon = (status) => {
     const icons = {
-      delivered: '✅',
-      shipped: '🚚',
-      pending: '⏳',
-      processing: '⚡'
+      delivered: <CheckCircle className="w-4 h-4 text-green-600" />,
+      shipped: <Truck className="w-4 h-4 text-blue-600" />,
+      pending: <Clock className="w-4 h-4 text-yellow-600" />,
+      processing: <Zap className="w-4 h-4 text-purple-600" />
     };
-    return icons[status] || '⏳';
+    return icons[status] || <Clock className="w-4 h-4 text-gray-600" />;
   };
  
    const handleProfileUpdate = async (e) => {
@@ -104,6 +126,7 @@ const AdminDashboard = () => {
         name: `${profileForm.firstName} ${profileForm.lastName}`
       };
       dispatch(setUser(updatedUser));
+      setProfileModalVisible(false)
     } catch (err) {
       toast.error(err.response || "Update failed!");
     } finally {
@@ -159,7 +182,7 @@ const AdminDashboard = () => {
       id: 'ORD-001',
       customer: 'Alice Johnson',
       product: 'Wireless Headphones',
-      amount: '$129.99',
+      amount: '129.99',
       status: 'delivered',
       date: '2024-01-14',
       address: '123 Main St, New York'
@@ -168,7 +191,7 @@ const AdminDashboard = () => {
       id: 'ORD-002',
       customer: 'Bob Smith',
       product: 'Smart Watch',
-      amount: '$299.99',
+      amount: '299.99',
       status: 'pending',
       date: '2024-01-15',
       address: '456 Oak Ave, Los Angeles'
@@ -177,7 +200,7 @@ const AdminDashboard = () => {
       id: 'ORD-003',
       customer: 'Carol Davis',
       product: 'Laptop Stand',
-      amount: '$49.99',
+      amount: '49.99',
       status: 'shipped',
       date: '2024-01-13',
       address: '789 Pine Rd, Chicago'
@@ -186,17 +209,21 @@ const AdminDashboard = () => {
       id: 'ORD-004',
       customer: 'David Wilson',
       product: 'Bluetooth Speaker',
-      amount: '$89.99',
+      amount: '89.99',
       status: 'processing',
       date: '2024-01-15',
       address: '321 Elm St, Miami'
     }
   ]);
 
+  const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [ordersState, setOrdersState] = useState(orders);
+  const [trackModalOpen, setTrackModalOpen] = useState(false);
+  const [trackOrder, setTrackOrder] = useState(null);
 
 
-
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -210,9 +237,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div className={`fixed inset-0 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}>
       <div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg transform transition-all overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl ring-4 ring-blue-400/20 w-full max-w-lg transform transition-all overflow-hidden focus:outline-none"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -250,37 +277,32 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           return (
             <div className="space-y-6 animate-fade-in">
               {/* Customer Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
                 <StatCard
                   title="My Orders"
-                  value={5}
-                  icon="🛒"
+                  value={ordersState.length}
+                  icon={<ShoppingCart className="w-8 h-8 text-blue-600" />}
                   color="text-blue-600"
                 />
-                <StatCard
-                  title="Total Spent"
-                  value={1250}
-                  icon="💰"
-                  color="text-green-600"
-                />
+               
                 <StatCard
                   title="Active Orders"
-                  value={2}
-                  icon="📦"
+                  value={ordersState.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length}
+                  icon={<Package className="w-8 h-8 text-purple-600" />}
                   color="text-purple-600"
                 />
                 <StatCard
                   title="Delivered"
-                  value={3}
-                  icon="✅"
+                  value={ordersState.filter(o => o.status === 'delivered').length}
+                  icon={<CheckCircle className="w-8 h-8 text-green-600" />}
                   color="text-green-600"
                 />
               </div>
 
               {/* Customer Content Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                 {/* Recent Orders */}
-                <div className="lg:col-span-2">
+                <div className="xl:col-span-7">
                   <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Recent Orders</h3>
@@ -298,7 +320,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                           </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                          {orders.slice(0, 3).map(order => (
+                          {ordersState.slice(0, 3).map(order => (
                             <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
@@ -310,15 +332,16 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                                 <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                                  {getStatusIcon(order.status)} {order.status.toUpperCase()}
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}> 
+                                  {getStatusIcon(order.status)} <span className="ml-1">{order.status.toUpperCase()}</span>
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                                 {order.date}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
+                                 <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" onClick={() => { setSelectedOrder(order); setOrderModalOpen(true); }}><Eye className="w-4 h-4" /></button>
+                                 <button className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 ml-2" onClick={() => { setTrackOrder(order); setTrackModalOpen(true); }} title="Track Order"><MapPin className="w-4 h-4" /></button>
                               </td>
                             </tr>
                           ))}
@@ -328,28 +351,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div>
-                  <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>
-                    </div>
-                    <div className="p-4 space-y-3">
-                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors">
-                        <span className="text-xl">🛒</span>
-                        <span className="font-medium">Place New Order</span>
-                      </button>
-                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 transition-colors">
-                        <span className="text-xl">📞</span>
-                        <span className="font-medium">Contact Support</span>
-                      </button>
-                      <button className="w-full flex items-center space-x-3 p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 transition-colors">
-                        <span className="text-xl">📋</span>
-                        <span className="font-medium">View All Orders</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
             </div>
           );
@@ -372,7 +374,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {orders.map(order => (
+                    {ordersState.map(order => (
                       <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
@@ -385,7 +387,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                            {getStatusIcon(order.status)} {order.status.toUpperCase()}
+                            {getStatusIcon(order.status)} <span className="ml-1">{order.status.toUpperCase()}</span>
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
@@ -393,8 +395,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <div className="flex space-x-2">
-                            <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
-                            <button className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">📞</button>
+                            <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" onClick={() => { setSelectedOrder(order); setOrderModalOpen(true); }}><Eye className="w-4 h-4" /></button>
+                           <button className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" onClick={() => { setTrackOrder(order); setTrackModalOpen(true); }} title="Track Order"><MapPin className="w-4 h-4" /></button>
                           </div>
                         </td>
                       </tr>
@@ -405,63 +407,15 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             </div>
           );
         case 'cart':
-          return (
-            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">My Shopping Cart</h3>
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🛒</div>
-                <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">Start shopping to add items to your cart</p>
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                  Browse Products
-                </button>
-              </div>
+          return ( 
+            <div className='-mt-24 -ml-6'>
+            <MyShoppingCart/>
             </div>
+          
+           
           );
-        case 'deliveries':
-          return (
-            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">My Deliveries</h3>
-              <div className="space-y-4">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">Order ORD-001</h4>
-                    <span className="text-sm text-green-600">Delivered</span>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Delivered on 2024-01-14</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Address: 123 Main St, New York</p>
-                </div>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">Order ORD-002</h4>
-                    <span className="text-sm text-yellow-600">In Transit</span>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Expected delivery: 2024-01-16</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Address: 456 Oak Ave, Los Angeles</p>
-                </div>
-              </div>
-            </div>
-          );
-        case 'settings':
-          return (
-            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Account Settings</h3>
-              <div className="space-y-4">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Profile Information</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Manage your personal information and preferences</p>
-                </div>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Notification Settings</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Configure how you receive notifications</p>
-                </div>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Security Settings</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Update your password and security preferences</p>
-                </div>
-              </div>
-            </div>
-          );
+        
+        
         default:
           return <OverviewContent />;
       }
@@ -541,111 +495,140 @@ const handleChange = (e) => {
   );
 
   return (
-    <div className='min-h-screen pb-24 pt-5'>
-
-      {/* Animated Background */}
-      <div className="fixed  inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"></div>
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-500/10 dark:to-purple-500/10 blur-sm animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${20 + Math.random() * 40}px`,
-              height: `${20 + Math.random() * 40}px`,
-              animationDelay: `${Math.random() * 20}s`,
-              animationDuration: `${15 + Math.random() * 10}s`
-            }}
-          />
-        ))}
-      </div>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50 pb-24 pt-2 relative'>
+      {(orderModalOpen || trackModalOpen || profileModalVisible || deleteModalVisible) && (
+        <div className="fixed inset-0 z-[100] bg-white/10 backdrop-blur-sm transition-all"></div>
+      )}
 
       <div className="flex h-screen relative top-20 z-10">
         {/* Sidebar */}
-        <div className={`${collapsed ? 'w-20' : 'w-80'}  h-[90%] transition-all duration-300 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-r border-gray-200 dark:border-gray-700 flex flex-col shadow-xl`}>
-          {/* Profile Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center space-x-3">
-              <img
-                src={user?.image}
-                alt="Profile"
-                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
-              />
-              {!collapsed && (
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{ user?.name || `${user.firstName} ${user?.lastName}` }</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{user?.role}</p>
+        <div className={`lg:relative h-[88%] fixed inset-y-0 left-0 z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-r border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 transform ${
+          collapsed ? 'w-20' : 'w-64'
+        } ${
+          sidebarOpen ? 'translate-x-0 top-20' : '-translate-x-full lg:translate-x-0 lg:top-0'
+        }`}>
+          <div className="flex flex-col h-full">
+            {/* User Profile Section */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center space-x-3">
+                <img
+                  src={user?.image}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                />
+                {!collapsed && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{ user?.name || `${user.firstName} ${user?.lastName}` }</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{user?.role}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-4 overflow-y-auto">
+              {
+                user.role === "admin" ? 
+              
+              <ul className="space-y-2">
+                {AdminItems.map(item => (
+                  <li key={item.key}>
+                    <button
+                      onClick={() => {
+                        setSelectedMenuItem(item.key);
+                        // Close sidebar on mobile after clicking menu item
+                        if (window.innerWidth < 1024) {
+                          setSidebarOpen(false);
+                        }
+                      }}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                        selectedMenuItem === item.key
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
+                      }`}
+                    >
+                      <span className="text-xl">{item.icon}</span>
+                      {!collapsed && <span className="font-medium">{item.label}</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              :
+              
+              <ul className="space-y-2">
+                {CustomerItems.map(item => (
+                  <li key={item.key}>
+                    <button
+                      onClick={() => {
+                        setSelectedMenuItem(item.key);
+                        // Close sidebar on mobile after clicking menu item
+                        if (window.innerWidth < 1024) {
+                          setSidebarOpen(false);
+                        }
+                      }}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                        selectedMenuItem === item.key
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
+                      }`}
+                    >
+                      <span className="text-xl">{item.icon}</span>
+                      {!collapsed && <span className="font-medium">{item.label}</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              }
+            </nav>
+
+            {/* Profile Actions - Bottom of Sidebar */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+              {!collapsed ? (
+                <>
+                <button
+                  onClick={() => setProfileModalVisible(true)}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span>Edit Profile</span>
+                </button>
+                <button
+                  onClick={() => setDeleteModalVisible(true)}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete Account</span>
+                </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center space-y-3">
+                  <button
+                    onClick={() => setProfileModalVisible(true)}
+                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    title="Edit Profile"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setDeleteModalVisible(true)}
+                    className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    title="Delete Account"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4">
-            {
-              user.role === "admin" ? 
-            
-            <ul className="space-y-2">
-              {AdminItems.map(item => (
-                <li key={item.key}>
-                  <button
-                    onClick={() => setSelectedMenuItem(item.key)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                      selectedMenuItem === item.key
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
-                    }`}
-                  >
-                    <span className="text-xl">{item.icon}</span>
-                    {!collapsed && <span className="font-medium">{item.label}</span>}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            :
-             
-            <ul className="space-y-2">
-              {CustomerItems.map(item => (
-                <li key={item.key}>
-                  <button
-                    onClick={() => setSelectedMenuItem(item.key)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                      selectedMenuItem === item.key
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
-                    }`}
-                  >
-                    <span className="text-xl">{item.icon}</span>
-                    {!collapsed && <span className="font-medium">{item.label}</span>}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            }
-          </nav>
-
-          {/* Profile Actions */}
-          {!collapsed && (
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
-              <button
-                onClick={() => setProfileModalVisible(true)}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                <span>✏️</span>
-                <span>Edit Profile</span>
-              </button>
-              <button
-                onClick={() => setDeleteModalVisible(true)}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                <span>🗑️</span>
-                <span>Delete Account</span>
-              </button>
-            </div>
-          )}
         </div>
+
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -653,10 +636,16 @@ const handleChange = (e) => {
           <header className="h-16  bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => {
+                  if (window.innerWidth < 1024) {
+                    setSidebarOpen(!sidebarOpen);
+                  } else {
+                    setCollapsed(!collapsed);
+                  }
+                }}
+                className="p-2 rounded-lg  text-gray-700 transition-colors"
               >
-                <span className="text-xl">{collapsed ? '☰' : '✕'}</span>
+                {collapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
               </button>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {user.role === "admin" 
@@ -666,14 +655,7 @@ const handleChange = (e) => {
               </h1>
             </div>
             
-            <div className="flex items-center space-x-4">
-              
-              <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">
-                <span className="text-xl">🔔</span>
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
-              </button>
-             
-            </div>
+          
           </header>
 
           {/* Content */}
@@ -683,11 +665,58 @@ const handleChange = (e) => {
         </div>
       </div>
 
+      {/* Place global modals here, after all dashboard content and overlay */}
+      <Modal
+        isOpen={orderModalOpen}
+        onClose={() => setOrderModalOpen(false)}
+        title={selectedOrder ? `Order Details - ${selectedOrder.id}` : 'Order Details'}
+        modalClassName="z-[110]"
+      >
+        {selectedOrder && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Product:</strong> {selectedOrder.product}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {selectedOrder.amount}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Status:</strong> {selectedOrder.status}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Date:</strong> {selectedOrder.date}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Address:</strong> {selectedOrder.address}</p>
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                onClick={() => {
+                  setOrdersState(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: 'cancelled' } : o));
+                  setOrderModalOpen(false);
+                }}
+              >
+                Cancel Order
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+      <Modal
+        isOpen={trackModalOpen}
+        onClose={() => setTrackModalOpen(false)}
+        title={trackOrder ? `Track Order - ${trackOrder.id}` : 'Track Order'}
+        modalClassName="z-[110]"
+      >
+        {trackOrder && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Address:</strong> {trackOrder.address}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Status:</strong> {trackOrder.status}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Date:</strong> {trackOrder.date}</p>
+            </div>
+          </div>
+        )}
+      </Modal>
       {/* Profile Modal */}
       <Modal
         isOpen={profileModalVisible}
         onClose={() => setProfileModalVisible(false)}
         title="Edit Profile"
+        modalClassName="z-[120]"
       >
         <div className="space-y-4">
            <div>
@@ -771,9 +800,10 @@ const handleChange = (e) => {
         isOpen={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
         title="Delete Account"
+        modalClassName="z-[120]"
       >
         <div className="text-center space-y-4">
-          <div className="text-6xl">⚠️</div>
+          <div className="text-6xl text-yellow-500"><AlertTriangle className="w-24 h-24 mx-auto" /></div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Are you absolutely sure?</h3>
           <p className="text-gray-600 dark:text-gray-400">
             This action cannot be undone. This will permanently delete your account

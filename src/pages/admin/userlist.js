@@ -124,7 +124,7 @@ export default function CustomerManagement() {
                 <TableCell className="text-center space-x-2">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="border-blue-400 text-blue-700 dark:border-cyan-400 dark:text-cyan-300 hover:bg-blue-50 dark:hover:bg-gray-800">View Orders</Button>
+                      <Button size="sm" variant="outline" className="border-blue-400 text-blue-700 bg-blue-50">View Orders</Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-md bg-white dark:bg-gray-900 border border-blue-100 dark:border-gray-700 rounded-xl shadow-xl">
                       <DialogHeader>

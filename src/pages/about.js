@@ -50,7 +50,7 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4">
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Droplets className="w-16 h-16 mx-auto mb-4 text-blue-500 animate-bounce" />
+          <Droplets className="w-16 h-16 mx-auto mb-4 text-blue-500  " />
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
             RO Technical Experts
           </h1>

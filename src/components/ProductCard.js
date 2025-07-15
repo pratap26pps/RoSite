@@ -71,6 +71,7 @@ export function CarouselSize() {
   const dispatch = useDispatch();
   const [addedToCartIds, setAddedToCartIds] = useState([]);
   const [addedToCart, setAddedToCart] = useState([]);
+
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
     toast.success(`${product.name} added to cart!`);
@@ -78,14 +79,12 @@ export function CarouselSize() {
   };
 
     const carthandler = async (id) => {
-    const product = dummyProducts.find((product) => product.id === id);
+    const product = products.find((product) => product.id === id);
     if (!product) return;
 
     dispatch(addToCart(product));
     toast.success(`${product.name} is added`);
-    console.log(`Added ${product.name} to cart`);
-
-      setAddedToCart((prev) => [...prev, id]);
+    setAddedToCart((prev) => [...prev, id]);
   };
 
   return (
@@ -111,7 +110,7 @@ export function CarouselSize() {
                 className="pl-2 md:pl-4 basis-[85%] xs:basis-[80%] sm:basis-[60%] md:basis-[45%] lg:basis-[33.333%] xl:basis-[25%]"
               >
                 <div className="h-full">
-                  <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col justify-between border border-gray-200 overflow-hidden group hover:scale-[1.02] hover:-translate-y-1">
+                  <div className="bg-white rounded-2xl   transition-all duration-300 h-full flex flex-col justify-between border border-gray-200 overflow-hidden ">
                     {/* Image Container */}
                     <div className="relative w-full h-56 overflow-hidden">
                       {product.bestSeller && (
@@ -153,16 +152,16 @@ export function CarouselSize() {
 
                         <div className="flex items-center justify-center gap-4">
                                   <ShoppingCart
-                                onClick={() => handleAddToCart(product.id)}
+                                onClick={() => carthandler(product.id)}
       disabled={addedToCart?.includes(product.id)}
-      className={`t scale-200 ${
-        addedToCart?.includes(product.id)
-          ? "bg-green-600 text-white cursor-not-allowed"
+      className={` border-2 cursor-pointer  h-[50px] w-[50px] rounded-lg ${
+        addedToCart.includes(product.id)
+          ? "  bg-green-400  cursor-not-allowed"
           : "text-blue-600  hover:text-blue-700"
       } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
                              />
-                          <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer" alt="Amazon" width={36} height={36} />
-                          <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer" alt="Flipkart" width={36} height={36} />
+                          <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"   className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
+                          <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"   className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
                         </div>
                       </div>
                     </div>

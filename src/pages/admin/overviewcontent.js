@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ShoppingCart, DollarSign, Users, CheckCircle, Eye, Pencil, Trash2, User, CreditCard, Truck, Clock, Bolt } from "lucide-react";
 
 export default function OverviewContent() {
   // Dashboard stats
@@ -8,25 +9,22 @@ export default function OverviewContent() {
     totalRevenue: 98450,
     activeUsers: 3421,
     deliveredOrders: 1089,
-    pendingOrders: 158,
-    orderGrowth: 12.5,
-    revenueGrowth: 8.3,
-    userGrowth: 15.2
+     
   });
 
   // Recent orders
   const [orders] = useState([
     {
-      id: 'ORD-001', customer: 'Alice Johnson', product: 'Wireless Headphones', amount: '$129.99', status: 'delivered', date: '2024-01-14', address: '123 Main St, New York'
+      id: 'ORD-001', customer: 'Alice Johnson', product: 'Wireless Headphones', amount: '129.99', status: 'delivered', date: '2024-01-14', address: '123 Main St, New York'
     },
     {
-      id: 'ORD-002', customer: 'Bob Smith', product: 'Smart Watch', amount: '$299.99', status: 'pending', date: '2024-01-15', address: '456 Oak Ave, Los Angeles'
+      id: 'ORD-002', customer: 'Bob Smith', product: 'Smart Watch', amount: '299.99', status: 'pending', date: '2024-01-15', address: '456 Oak Ave, Los Angeles'
     },
     {
-      id: 'ORD-003', customer: 'Carol Davis', product: 'Laptop Stand', amount: '$49.99', status: 'shipped', date: '2024-01-13', address: '789 Pine Rd, Chicago'
+      id: 'ORD-003', customer: 'Carol Davis', product: 'Laptop Stand', amount: '49.99', status: 'shipped', date: '2024-01-13', address: '789 Pine Rd, Chicago'
     },
     {
-      id: 'ORD-004', customer: 'David Wilson', product: 'Bluetooth Speaker', amount: '$89.99', status: 'processing', date: '2024-01-15', address: '321 Elm St, Miami'
+      id: 'ORD-004', customer: 'David Wilson', product: 'Bluetooth Speaker', amount: '89.99', status: 'processing', date: '2024-01-15', address: '321 Elm St, Miami'
     }
   ]);
 
@@ -99,18 +97,18 @@ export default function OverviewContent() {
   };
   const getStatusIcon = (status) => {
     const icons = {
-      delivered: '✅',
-      shipped: '🚚',
-      pending: '⏳',
-      processing: '⚡'
+      delivered: <CheckCircle className="w-4 h-4 text-green-600" />, // delivered
+      shipped: <Truck className="w-4 h-4 text-blue-600" />, // shipped
+      pending: <Clock className="w-4 h-4 text-yellow-600" />, // pending
+      processing: <Bolt className="w-4 h-4 text-purple-600" /> // processing
     };
-    return icons[status] || '⏳';
+    return icons[status] || <Clock className="w-4 h-4 text-gray-600" />;
   };
 
   // Stat card
   const StatCard = ({ title, value, icon, growth, color }) => (
     <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 dark:border-gray-700/50">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{title}</p>
           <p className={`text-2xl font-bold ${color}`}>{value.toLocaleString()}</p>
@@ -137,14 +135,14 @@ export default function OverviewContent() {
         <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>{getStatusIcon(order.status)} {order.status.toUpperCase()}</span>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>{getStatusIcon(order.status)} <span className="ml-1">{order.status.toUpperCase()}</span></span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.date}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <div className="flex space-x-2">
-          <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">👁️</button>
-          <button className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">✏️</button>
-          <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">🗑️</button>
+          <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"><Eye className="w-4 h-4" /></button>
+          <button className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300"><Pencil className="w-4 h-4" /></button>
+          <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
         </div>
       </td>
     </tr>
@@ -154,10 +152,10 @@ export default function OverviewContent() {
   const ActivityItem = ({ activity }) => (
     <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors">
       <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-        {activity.type === 'order' && '🛒'}
-        {activity.type === 'user' && '👤'}
-        {activity.type === 'payment' && '💳'}
-        {activity.type === 'shipping' && '🚚'}
+        {activity.type === 'order' && <ShoppingCart className="w-4 h-4" />}
+        {activity.type === 'user' && <User className="w-4 h-4" />}
+        {activity.type === 'payment' && <CreditCard className="w-4 h-4" />}
+        {activity.type === 'shipping' && <Truck className="w-4 h-4" />}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-gray-900 dark:text-gray-100">{activity.action}</p>
@@ -204,17 +202,17 @@ export default function OverviewContent() {
         </div>
       </div>
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Orders" value={dashboardData.totalOrders} icon="🛒" growth={dashboardData.orderGrowth} color="text-green-600" />
-        <StatCard title="Total Revenue" value={dashboardData.totalRevenue} icon="💰" growth={dashboardData.revenueGrowth} color="text-blue-600" />
-        <StatCard title="Active Users" value={dashboardData.activeUsers} icon="👥" growth={dashboardData.userGrowth} color="text-purple-600" />
-        <StatCard title="Delivered Orders" value={dashboardData.deliveredOrders} icon="✅" color="text-green-600" />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <StatCard title="Total Orders" value={dashboardData.totalOrders} icon={<ShoppingCart className="w-8 h-8 text-green-600" />} growth={dashboardData.orderGrowth} color="text-green-600" />
+        <StatCard title="Total Revenue" value={dashboardData.totalRevenue} icon={<DollarSign className="w-8 h-8 text-blue-600" />} growth={dashboardData.revenueGrowth} color="text-blue-600" />
+        <StatCard title="Active Users" value={dashboardData.activeUsers} icon={<Users className="w-8 h-8 text-purple-600" />} growth={dashboardData.userGrowth} color="text-purple-600" />
+        <StatCard title="Delivered Orders" value={dashboardData.deliveredOrders} icon={<CheckCircle className="w-8 h-8 text-green-600" />} color="text-green-600" />
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Recent Orders */}
-        <div className="lg:col-span-2">
+        <div className="xl:col-span-2">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Orders</h3>

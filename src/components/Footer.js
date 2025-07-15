@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { ChevronDown, ChevronUp, MapPin, Phone, Mail, Youtube } from "lucide-react";
 
 const faqs = [
   {
@@ -50,9 +50,9 @@ export default function Footer() {
                 <div className="flex justify-between items-center">
                   <h3 className="font-semibold text-base text-gray-800 break-words max-w-full">{faq.question}</h3>
                   {activeIndex === i ? (
-                    <FaChevronUp className="text-gray-500" />
+                    <ChevronUp className="text-gray-500 w-5 h-5" />
                   ) : (
-                    <FaChevronDown className="text-gray-500" />
+                    <ChevronDown className="text-gray-500 w-5 h-5" />
                   )}
                 </div>
                 <div
@@ -68,16 +68,20 @@ export default function Footer() {
         </div>
 
         {/* Footer Main Content */}
-        <div className="flex flex-col md:flex-row md:gap-x-12  gap-y-8 md:gap-y-0 w-full">
+        <div className="flex flex-col md:flex-row   gap-y-8 md:gap-y-0 w-full">
           {/* Contact Info */}
           <div className="space-y-3 text-sm flex-1 min-w-0">
-            <h3 className="text-base font-semibold text-gray-900 border-b border-blue-500 pb-2">
+            <h3 className="text-base font-semibold border-b border-blue-500  text-gray-900 pb-2">
               Contact Information
             </h3>
-            <p className="break-words max-w-full">📍 <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
-            <p className="break-words max-w-full">📞 <strong>Phone:</strong> +91-9876543210, +91-9998887776</p>
-            <p className="break-words max-w-full">📧 <strong>Email:</strong> support@rotechnicalxperts.com</p>
-            <p className="break-words max-w-full">📺 <strong>YouTube:</strong>{" "}
+            <p className="break-words max-w-full">
+              <MapPin className="inline w-4 h-4 mr-1" /> <strong>Address:</strong> Ballabhgarh, Faridabad, Haryana – 121004</p>
+            <p className="break-words max-w-full">
+              <Phone className="inline w-4 h-4 mr-1" /> <strong>Phone:</strong> +91-9876543210, +91-9998887776</p>
+            <p className="break-words max-w-full">
+              <Mail className="inline w-4 h-4 mr-1" /> <strong>Email:</strong> support@rotechnicalxperts.com</p>
+            <p className="break-words max-w-full">
+              <Youtube className="inline w-4 h-4 mr-1" /> <strong>YouTube:</strong>{" "}
               <a
                 href="https://youtube.com/@rotechnicalxperts"
                 target="_blank"
@@ -89,11 +93,11 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-y-8 gap-x-12 flex-1 min-w-0">
+ 
             {/* Company Links */}
-            <div className="space-y-2 text-sm min-w-0">
-              <h3 className="text-base font-semibold text-gray-900">Company</h3>
-              <ul className="text-gray-600 space-y-1">
+            <div className="space-y-2   flex flex-col items-center lg:items-start text-sm min-w-0">
+              <h3 className="text-base border-b border-blue-500 pb-2  font-semibold text-gray-900">Company</h3>
+              <ul className="text-gray-600 space-y-3 mt-4">
                 <li><a href="/about" className="break-words max-w-full">About</a></li>
                 <li><a href="#" className="break-words max-w-full">Services</a></li>
                 <li><a href="#" className="break-words max-w-full">Certifications</a></li>
@@ -101,30 +105,12 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Social Links */}
-            <div className="space-y-2 text-sm min-w-0">
-              <h3 className="text-base font-semibold text-gray-900">Social</h3>
-              <ul className="text-gray-600 space-y-1">
-                <li><a href="#" className="break-words max-w-full">Facebook</a></li>
-                <li><a href="#" className="break-words max-w-full">LinkedIn</a></li>
-                <li><a href="#" className="break-words max-w-full">Twitter</a></li>
-                <li>
-                  <a
-                    href="https://youtube.com/@rotechnicalxperts"
-                    className="text-blue-600 underline break-words max-w-full"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    YouTube
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+            
+ 
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-12 text-center text-gray-500 text-sm border-t border-gray-300 pt-6 w-full break-words max-w-full">
+        <div className="lg:mt-6 text-center text-gray-500 text-sm border-t border-gray-300 pt-2 w-full break-words max-w-full">
           &copy; {new Date().getFullYear()} RO TECHNICAL XPERTS. All rights reserved.
         </div>
       </div>

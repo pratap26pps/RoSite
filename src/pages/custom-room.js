@@ -251,7 +251,7 @@ export default function BuildPage() {
     }
 return (
   <div className="space-y-6">
-    <div className="bg-white rounded-xl shadow-lg">
+    <div className="bg-white rounded-xl">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">
         Select {steps[currentStep].name}
       </h3>

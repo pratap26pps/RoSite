@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
 import { placeOrder } from "@/src/redux/slices/orderSlice";
 import { useDispatch } from "react-redux";
+import { CreditCard, Banknote, Wallet } from "lucide-react";
 
 export default function CheckoutPage() {
 
@@ -55,90 +56,83 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
 
 
   return (
-    <div className="min-h-screen relative py-20 px-4 md:px-8">
+    <div className="min-h-screen bg-white relative py-24 px-4 md:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Billing Details */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-bold text-blue-700 mb-4 border-l-4 border-blue-600 pl-3">
+        <Card className="shadow-lg bg-white border border-gray-200">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold text-blue-700 mb-6 border-l-4 border-blue-600 pl-3">
               Billing details
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <Label>first name </Label>
-                <Input placeholder="full name" value={user?.name || ""} readOnly /> 
+                <Label className="text-gray-700">First Name</Label>
+                <Input placeholder="Full name" value={user?.name || ""} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
-              
               <div>
-                <Label>Email</Label>
-                <Input placeholder="email" value={user?.email || ""} readOnly /> 
-              </div>
-              
-              <div className="sm:col-span-2">
-                <Label>Company name (optional)</Label>
-                <Input placeholder="Company" />
+                <Label className="text-gray-700">Email</Label>
+                <Input placeholder="Email" value={user?.email || ""} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
               <div className="sm:col-span-2">
-                <Label>Country / Region *</Label>
-                <Input placeholder="e.g., India" />
+                <Label className="text-gray-700">Company name (optional)</Label>
+                <Input placeholder="Company" className="bg-white border-gray-300 text-black" />
               </div>
               <div className="sm:col-span-2">
-                <Label>Street address *</Label>
-                <Input placeholder="House number and street name" />
+                <Label className="text-gray-700">Country / Region *</Label>
+                <Input placeholder="e.g., India" className="bg-white border-gray-300 text-black" />
               </div>
               <div className="sm:col-span-2">
-                <Label>Apartment, suite, etc. (optional)</Label>
-                <Input placeholder="Apartment, suite, etc." />
+                <Label className="text-gray-700">Street address *</Label>
+                <Input placeholder="House number and street name" className="bg-white border-gray-300 text-black" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-gray-700">Apartment, suite, etc. (optional)</Label>
+                <Input placeholder="Apartment, suite, etc." className="bg-white border-gray-300 text-black" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Order Summary */}
-        <Card className="shadow-lg">
-          <CardContent className="p-6 space-y-4">
-            <h2 className="text-xl font-bold text-blue-700 mb-2 border-l-4 border-blue-600 pl-3">
+        <Card className="shadow-lg bg-white border border-gray-200">
+          <CardContent className="p-8 space-y-6">
+            <h2 className="text-2xl font-bold text-blue-700 mb-4 border-l-4 border-blue-600 pl-3">
               Your order
             </h2>
-         <div className="bg-white border rounded p-4">
-  <div className="flex justify-between font-semibold mb-2">
-    <span>Image</span>
-    <span>Product</span>
-    <span>Subtotal</span>
-  </div>
-
-  {recentproduct?.length > 0 ? (
-    recentproduct.map((item) => (
-      <div key={item.id} className="flex justify-between mb-2 text-gray-700">
-      <img src={item?.image} alt={item?.name} className="w-16 h-16 object-cover rounded" />
-
-
-        <span>{item.name} × {item.quantity}</span>
-        <span>₹{item.price * item.quantity}</span>
-      </div>
-    ))
-  ) : (
-    <p className="text-sm text-gray-500">No items in cart.</p>
-  )}
-
-  <hr className="my-2" />
-  <div className="flex justify-between text-blue-700">
-    <span>Subtotal</span>
-    <span>₹{total}</span>
-  </div>
-  <div className="flex justify-between font-bold text-blue-800 text-lg mt-2">
-    <span>Total</span>
-    <span>₹{total}</span>
-  </div>
-</div>
-
+            <div className="bg-white border rounded-xl p-6">
+              <div className="flex justify-between font-semibold mb-4 text-gray-700">
+                <span>Image</span>
+                <span>Product</span>
+                <span>Subtotal</span>
+              </div>
+              {recentproduct?.length > 0 ? (
+                recentproduct.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between mb-3 text-gray-700">
+                    <img src={item?.image} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
+                    <span className="flex-1 ml-4">{item.name} × {item.quantity}</span>
+                    <span className="font-semibold">₹{item.price * item.quantity}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">No items in cart.</p>
+              )}
+              <hr className="my-3" />
+              <div className="flex justify-between text-blue-700">
+                <span>Subtotal</span>
+                <span>₹{total}</span>
+              </div>
+              <div className="flex justify-between font-bold text-blue-800 text-lg mt-2">
+                <span>Total</span>
+                <span>₹{total}</span>
+              </div>
+            </div>
 
             {/* Payment Methods */}
-            <RadioGroup defaultValue="bank" className="space-y-4">
+            <RadioGroup defaultValue="bank" className="space-y-4 mt-6">
               <div className="flex items-start gap-3">
                 <RadioGroupItem value="bank" />
                 <div>
-                  <span className="font-medium">Direct bank transfer</span>
+                  <span className="font-medium flex items-center gap-2"><Banknote className="w-5 h-5 text-blue-600" /> Direct bank transfer</span>
                   <p className="text-sm mt-1 text-blue-600 bg-blue-100 p-2 rounded">
                     Make your payment directly into our bank account. Please use
                     your Order ID as the payment reference. Your order will not
@@ -146,33 +140,20 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
                   </p>
                 </div>
               </div>
-
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="check" />
-                <span>Check payments</span>
+                <span className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-blue-600" /> Check payments</span>
               </div>
-
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="cod" />
-                <span>Cash on delivery</span>
+                <span className="flex items-center gap-2"><Wallet className="w-5 h-5 text-blue-600" /> Cash on delivery</span>
               </div>
-
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="paypal" />
-                <span>
-                  PayPal
-                  <img
-                    src="/paypal-logos.png"
-                    alt="paypal"
-                    className="inline-block h-5 ml-2"
-                  />
-                </span>
-              </div>
+            
             </RadioGroup>
 
             <Button 
                onClick={checkouthandler}
-            className="w-full mt-4 text-white bg-blue-600 hover:bg-blue-700">
+            className="w-full mt-6 text-white bg-blue-600 hover:bg-blue-700 py-3 text-lg font-semibold rounded-xl shadow">
               Place order
             </Button>
           </CardContent>
