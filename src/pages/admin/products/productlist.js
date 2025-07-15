@@ -28,8 +28,10 @@ import { setProducts,updateProduct,removeProduct } from "@/src/redux/slices/prod
  
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import toast from "react-hot-toast";
 
-const categoriesList = ["RO Purifier", "Water Supply"];
+
+
 
 export default function ProductHistory() {
     const dispatch = useDispatch();
@@ -38,6 +40,7 @@ export default function ProductHistory() {
     const [deleteId, setDeleteId] = useState(null);
     const [editProduct, setEditProduct] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [loading, setloading] = useState(false);
 
     // Fetch all products from backend on mount
     useEffect(() => {
@@ -54,6 +57,22 @@ export default function ProductHistory() {
         }
         fetchProducts();
     }, [dispatch]);
+    console.log("product in lisr",products)
+
+    const categoriesList=[
+        {
+            _id:"687539dd86db9394128efa46",
+            name: "asdasd",
+        },
+         {
+            _id:"68764fdea48d1d6c06c70ad5",
+            name: "roo",
+        },
+         {
+            _id:"68753306b4bf47befac0bd74",
+            name: "new cat",
+        }
+    ]
 
     const filteredProducts = products.filter(
         (p) =>
@@ -61,41 +80,76 @@ export default function ProductHistory() {
             (p.category && p.category.name && p.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const handleDelete = async () => {
-        if (deleteId) {
+    const handleDelete = async (id) => {
+        if (id) {
             try {
                 const res = await fetch('/api/admin/deleteproduct', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: deleteId })
+                    body: JSON.stringify({ id: id })
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    dispatch(removeProduct(deleteId));
+                    dispatch(removeProduct(id));
+                    toast.success("product deleted")
+
+
                 }
             } catch (err) {
-                // Optionally handle error
+               console.log(err)
             }
             setDeleteId(null);
         }
     };
 
-    const handleUpdateProduct = async () => {
-        if (!editProduct?.id) return;
+  // Handle image upload (multiple)
+  const handleImageChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const formData = new FormData();
+    files.forEach(file => formData.append('image', file));
+    try {
+      const response = await fetch('/api/uploadproductimages', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (response.ok && result.urls) {
+        setEditProduct((prev) => ({ ...prev, images: result.urls }));
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    }
+  };
+
+
+    const handleUpdateProduct = async (id) => {
+        if (!id) return;
+        console.log("editproduct",editProduct)
+          const updatedProduct = { ...editProduct, id };
+            console.log("Sending to backend:", updatedProduct);
         try {
+            setloading(true)
             const res = await fetch('/api/admin/editproduct', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(editProduct)
+                body: JSON.stringify(updatedProduct)
             });
             const data = await res.json();
             if (res.ok && data.success) {
+
                 dispatch(updateProduct(data.product));
+                toast.success("updated successfully")
             }
         } catch (err) {
-            // Optionally handle error
+            console.error(err)
+            toast.error(err)
+            toast.error("Update failed");
+        }finally{
+            setloading(false)
+            setIsDialogOpen(false);
         }
-        setIsDialogOpen(false);
+    
     };
 
     return (
@@ -140,7 +194,7 @@ export default function ProductHistory() {
                                                     />
                                                 </TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.name}</TableCell>
-                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.category?.name || ""}</TableCell>
+                                                <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.category?.name || product?.category || ""}</TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">₹{product?.price}</TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">{product?.quantity}</TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">{new Date(product?.updatedAt).toLocaleDateString('en-GB')}</TableCell>
@@ -158,6 +212,84 @@ export default function ProductHistory() {
                                                         >
                                                             <Pencil className="w-4 h-4" /> Edit
                                                         </Button>
+                                                        {/* edit modal - custom, not Dialog */}
+                                                        {isDialogOpen && editProduct?._id === product._id && (
+                                                            <Modal isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title="Edit Product">
+                                                                <div className="space-y-4">
+                                                                    <div>
+                                                                    <Label className="mb-1 text-gray-800">Product Image</Label>
+
+                                                                    {/* Current Image Preview */}
+                                                                    {editProduct?.images?.[0] && (
+                                                                    <img
+                                                                        src={editProduct.images[0]}
+                                                                        alt="Product"
+                                                                        className="w-32 h-32 object-cover rounded mb-2 border"
+                                                                    />
+                                                                    )}
+
+                                                                    {/* Image Upload */}
+                                                                    <Input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    onChange={handleImageChange}
+                                                                    className="cursor-pointer"
+                                                                    />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <Label className="mb-1  text-gray-800">Product Name</Label>
+                                                                        <Input
+                                                                            value={editProduct?.name || ""}
+                                                                            onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div >
+                                                                        <Label className="mb-1  text-gray-800">Category</Label>
+                                                                        <Select
+                                                                            value={editProduct?.category?.id}
+                                                                            onValueChange={(value) => setEditProduct({ ...editProduct, category: value })}
+                                                                        >
+                                                                            <SelectTrigger className="w-[100%]  ">
+                                                                                <SelectValue className=" text-black" placeholder="Select category"  />
+                                                                            </SelectTrigger>
+                                                                            <SelectContent>
+                                                                                {categoriesList.map((cat) => (
+                                                                                
+                                                                                    <SelectItem key={cat?._id} value={cat?._id}>
+                                                                                        {cat.name}
+                                                                                    </SelectItem>
+                                                                                ))}
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="mb-1 text-gray-800">Price (₹)</Label>
+                                                                        <Input
+                                                                            type="number"
+                                                                            value={editProduct?.price || ""}
+                                                                            onChange={(e) => setEditProduct({ ...editProduct, price: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="mb-1 text-gray-800">Items</Label>
+                                                                        <Input
+                                                                            type="number"
+                                                                            value={editProduct?.quantity || ""}
+                                                                            onChange={(e) => setEditProduct({ ...editProduct, quantity: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex  justify-end gap-2 mt-6">
+                                                                        <Button className="cursor-pointer" onClick={() => setIsDialogOpen(false)}>
+                                                                            Cancel
+                                                                        </Button>
+                                                                        <Button onClick={()=>handleUpdateProduct(editProduct._id)} className="bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700">
+                                                                          {loading ?"updating...":"Save"}  
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            </Modal>
+                                                        )}
                                                         {/* delete confirmation dialog */}
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
@@ -178,8 +310,8 @@ export default function ProductHistory() {
                                                                     </AlertDialogDescription>
                                                                 </AlertDialogHeader>
                                                                 <AlertDialogFooter>
-                                                                    <AlertDialogCancel className="dark:bg-gray-800 dark:text-cyan-200 dark:border-gray-700">Cancel</AlertDialogCancel>
-                                                                    <AlertDialogAction onClick={handleDelete} className="bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-800">Delete</AlertDialogAction>
+                                                                    <AlertDialogCancel className="dark:bg-gray-800 dark:text-cyan-200 cursor-pointer dark:border-gray-700">Cancel</AlertDialogCancel>
+                                                                    <AlertDialogAction onClick={()=>handleDelete(product._id)} className="bg-red-600 cursor-pointer dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-800">Delete</AlertDialogAction>
                                                                 </AlertDialogFooter>
                                                             </AlertDialogContent>
                                                         </AlertDialog>
@@ -200,69 +332,41 @@ export default function ProductHistory() {
                     </div>
                 </div>
             </div>
-            {/* edit modal - custom, not Dialog */}
-            {isDialogOpen && (
-              <Modal isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title="Edit Product">
-                <div className="space-y-4">
-                  <div>
-                    <Label className="mb-1 block text-gray-800">Product Name</Label>
-                    <Input
-                      value={editProduct?.name || ""}
-                      className="text-gray-800"
-
-                      onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
-                    />
-                  </div>
-                  <div >
-                    <Label className="mb-1 block text-gray-800">Category</Label>
-                    <Select
-                      value={editProduct?.category}
-                      className="text-gray-800"
-
-                      onValueChange={(value) => setEditProduct({ ...editProduct, category: value })}
-                    >
-                      <SelectTrigger className="w-[100%]  ">
-                        <SelectValue className=" text-black" placeholder="Select category"  />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categoriesList.map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="mb-1 block text-gray-800">Price (₹)</Label>
-                    <Input
-                      type="number"
-                      value={editProduct?.price || ""}
-                      className="text-gray-800"
-
-                      onChange={(e) => setEditProduct({ ...editProduct, price: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label className="mb-1 block text-gray-800">Items</Label>
-                    <Input
-                      type="number"
-                      value={editProduct?.quantity || ""}
-                      className="text-gray-800"
-                      onChange={(e) => setEditProduct({ ...editProduct, quantity: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-3 pt-4">
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleUpdateProduct} className="bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                      Save
-                    </Button>
-                  </div>
-                </div>
-              </Modal>
-            )}
         </div>
     );
 }
+
+// Modal component 
+const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => (document.body.style.overflow = "unset");
+  }, [isOpen]);
+  if (!isOpen) return null;
+  return (
+    <div className={`fixed inset-0 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}
+      style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(8px)' }}>
+      <div
+        className="bg-white rounded-xl shadow-2xl ring-4 ring-blue-400/20 w-full max-w-lg transform transition-all overflow-hidden focus:outline-none"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div className="px-6 py-4 border-b flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900" id="modal-title">{title}</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+        <div className="px-6 py-4 max-h-[80vh] overflow-y-auto">{children}</div>
+      </div>
+    </div>
+  );
+};

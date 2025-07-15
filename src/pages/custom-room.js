@@ -143,6 +143,11 @@ const steps = [
   { id: "storage", name: "Storage", icon: Settings },
   { id: "body", name: "Body", icon: Monitor },
   { id: "uv", name: "UV Protection", icon: Shield },
+  { id: "review", name: "Review", icon: CheckCircle },
+ { id: "filters", name: "Filters", icon: Droplets },
+  { id: "storage", name: "Storage", icon: Settings },
+  { id: "body", name: "Body", icon: Monitor },
+  { id: "uv", name: "UV Protection", icon: Shield },
   { id: "review", name: "Review", icon: CheckCircle }
 ];
 export default function BuildPage() {
