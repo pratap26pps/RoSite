@@ -15,73 +15,19 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const products = [
-  {
-    id: 1,
-    name: "AquaFresh RO System",
-    image: "/images/image copy.png",
-    description: "6-stage purification with UV + Mineral Guard.",
-    price: 299,
-    bestSeller: true,
-  },
-  {
-    id: 2,
-    name: "EcoPure Water Cooler",
-    image: "/images/image copy 2.png",
-    description: "Energy-efficient stainless steel water cooler.",
-    price: 199,
-    bestSeller: false,
-  },
-  {
-    id: 3,
-    name: "Mini Pump Pro",
-    image: "/images/image copy 3.png",
-    description: "Compact water pump for all RO systems.",
-    price: 89,
-    bestSeller: false,
-  },
-  {
-    id: 4,
-    name: "AquaPro Elite",
-    image: "/images/image copy 4.png",
-    description: "Smart RO with app control and TDS monitor.",
-    price: 449,
-    bestSeller: true,
-  },
-  {
-    id: 5,
-    name: "AquaPro Elite Pro",
-    image: "/images/image copy 5.png",
-    description: "Advanced smart RO with IoT connectivity.",
-    price: 549,
-    bestSeller: false,
-  },
-  {
-    id: 6,
-    name: "AquaPro Elite Max",
-    image: "/images/image copy 6.png",
-    description: "Premium smart RO with AI-powered monitoring.",
-    price: 649,
-    bestSeller: true,
-  },
-];
+ import { useSelector } from "react-redux";
 
 export function CarouselSize() {
+
   const router=useRouter();
   const dispatch = useDispatch();
-  const [addedToCartIds, setAddedToCartIds] = useState([]);
   const [addedToCart, setAddedToCart] = useState([]);
-
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-    toast.success(`${product.name} added to cart!`);
-    setAddedToCartIds((prev) => [...prev, product.id]);
-  };
+ const products = useSelector((state) => state.product.products);
+ console.log("products",products)
 
     const carthandler = async (id) => {
     const product = products.find((product) => product.id === id);
     if (!product) return;
-
     dispatch(addToCart(product));
     toast.success(`${product.name} is added`);
     setAddedToCart((prev) => [...prev, id]);
@@ -118,8 +64,8 @@ export function CarouselSize() {
                           Best Seller
                         </span>
                       )}
-                      <Image
-                        src={product.image}
+                      <img
+                        src={product?.images?.[0]}
                         alt={product.name}
                         fill
                         className="object-contain transition-transform duration-300 pt-3"

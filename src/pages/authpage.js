@@ -132,7 +132,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-20 relative flex items-center justify-center p-4 font-inter">
+    <div className="min-h-screen bg-gray-600 py-20 relative flex items-center justify-center p-4 font-inter">
       
 
       <motion.div

@@ -99,12 +99,11 @@ export default function Chatbot() {
           show ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
-        <div className="relative">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl">
+    
+          <div className="w-14 h-14 cursor-pointer sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl">
             💬
           </div>
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
-        </div>
+              
       </button>
 
       {/* Chat Window */}

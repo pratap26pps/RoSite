@@ -18,87 +18,14 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import { Search, Filter, DollarSign, Star, ShoppingCart, Menu, X } from "lucide-react";
+import { Search, Filter, Star, ShoppingCart, Menu, X } from "lucide-react";
 import { addToCart } from "../redux/slices/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
+import { stringify } from "querystring";
  
  
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Water Purifier X1",
-    sqNumber: "SQ123",
-    category: "RO",
-    price: 12000,
-    image: "/images/image copy 2.png",
-  },
-  {
-    id: 2,
-    name: "UV Filter Y2",
-    sqNumber: "SQ456",
-    category: "UV",
-    price: 8000,
-    image: "/images/image copy 6.png",
-  },
-  {
-    id: 3,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy.png",
-  },
-  {
-    id: 4,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 4.png",
-  },
-  {
-    id: 5,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 5.png",
-  },
-  {
-    id: 6,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 4.png",
-  },
-  {
-    id: 7,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 5.png",
-  },
-  {
-    id: 8,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 4.png",
-  },
-  {
-    id: 9,
-    name: "Carbon Filter Z3",
-    sqNumber: "SQ789",
-    category: "Carbon",
-    price: 5000,
-    image: "/images/image copy 5.png",
-  },
-];
 
 const categories = ["All", "RO", "UV", "Carbon"];
 const PRODUCTS_PER_PAGE = 6;
@@ -110,7 +37,8 @@ export default function ShopPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [addedToCart, setAddedToCart] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [tempPriceRange, setTempPriceRange] = useState([0, 20000]); // default range
+  const [tempPriceRange, setTempPriceRange] = useState([0, 20000]); 
+   const dummyProducts = useSelector((state) => state.product.products);
 
 const router=useRouter()
  const dispatch = useDispatch()
@@ -119,7 +47,7 @@ const router=useRouter()
       product.name.toLowerCase().includes(search.toLowerCase()) ||
       product.sqNumber.toLowerCase().includes(search.toLowerCase());
     const matchCategory =
-      selectedCategory === "All" || product.category === selectedCategory;
+      selectedCategory === "All" ||  product?.category?.name === selectedCategory;
     const matchPrice =
       product.price >= priceRange[0] && product.price <= priceRange[1];
     return matchSearch && matchCategory && matchPrice;
@@ -144,6 +72,7 @@ const router=useRouter()
     if (!product) return;
 
     dispatch(addToCart(product));
+    localStorage.setItem("cartproduct", JSON.stringify(product));
     toast.success(`${product.name} is added`);
     console.log(`Added ${product.name} to cart`);
 
@@ -275,32 +204,7 @@ const router=useRouter()
 
             <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
 
-            {/* Reviews */}
-            <div className="space-y-3 hidden lg:block">
-              <div className="flex items-center gap-2   mb-3">
-                <Star className="w-5 h-5" />
-                <h3 className="text-lg font-semibold">Recent Reviews</h3>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { name: "Aakash", review: "Great product!", rating: 5 },
-                  { name: "Neha", review: "Fast delivery.", rating: 4 },
-                  { name: "Raju", review: "Worth the price.", rating: 5 }
-                ].map((review, index) => (
-                  <div key={index} className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="flex text-yellow-400">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 fill-current" />
-                        ))}
-                      </div>
-                      <span className="text-slate-900 text-sm font-medium">{review.name}</span>
-                    </div>
-                    <p className="text-slate-500 text-sm">"{review.review}"</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
           </div>
         </aside>
 
@@ -314,19 +218,19 @@ const router=useRouter()
 >
   <div className="relative overflow-hidden">
     <img
-      src={product.image}
+      src={product.images?.[0]}
       alt={product.name}
       className="w-full h-48 object-cover transition-transform duration-300 "
     />
     <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
-      {product.category}
+       {product?.category?.name}
     </div>
   </div>
 
   <CardContent className="space-y-1">
     <div className="space-y-2">
       <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500">SQ: {product.sqNumber}</p>
+      <p className="text-sm text-gray-500">SQ: {product?.skuid}</p>
       <div className="text-xl font-semibold text-blue-600">
         ₹{product.price.toLocaleString()}
       </div>

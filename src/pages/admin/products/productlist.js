@@ -22,7 +22,7 @@ import {
     AlertDialogTitle,
     AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Trash2 } from "lucide-react";
+import { Ban, Pencil, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { setProducts,updateProduct,removeProduct } from "@/src/redux/slices/productSlice";
  
@@ -41,23 +41,8 @@ export default function ProductHistory() {
     const [editProduct, setEditProduct] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [loading, setloading] = useState(false);
+    const [selectedImageIdx, setSelectedImageIdx] = useState(null);
 
-    // Fetch all products from backend on mount
-    useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const res = await fetch('/api/products');
-                const data = await res.json();
-                if (data.success && Array.isArray(data.products)) {
-                    dispatch(setProducts(data.products));
-                }
-            } catch (err) {
-                 console.log(err);
-            }
-        }
-        fetchProducts();
-    }, [dispatch]);
-    console.log("product in lisr",products)
 
     const categoriesList=[
         {
@@ -176,8 +161,8 @@ export default function ProductHistory() {
                                         <TableHead className="min-w-[80px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Image</TableHead>
                                         <TableHead className="min-w-[150px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Product</TableHead>
                                         <TableHead className="min-w-[140px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Category</TableHead>
-                                        <TableHead className="min-w-[100px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Price (₹)</TableHead>
-                                        <TableHead className="min-w-[80px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Items</TableHead>
+                                        <TableHead className="min-w-[100px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Price</TableHead>
+                                        <TableHead className="min-w-[80px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Quantity</TableHead>
                                         <TableHead className="min-w-[130px] text-gray-900 dark:text-cyan-200 border-b border-gray-200 dark:border-gray-700">Date Added</TableHead>
                                         <TableHead className="text-center text-gray-900 dark:text-cyan-200 min-w-[180px] border-b border-gray-200 dark:border-gray-700">Actions</TableHead>
                                     </TableRow>
@@ -217,23 +202,46 @@ export default function ProductHistory() {
                                                             <Modal isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title="Edit Product">
                                                                 <div className="space-y-4">
                                                                     <div>
-                                                                    <Label className="mb-1 text-gray-800">Product Image</Label>
-
-                                                                    {/* Current Image Preview */}
-                                                                    {editProduct?.images?.[0] && (
-                                                                    <img
-                                                                        src={editProduct.images[0]}
-                                                                        alt="Product"
-                                                                        className="w-32 h-32 object-cover rounded mb-2 border"
-                                                                    />
-                                                                    )}
-
-                                                                    {/* Image Upload */}
+                                                                    <Label className="mb-1 text-gray-800">Product Images</Label>
+                                                                    <div className="flex gap-2 mb-2 flex-wrap">
+                                                                        {editProduct?.images?.map((img, idx) => (
+                                                                            <img
+                                                                                key={idx}
+                                                                                src={img}
+                                                                                alt={`Product ${idx + 1}`}
+                                                                                className={`w-20 h-20 object-cover rounded border-2 cursor-pointer ${selectedImageIdx === idx ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-300'}`}
+                                                                                onClick={() => setSelectedImageIdx(idx)}
+                                                                            />
+                                                                        ))}
+                                                                    </div>
                                                                     <Input
-                                                                    type="file"
-                                                                    accept="image/*"
-                                                                    onChange={handleImageChange}
-                                                                    className="cursor-pointer"
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={async (e) => {
+                                                                            const files = Array.from(e.target.files);
+                                                                            if (!files.length) return;
+                                                                            const formData = new FormData();
+                                                                            files.forEach(file => formData.append('image', file));
+                                                                            try {
+                                                                                const response = await fetch('/api/uploadproductimages', {
+                                                                                    method: 'POST',
+                                                                                    body: formData,
+                                                                                });
+                                                                                const result = await response.json();
+                                                                                if (response.ok && result.urls && result.urls[0]) {
+                                                                                    setEditProduct((prev) => {
+                                                                                        const newImages = [...(prev.images || [])];
+                                                                                        if (typeof selectedImageIdx === 'number' && selectedImageIdx >= 0) {
+                                                                                            newImages[selectedImageIdx] = result.urls[0];
+                                                                                        }
+                                                                                        return { ...prev, images: newImages };
+                                                                                    });
+                                                                                }
+                                                                            } catch (error) {
+                                                                                console.error('Error uploading images:', error);
+                                                                            }
+                                                                        }}
+                                                                        className="cursor-pointer"
                                                                     />
                                                                     </div>
 
@@ -242,6 +250,15 @@ export default function ProductHistory() {
                                                                         <Input
                                                                             value={editProduct?.name || ""}
                                                                             onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="mb-1 text-gray-800">Description</Label>
+                                                                        <Input
+                                                                            type="text"
+                                                                            value={editProduct?.description || ""}
+                                                                            onChange={e => setEditProduct({ ...editProduct, description: e.target.value })}
+                                                                            placeholder="Enter product description"
                                                                         />
                                                                     </div>
                                                                     <div >
@@ -272,7 +289,7 @@ export default function ProductHistory() {
                                                                         />
                                                                     </div>
                                                                     <div>
-                                                                        <Label className="mb-1 text-gray-800">Items</Label>
+                                                                        <Label className="mb-1 text-gray-800">Quantity</Label>
                                                                         <Input
                                                                             type="number"
                                                                             value={editProduct?.quantity || ""}
@@ -290,6 +307,55 @@ export default function ProductHistory() {
                                                                 </div>
                                                             </Modal>
                                                         )}
+                                                      {/*  for out of stock */}
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger asChild>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    className="flex items-center gap-1 border border-red-400 text-red-400 bg-white cursor-pointer"
+                                                                    disabled={product.quantity === 0}
+                                                                >
+                                                                    <Ban className="w-4 h-4" /> Out of Stock
+                                                                </Button>
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent className="bg-white border border-gray-200  ">
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle className="text-gray-900 dark:text-cyan-200">Mark as Out of Stock</AlertDialogTitle>
+                                                                    <AlertDialogDescription className="text-gray-600 dark:text-gray-300">
+                                                                        Are you sure you want to mark <b>{product.name}</b> as out of stock? This will set its quantity to 0.
+                                                                    </AlertDialogDescription>
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel className="dark:bg-gray-800 dark:text-cyan-200 cursor-pointer dark:border-gray-700">Cancel</AlertDialogCancel>
+                                                                    <AlertDialogAction
+                                                                        onClick={async () => {
+                                                                            try {
+                                                                                const updatedProduct = { ...product, quantity: 0, id: product._id };
+                                                                                const res = await fetch('/api/admin/editproduct', {
+                                                                                    method: 'PATCH',
+                                                                                    headers: { 'Content-Type': 'application/json' },
+                                                                                    body: JSON.stringify(updatedProduct)
+                                                                                });
+                                                                                const data = await res.json();
+                                                                                if (res.ok && data.success) {
+                                                                                    dispatch(updateProduct(data.product));
+                                                                                    toast.success('Marked as out of stock');
+                                                                                } else {
+                                                                                    toast.error(data.message || 'Failed to update');
+                                                                                }
+                                                                            } catch (err) {
+                                                                                toast.error('Failed to update');
+                                                                            }
+                                                                        }}
+                                                                        className="bg-blue-600 cursor-pointer dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800"
+                                                                    >
+                                                                        Confirm
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                        
                                                         {/* delete confirmation dialog */}
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
@@ -315,6 +381,7 @@ export default function ProductHistory() {
                                                                 </AlertDialogFooter>
                                                             </AlertDialogContent>
                                                         </AlertDialog>
+                                                        
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

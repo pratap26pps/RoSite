@@ -7,7 +7,7 @@ export default function OverviewContent() {
   const [dashboardData] = useState({
     totalOrders: 1247,
     totalRevenue: 98450,
-    activeUsers: 3421,
+    TotalUsers: 3421,
     deliveredOrders: 1089,
      
   });
@@ -140,10 +140,10 @@ export default function OverviewContent() {
       <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.date}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <div className="flex space-x-2">
-          <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"><Eye className="w-4 h-4" /></button>
-          <button className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300"><Pencil className="w-4 h-4" /></button>
-          <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
-        </div>
+          <button className="text-blue-600 cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View</button>
+          <button className="text-yellow-600 cursor-pointer hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">Edit</button>
+          <button className="text-red-600 cursor-pointer hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+        </div> 
       </td>
     </tr>
   );
@@ -205,14 +205,14 @@ export default function OverviewContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard title="Total Orders" value={dashboardData.totalOrders} icon={<ShoppingCart className="w-8 h-8 text-green-600" />} growth={dashboardData.orderGrowth} color="text-green-600" />
         <StatCard title="Total Revenue" value={dashboardData.totalRevenue} icon={<DollarSign className="w-8 h-8 text-blue-600" />} growth={dashboardData.revenueGrowth} color="text-blue-600" />
-        <StatCard title="Active Users" value={dashboardData.activeUsers} icon={<Users className="w-8 h-8 text-purple-600" />} growth={dashboardData.userGrowth} color="text-purple-600" />
+        <StatCard title="Active Users" value={dashboardData.TotalUsers} icon={<Users className="w-8 h-8 text-purple-600" />} growth={dashboardData.userGrowth} color="text-purple-600" />
         <StatCard title="Delivered Orders" value={dashboardData.deliveredOrders} icon={<CheckCircle className="w-8 h-8 text-green-600" />} color="text-green-600" />
       </div>
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Recent Orders */}
-        <div className="xl:col-span-2">
+        <div className="xl:col-span-5">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Orders</h3>
@@ -240,19 +240,7 @@ export default function OverviewContent() {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div>
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Activity</h3>
-            </div>
-            <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
-              {recentActivity.map(activity => (
-                <ActivityItem key={activity.id} activity={activity} />
-              ))}
-            </div>
-          </div>
-        </div>
+       
       </div>
     </div>
   );

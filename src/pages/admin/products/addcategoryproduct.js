@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { SiFlipkart, SiAmazon } from 'react-icons/si';
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory,setCategories } from "@/src/redux/slices/categorySlice";
 import { setProducts,addProduct } from "@/src/redux/slices/productSlice";
+import toast from "react-hot-toast";
 
 export default function AddCategoryProduct() {
+
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.category.categories);
   const products = useSelector((state) => state.product.products);
@@ -25,6 +26,26 @@ export default function AddCategoryProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [allCategories, setAllCategories] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   // Fetch all categories from backend on mount
   useEffect(() => {
@@ -37,7 +58,7 @@ export default function AddCategoryProduct() {
           dispatch(setCategories(data.categories));
         }
       } catch (err) {
-        // Optionally handle error
+       console.log(err)
       }
     }
     fetchCategories();
@@ -48,13 +69,14 @@ export default function AddCategoryProduct() {
     e.preventDefault();
     if (!categoryName.trim()) return;
     const newCategory = {
-      id: Date.now().toString(),
+      _id: Date.now().toString(),
       name: categoryName,
       description: categoryDesc,
     };
     dispatch(addCategory(newCategory));
     setCategoryName("");
     setCategoryDesc("");
+    setSelectedCategory(newCategory._id);
     setMessage({ type: 'success', text: 'Category added successfully!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
   };
@@ -65,7 +87,7 @@ export default function AddCategoryProduct() {
     if (!selectedCategory || !productForm.name.trim() ||!productForm.quantity || !productForm.price) return;
     const newProduct = {
       ...productForm,
-      id: Date.now().toString(),
+      _id: Date.now().toString(),
       category: selectedCategory,
       images: productForm.images,
     };
@@ -79,6 +101,7 @@ export default function AddCategoryProduct() {
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
+    setUploading(true);
     const formData = new FormData();
     files.forEach(file => formData.append('image', file));
     try {
@@ -87,11 +110,14 @@ export default function AddCategoryProduct() {
         body: formData,
       });
       const result = await response.json();
-      if (response.ok && result.urls) {
-        setProductForm((prev) => ({ ...prev, images: result.urls }));
+      if (response.ok && (result.urls || result.url)) {
+        // Accept both array and single url
+        setProductForm((prev) => ({ ...prev, images: result.urls || [result.url] }));
       }
     } catch (error) {
       console.error('Error uploading images:', error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -113,10 +139,12 @@ export default function AddCategoryProduct() {
         })
       });
       const result = await response.json();
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'All products added to database!' });
+      if (response.ok && result.products && result.products.length > 0) {
+        setMessage({ type: 'success', text: 'Categories and products processed successfully' });
+        toast.success('Categories and products processed successfully');
         // Remove products for this category from redux
         dispatch(setProducts(products.filter(p => p.category !== catId)));
+        setProductForm({ name: "", price: "", quantity: "", images: [], description: "" });
         setTimeout(() => setMessage({ type: '', text: '' }), 3000);
       } else {
         setMessage({ type: 'error', text: result.message || 'Failed to add products' });
@@ -145,22 +173,92 @@ export default function AddCategoryProduct() {
         <Card className="mb-10 p-8 bg-white/90 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-2xl rounded-2xl transition-colors">
           <div className="flex flex-col md:justify-between gap-4 items-end">
             <div className="flex-1 w-full">
+             
               <h3 className="text-lg font-bold text-blue-600 dark:text-cyan-300 mb-2">Select Existing Category</h3>
-              <select
-                className="w-72 cursor-pointer p-2 border border-blue-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={selectedCategory || ''}
-                onChange={e => setSelectedCategory(e.target.value)}
-              >
-                <option value="">-- Select a category --</option>
-                {/* Show backend categories */}
-                {allCategories.map(cat => (
-                  <option key={cat._id} value={cat._id}>{cat.name}</option>
-                ))}
-                {/* Show newly added (local) categories */}
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+              {/* Custom select-like dropdown for unique categories with delete logic */}
+              <div className="relative w-72" ref={dropdownRef}>
+                <div
+                  className="p-2 border border-blue-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer select-none flex justify-between items-center"
+                  onClick={() => setDropdownOpen((open) => !open)}
+                >
+                  <span>
+                    {(() => {
+                      if (!selectedCategory) return 'Select a category';
+                      const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
+                      return cat ? cat.name : 'Select a category';
+                    })()}
+                  </span>
+                  <svg className={`w-4 h-4 ml-2 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </div>
+                {dropdownOpen && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-blue-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+                    {(() => {
+                      const seen = new Set();
+                      const uniqueBackend = allCategories.filter(cat => {
+                        if (seen.has(cat.name)) return false;
+                        seen.add(cat.name);
+                        return true;
+                      });
+                      const uniqueLocal = categories.filter(cat => {
+                        if (seen.has(cat.name)) return false;
+                        seen.add(cat.name);
+                        return true;
+                      });
+                      return [
+                        ...uniqueBackend.map(cat => (
+                          <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
+                            <span
+                              className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
+                              onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
+                            >
+                              {cat.name}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="ml-2 px-2 py-1 cursor-pointer text-xs"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  const res = await fetch(`/api/admin/${cat._id}`, { method: 'DELETE' });
+                                  const data = await res.json();
+                                  if (res.ok && data.success) {
+                                    setAllCategories(prev => prev.filter(c => c._id !== cat._id));
+                                    if (selectedCategory === cat._id) setSelectedCategory(null);
+                                    toast.success(data.message)
+                                  }
+                                } catch (err) { 
+                                  console.log(err)
+                                }
+                              }}
+                            >Delete</Button>
+                          </li>
+                        )),
+                        ...uniqueLocal.map(cat => (
+                          <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
+                            <span
+                              className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
+                              onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
+                            >
+                              {cat.name}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="ml-2 px-2 py-1 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                dispatch(setCategories(categories.filter(c => c._id !== cat._id)));
+                                if (selectedCategory === cat._id) setSelectedCategory(null);
+                              }}
+                            >Delete</Button>
+                          </li>
+                        ))
+                      ];
+                    })()}
+                  </ul>
+                )}
+              </div>
             </div>
             <form onSubmit={handleAddCategory} className="flex flex-col sm:flex-row gap-4 items-end flex-1 w-full">
               <div className="flex-1 w-full">
@@ -191,12 +289,12 @@ export default function AddCategoryProduct() {
         {/* Product Form for Selected Category */}
         {selectedCategory && (() => {
           // Find selected category in backend or local
-          const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c.id === selectedCategory);
+          const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
           if (!cat) return null;
           // Get products for this category from redux
-          const catProducts = products.filter(p => p.category === (cat.id || cat._id));
+          const catProducts = products.filter(p => p.category === (cat._id || cat._id));
           return (
-            <Card key={cat.id || cat._id} className="p-6 sm:p-8 bg-white/95 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-xl rounded-2xl transition-all hover:shadow-2xl mb-10">
+            <Card key={cat._id || cat._id} className="p-6 sm:p-8 bg-white/95 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-xl rounded-2xl transition-all hover:shadow-2xl mb-10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-blue-50 dark:border-gray-700 pb-4">
                 <div>
                   <h3 className="text-xl font-bold text-blue-700 dark:text-cyan-300 flex items-center gap-2">
@@ -276,17 +374,14 @@ export default function AddCategoryProduct() {
                       Create Product
                     </Button>
                   </div>
-                  <div className="flex gap-4 items-center">
-                    <SiFlipkart className="w-8 h-8 text-blue-600 cursor-pointer hover:scale-110 transition-transform" title="Flipkart" />
-                    <SiAmazon className="w-8 h-8 text-yellow-600 cursor-pointer hover:scale-110 transition-transform" title="Amazon" />
-                  </div>
+                 
                 </div>
               </form>
               {/* Show Add All to Database button only if there are products for this category */}
               {catProducts.length > 0 && (
                 <div className="flex justify-end mt-4">
                   <Button 
-                    onClick={() => handleAddAllToDB(cat.id || cat._id)}
+                    onClick={() => handleAddAllToDB(cat._id || cat._id)}
                     disabled={isLoading}
                     className="bg-gradient-to-r from-green-500 to-blue-500 dark:from-green-700 dark:to-blue-700 text-white font-bold shadow hover:from-green-600 hover:to-blue-600 disabled:opacity-50"
                   >
@@ -301,9 +396,12 @@ export default function AddCategoryProduct() {
                     <span className="inline-block w-2 h-2 bg-cyan-400 dark:bg-cyan-600 rounded-full"></span>
                     Products in {cat.name}:
                   </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Total Products: {catProducts.length}
+                  </p>
                   <div className="grid gap-3">
                     {catProducts.map((prod) => (
-                      <div key={prod.id} className="flex items-center gap-4 p-3 bg-cyan-50 dark:bg-gray-900 rounded-xl border border-blue-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
+                      <div key={prod._id} className="flex items-center gap-4 p-3 bg-cyan-50 dark:bg-gray-900 rounded-xl border border-blue-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
                         {prod.images && prod.images.length > 0 && (
                           <div className="flex gap-2">
                             {prod.images.map((img, idx) => (

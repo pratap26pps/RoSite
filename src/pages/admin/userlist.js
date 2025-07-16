@@ -1,6 +1,6 @@
 "use client";
-import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+ 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,43 +12,43 @@ import {
 import { Table, TableHead, TableBody, TableRow, TableCell, TableHeader } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+ 
 
 export default function CustomerManagement() {
-  const dispatch = useDispatch();
-  const [customers, setCustomers] = useState([
-    {
-      id: 1,
-      name: "Pankaj Singh",
-      email: "pankaj@example.com",
-      mobile: "9876543210",
-      isBlocked: false,
-      role: "customer",
-      orders: [
-        { id: "ord1", date: "2025-07-01", total: "₹1,200" },
-        { id: "ord2", date: "2025-07-03", total: "₹799" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Ravi Kumar",
-      email: "ravi@example.com",
-      mobile: "9898989898",
-      isBlocked: true,
-      role: "customer",
-      orders: [],
-    },
-  ]);
+ 
+
+  const [customers, setCustomers] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchValue, setSearchValue] = useState("");
 
-  const toggleBlockStatus = (id) => {
-    setCustomers((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, isBlocked: !c.isBlocked } : c
-      )
-    );
-  };
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+       
+        const res = await fetch("/api/admin/getusers?role=customer");
+        const data = await res.json();
+        if (res.ok && data.users) {
+          setCustomers(
+            data.users.map((u, idx) => ({
+              id: u._id,
+              name: `${u.firstName} ${u.lastName}`,
+              email: u.email,
+              mobile: u.mobile,
+              role: u.role,
+              orders: [],  
+            }))
+          );
+        
+        }
+      } catch (err) {
+         console.log(err)
+      }
+    }
+    fetchUsers();
+  }, []);
+
+ 
 
   const handleRoleChange = (id, newRole) => {
     setCustomers((prev) =>
@@ -89,7 +89,6 @@ export default function CustomerManagement() {
               <TableHead className="text-blue-900 dark:text-cyan-200">Name</TableHead>
               <TableHead className="text-blue-900 dark:text-cyan-200">Email</TableHead>
               <TableHead className="text-blue-900 dark:text-cyan-200">Mobile</TableHead>
-              <TableHead className="text-blue-900 dark:text-cyan-200">Status</TableHead>
               <TableHead className="text-blue-900 dark:text-cyan-200">Role</TableHead>
               <TableHead className="text-blue-900 dark:text-cyan-200 text-center">Actions</TableHead>
             </TableRow>
@@ -100,13 +99,7 @@ export default function CustomerManagement() {
                 <TableCell className="font-semibold">{customer.name}</TableCell>
                 <TableCell>{customer.email}</TableCell>
                 <TableCell>{customer.mobile}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${customer?.isBlocked ? "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300" : "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"}`}
-                  >
-                    {customer?.isBlocked ? "Blocked" : "Active"}
-                  </span>
-                </TableCell>
+                
                 <TableCell>
                   <Select
                     value={customer.role}
@@ -145,14 +138,7 @@ export default function CustomerManagement() {
                       </div>
                     </DialogContent>
                   </Dialog>
-                  <Button
-                    size="sm"
-                    variant={customer.isBlocked ? "default" : "destructive"}
-                    onClick={() => toggleBlockStatus(customer.id)}
-                    className={customer.isBlocked ? "bg-green-500 text-white hover:bg-green-600" : "bg-red-500 text-white hover:bg-red-600"}
-                  >
-                    {customer.isBlocked ? "Unblock" : "Block"}
-                  </Button>
+                  
                 </TableCell>
               </TableRow>
             ))}

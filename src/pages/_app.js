@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
-
+import { setProducts } from "../redux/slices/productSlice";
 
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,
@@ -20,6 +20,7 @@ const Chatbot = dynamic(() => import("../components/Chatbot"), {
 
  
 function AuthSyncWrapper({ children }) {
+
   const { data: sessionData, status } = useSession();
   const dispatch = useDispatch();
 
@@ -54,6 +55,27 @@ function AuthSyncWrapper({ children }) {
       dispatch(setUser(null));
     }
   }, [status, sessionData]);
+
+  
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const res = await fetch('/api/products');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.products)) {
+                    dispatch(setProducts(data.products));
+                }
+            } catch (err) {
+                 console.log(err);
+            }
+        }
+        fetchProducts();
+    }, [dispatch]);
+   
+
+
+
+
 
   return children;
 }

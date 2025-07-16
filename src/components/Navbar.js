@@ -112,14 +112,7 @@ export default function PremiumNavigation() {
                     </NavigationMenuLink>
    </NavigationMenu>
            
-            {/* Reviews */}
-            <NavigationMenu>
-              <NavigationMenuLink
-                onClick={()=>router.push("/customer/our-reviews")}
-              className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
-                <span className="relative z-10">Reviews</span>
-              </NavigationMenuLink>
-            </NavigationMenu>
+             
 
             {/* Certifications */}
             <NavigationMenu>
@@ -231,7 +224,7 @@ export default function PremiumNavigation() {
             </NavigationMenu>
 
             {/* Shop Menu */}
-            {/* Reviews */}
+            
             <NavigationMenu>
               <NavigationMenuLink
                 onClick={()=>{router.push("/shop"),setMenuOpen(false)}}
@@ -259,14 +252,7 @@ export default function PremiumNavigation() {
             </NavigationMenu>
 
            
-            {/* Reviews */}
-            <NavigationMenu>
-              <NavigationMenuLink
-                onClick={()=>{router.push("/customer/our-reviews"),setMenuOpen(false)}}
-              className="block cursor-pointer  py-2 text-sm text-slate-200  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
-                <span className="relative z-10">Reviews</span>
-              </NavigationMenuLink>
-            </NavigationMenu>
+          
 
             {/* Certifications */}
             <NavigationMenu>

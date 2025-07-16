@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ShoppingCartIcon,
@@ -17,17 +17,31 @@ import {
   removeFromCart,
   increaseQty,
   decreaseQty,
+  addToCart,
 } from "../redux/slices/cartSlice";
 import { IndianRupee ,ShoppingCart} from "lucide-react";
+ 
 
 const MyShoppingCart = () => {
+  
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const user = useSelector((state) => state.auth.user);
-  const [promoCode, setPromoCode] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [cartproducts, setcartproducts] = useState([]);
   const router = useRouter();
+
+    useEffect(() => {
+     if (cartItems && cartItems.length > 0) {
+      setcartproducts(cartItems);  
+      localStorage.setItem("cartproduct", JSON.stringify(cartItems)); 
+    }
+    if (typeof window !== "undefined") {
+      const storedItems = JSON.parse(localStorage.getItem("cartproduct")) || [];
+      setcartproducts(storedItems);
+      dispatch(addToCart(storedItems))
+    }
+  }, []);
 
   const theme = {
     bg: "bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50",
@@ -46,11 +60,12 @@ const MyShoppingCart = () => {
   );
   const shipping = subtotal > 100 ? 0 : 15.99;
   const tax = subtotal * 0.08;
-  const discount = appliedPromo ? subtotal * 0.1 : 0;
-  const total = subtotal + shipping + tax - discount;
+ 
+  const total = subtotal + shipping + tax;
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
+    localStorage.removeItem("cartproduct");
     toast.success("Item removed from cart");
   };
 
@@ -66,7 +81,7 @@ const MyShoppingCart = () => {
     }
     router.push("/customer/billingorder");
   };
-
+console.log("cartproducts",cartproducts)
  
 
   return (
@@ -79,7 +94,7 @@ const MyShoppingCart = () => {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-black">Shopping Cart</h2>
-              <p className="text-gray-600">{cartItems.length} items in your cart</p>
+              <p className="text-gray-600">{cartproducts.length} items in your cart</p>
             </div>
           </div>
         </div>
@@ -89,7 +104,7 @@ const MyShoppingCart = () => {
             <div className={`rounded-xl shadow p-6 ${theme.card}`}>
               <h3 className="text-xl font-semibold mb-6">Your Items</h3>
 
-              {cartItems.length === 0 ? (
+              {cartproducts.length === 0 ? (
                  <div className="text-center ">
                                 <div className="text-6xl mb-4 text-gray-400"><ShoppingCart className="w-24 h-24 mx-auto" /></div>
                                 <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
@@ -101,22 +116,22 @@ const MyShoppingCart = () => {
                                 </button>
                               </div>
               ) : (
-                cartItems.map((item) => (
+                cartproducts.map((item) => (
                   <div
                     key={item.id}
                     className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4  rounded-lg  mb-5 bg-gray-100"
                   >
                     <img
-                      src={item.image}
+                      src={item.images?.[0]}
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded-lg"
                     />
                     <div className="flex-1 space-y-2">
                       <h4 className="text-lg font-bold">{item.name}</h4>
-                      <p className="text-sm text-gray-500">Category: {item.category}</p>
+                      <p className="text-sm text-gray-500">Category: {item?.category?.name}</p>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold flex text-blue-600">
-                          <IndianRupee className="w-5 h-5" /> {item.price.toFixed(2)}
+                          <IndianRupee className="w-5 h-5" /> {item?.price?.toFixed(2)}
                         </span>
                         {item.originalPrice > item.price && (
                           <span className="line-through text-sm text-gray-400">
@@ -171,12 +186,7 @@ const MyShoppingCart = () => {
                 <span>Tax</span>
                 <span className="flex"> <IndianRupee className="w-5 h-5" /> {tax.toFixed(2)}</span>
               </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Discount</span>
-                  <span>-${discount.toFixed(2)}</span>
-                </div>
-              )}
+              
               <div className="border-t pt-3 mt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
                 <span className="text-blue-600 flex"> <IndianRupee className="w-5 " /> {total.toFixed(2)}</span>

@@ -10,14 +10,14 @@ const orderSlice = createSlice({
   reducers: {
     placeOrder(state, action) {
       const newOrder = {
-        id: Date.now(), // unique ID
+        id: Date.now(),   
         items: action.payload.items,
         total: action.payload.total,
-        status: "Pending", // default
+        status: "Pending",  
         createdAt: new Date().toISOString(),
       };
       state.orders.push(newOrder);
-      //  persist to localStorage
+     
       localStorage.setItem("user-orders", JSON.stringify(state.orders));
     },
     updateOrderStatus(state, action) {
