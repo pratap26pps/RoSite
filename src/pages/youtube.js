@@ -9,6 +9,7 @@ import {
   Youtube,
 } from "lucide-react";
 
+import Image from "next/image";
 export default function YoutubeTrust() {
   return (
     <section className="relative py-20   text-gray-800 overflow-hidden font-sans">
@@ -72,7 +73,9 @@ export default function YoutubeTrust() {
 
        {/* Right Logo/Image */}
     <div className="w-24 h-24 mt-6 flex ml-20 lg:hidden shrink-0">
-      <img
+      <Image
+      width={45}
+      height={45}
         src="/images/youtubelogo.jpg"  
         alt="RO Technical Xperts Logo"
         className="w-full h-full object-contain rounded-2xl scale-125"
