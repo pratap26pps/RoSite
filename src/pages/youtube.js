@@ -76,7 +76,7 @@ export default function YoutubeTrust() {
       <Image
       width={45}
       height={45}
-        src="/images/youtubelogo.jpg"  
+        src="/images/youtubelogo.png"  
         alt="RO Technical Xperts Logo"
         className="w-full h-full object-contain rounded-2xl scale-125"
       />
@@ -94,7 +94,7 @@ export default function YoutubeTrust() {
     {/* Right Logo/Image */}
     <div className="w-24 hidden lg:block h-24 shrink-0">
       <img
-        src="/images/youtubelogo.jpg"  
+        src="/images/youtubelogo.png"  
         alt="RO Technical Xperts Logo"
         className="w-full h-full object-contain rounded-xl scale-125"
       />
