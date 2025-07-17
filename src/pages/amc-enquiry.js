@@ -55,7 +55,7 @@ export default function AmcEnquiry() {
         }}
       />
       {/* Responsive Form Content */}
-      <form onSubmit={handleSubmit} className="relative z-10 w-full max-w-lg bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 backdrop-blur-md border border-blue-100 dark:border-gray-700">
+      <form onSubmit={handleSubmit} className="relative z-10 w-full max-w-lg bg-white/90  text-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 backdrop-blur-md border border-blue-100 dark:border-gray-700">
         <h2 className="text-2xl font-extrabold text-blue-700 dark:text-cyan-300 mb-2 text-center drop-shadow">AMC Enquiry Form</h2>
         {success && <div className="bg-green-100 text-green-800 px-4 py-2 rounded text-center font-semibold">{success}</div>}
         {error && <div className="bg-red-100 text-red-800 px-4 py-2 rounded text-center font-semibold">{error}</div>}
@@ -81,7 +81,7 @@ export default function AmcEnquiry() {
             <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" rows={3} />
           </div>
         </div>
-        <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold py-2 px-4 rounded-xl transition disabled:opacity-60 shadow-lg">
+        <button type="submit" disabled={loading} className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold py-2 px-4 rounded-xl transition disabled:opacity-60 shadow-lg">
           {loading ? 'Sending...' : 'Send Enquiry'}
         </button>
       </form>

@@ -48,13 +48,20 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
       {/* Hero Section */}
+ 
       <section className="relative min-h-screen flex items-center justify-center px-4">
+         <div
+          className="absolute inset-0 bg-cover bg-center brightness-75"
+          style={{
+            backgroundImage: "url('/images/about1.png')",
+          }}
+        ></div>
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Droplets className="w-16 h-16 mx-auto mb-4 text-blue-500  " />
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white bg-clip-text ">
             RO Technical Experts
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-8">
+          <p className="text-xl md:text-2xl text-white mb-8">
             Your Trusted Water Purification Specialists
           </p>
 
@@ -75,12 +82,10 @@ const AboutPage = () => {
 
           <a
             href="#about"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-md"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600   px-8 py-4 rounded-full font-semibold transition-all duration-300 transform   cursor-pointer"
           >
             Learn More
-            <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+          
           </a>
         </div>
       </section>
@@ -208,21 +213,8 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-4 border-t border-blue-200">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Droplets className="w-6 h-6 text-blue-600" />
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              RO Technical Experts
-            </span>
-          </div>
-          <p className="text-gray-500 text-sm">
-            © 2024 RO Technical Experts. All rights reserved. | Pure Water, Pure Life.
-          </p>
-        </div>
-      </footer>
+ 
+      
     </div>
   );
 };

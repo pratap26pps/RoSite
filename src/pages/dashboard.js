@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useRef } from 'react';
 import MyShoppingCart from './cart';
+import AddReview from './admin/addreview';
 const AdminDashboard = () => {
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
@@ -77,7 +78,9 @@ const AdminDashboard = () => {
     { key: 'overview', label: 'Overview', icon: <BarChart3 className="w-5 h-5" /> },
     { key: 'orders', label: 'Orders', icon: <ShoppingCart className="w-5 h-5" /> },
     { key: 'customers', label: 'Customers', icon: <Users className="w-5 h-5" /> },
+    { key: 'Micro Admin', label: 'Micro Admin', icon: <Users className="w-5 h-5" /> },
     { key: 'Add Category/Product', label: 'Add Category/Product', icon: <Plus className="w-5 h-5" /> },
+    { key: 'Add Review', label: 'Add Review', icon: <Plus className="w-5 h-5" /> },
     { key: 'Product-History', label: 'Product-History', icon: <Package className="w-5 h-5" /> },
    
   ];
@@ -433,9 +436,17 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
         return (
           <CustomerManagement/>
         );
+         case 'Micro Admin':
+        return (
+          <CustomerManagement/>
+        );
       case 'Add Category/Product':
         return (
           <AddCategoryProduct/>
+        );
+         case 'Add Review':
+        return (
+          <AddReview/>
         );
       case 'Product-History':
         return (

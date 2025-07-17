@@ -1,31 +1,43 @@
 "use client";
+import { useEffect, useState, useRef } from "react";
 import { Quote } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Cameron Williamson",
-    title: "Designer",
-    quote:
-      "Searches for multiplexes, property comparisons, and the loan estimator. Works great. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    name: "Esther Howard",
-    title: "Marketing",
-    quote:
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
-    avatar: "https://randomuser.me/api/portraits/men/34.jpg",
-  },
-  {
-    name: "Devon Lane",
-    title: "Developer",
-    quote:
-      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia magni dolores eos qui ratione.",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-  },
-];
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function ModernTestimonials() {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const autoplayRef = useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
+
+  useEffect(() => {
+    async function fetchReviews() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/reviews");
+        const data = await res.json();
+        if (data.success) {
+          setTestimonials(data.reviews);
+        } else {
+          setError(data.message || "Failed to load testimonials");
+        }
+      } catch (err) {
+        setError("Failed to load testimonials");
+      }
+      setLoading(false);
+    }
+    fetchReviews();
+  }, []);
+
   return (
     <section className="py-16 bg-white text-gray-800 font-sans">
       <div className="max-w-7xl mx-auto px-4">
@@ -49,30 +61,47 @@ export default function ModernTestimonials() {
           </div>
         </div>
 
-        {/* Testimonial Cards */}
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t, idx) => (
-            <div
-              key={idx}
-              className="bg-gray-200 border border-gray-100 shadow-sm hover:shadow-md rounded-2xl p-6 transition-all duration-300"
-            >
-              <div className="flex items-center mb-4">
-                <img
-                  src={t.avatar}
-                  alt={t.name}
-                  className="w-14 h-14 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <h4 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                    {t.name} <Quote className="w-4 h-4 text-gray-400" />
-                  </h4>
-                  <p className="text-sm text-gray-500">{t.title}</p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed">{t.quote}</p>
-            </div>
-          ))}
-        </div>
+        {/* Testimonial Carousel */}
+        <Carousel
+          opts={{ align: "start", loop: true, slidesToScroll: 1 }}
+          plugins={[autoplayRef.current]}
+          className="relative"
+        >
+          <CarouselContent className="-ml-4">
+            {loading ? (
+              <div className="col-span-full text-center text-gray-500 py-10 w-full">Loading testimonials...</div>
+            ) : error ? (
+              <div className="col-span-full text-center text-red-500 py-10 w-full">{error}</div>
+            ) : testimonials.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400 py-10 w-full">No testimonials yet.</div>
+            ) : (
+              testimonials.map((t, idx) => (
+                <CarouselItem
+                  key={t._id || idx}
+                  className="basis-full md:basis-1/2 lg:basis-1/3 pl-4"
+                >
+                  <div className="bg-gray-200 border border-gray-100 shadow-sm hover:shadow-md rounded-2xl p-6 transition-all duration-300 h-full flex flex-col">
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={t.image}
+                        alt={t.name}
+                        className="w-14 h-14 rounded-full object-cover mr-4"
+                      />
+                      <div>
+                        <h4 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                          {t.name} <Quote className="w-4 h-4 text-gray-400" />
+                        </h4>
+                        <p className="text-sm text-gray-500">{t.position}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{t.description}</p>
+                  </div>
+                </CarouselItem>
+              ))
+            )}
+          </CarouselContent>
+      
+        </Carousel>
       </div>
     </section>
   );

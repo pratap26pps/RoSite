@@ -1,4 +1,4 @@
-import nodemailer from '../../lib/nodemailer';
+import { sendAmcEnquiryEmail } from '../../lib/newmailer';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const mailOptions = {
       from: process.env.EMAIL_FROM || email,
-      to: process.env.ENQUIRY_RECEIVER || process.env.EMAIL_FROM,
+      to: process.env.MAIL_AUTH || process.env.EMAIL_FROM,
       subject: 'New AMC Enquiry',
       text: `AMC Enquiry Details:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nAddress: ${address}\nMessage: ${message || '-'}\n`,
       html: `<h2>AMC Enquiry Details</h2>
@@ -21,9 +21,10 @@ export default async function handler(req, res) {
         <p><b>Address:</b> ${address}</p>
         <p><b>Message:</b> ${message || '-'}</p>`
     };
-    await nodemailer.sendMail(mailOptions);
+    await sendAmcEnquiryEmail(mailOptions);
     return res.status(200).json({ success: true });
   } catch (err) {
+    console.log("error in amc",err)
     return res.status(500).json({ error: 'Failed to send email.' });
   }
 } 
