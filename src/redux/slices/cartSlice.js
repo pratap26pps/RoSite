@@ -10,7 +10,7 @@ const cartSlice = createSlice({
   reducers: {
     addToCart(state, action) {
       const item = action.payload;
-      const exist = state.cartItems.find((p) => p.id === item.id);
+      const exist = state.cartItems.find((p) => p._id === item._id);
       if (exist) {
         exist.quantity += 1;
       } else {
@@ -18,14 +18,14 @@ const cartSlice = createSlice({
       }
     },
     removeFromCart(state, action) {
-      state.cartItems = state.cartItems.filter((p) => p.id !== action.payload);
+      state.cartItems = state.cartItems.filter((p) => p._id !== action.payload);
     },
     increaseQty(state, action) {
-      const item = state.cartItems.find((p) => p.id === action.payload);
+      const item = state.cartItems.find((p) => p._id === action.payload);
       if (item) item.quantity += 1;
     },
     decreaseQty(state, action) {
-      const item = state.cartItems.find((p) => p.id === action.payload);
+      const item = state.cartItems.find((p) => p._id === action.payload);
       if (item && item.quantity > 1) item.quantity -= 1;
     },
     clearCart(state) {

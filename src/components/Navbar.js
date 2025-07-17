@@ -128,7 +128,7 @@ export default function PremiumNavigation() {
               <NavigationMenuLink
                 onClick={()=>router.push("/amc-enquiry")}
               className="block cursor-pointer  py-2 text-sm text-slate-900  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
-                <span className="relative z-10">Amc-enquiry</span>
+                <span className="relative z-10">AMC-Enquiry</span>
               </NavigationMenuLink>
             </NavigationMenu>
           </div>
@@ -136,12 +136,12 @@ export default function PremiumNavigation() {
           {/* Auth/Login Buttons */}
           <div className="hidden sm:flex items-center gap-6 relative">
             {/* Cart */}
-            <div className="relative cursor-pointer">
+            <div    onClick={() => router.push("/cart")} className="relative cursor-pointer">
               <div className="absolute -top-4 -right-2  text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold   border-2 border-slate-900">
                 {totalItems}
               </div>
               <ShoppingCart
-                onClick={() => router.push("/cart")}
+             
                 className="text-slate-900 w-6 h-6 transition-all duration-300"
               />
             </div>
@@ -268,7 +268,7 @@ export default function PremiumNavigation() {
               <NavigationMenuLink
                 onClick={()=>{router.push("/amc-enquiry",setMenuOpen(false))}}
               className="block cursor-pointer  py-2 text-sm text-slate-100  hover:text-blue-300   rounded-lg transition-all duration-300  relative group">
-                <span className="relative z-10">Amc-enquiry</span>
+                <span className="relative z-10">AMC-Enquiry</span>
               </NavigationMenuLink>
             </NavigationMenu>
             

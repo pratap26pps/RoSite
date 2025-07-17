@@ -58,7 +58,7 @@ const router=useRouter()
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
   );
-
+  console.log(paginatedProducts)
   const handlePageChange = (page) => {
     setCurrentPage(page);
     // Scroll to top of shop page after pagination
@@ -68,15 +68,13 @@ const router=useRouter()
   };
 
   const carthandler = async (id) => {
-    const product = dummyProducts.find((product) => product.id === id);
+    const product = filteredProducts.find((product) => product._id === id);
     if (!product) return;
 
     dispatch(addToCart(product));
-    localStorage.setItem("cartproduct", JSON.stringify(product));
+    // localStorage.setItem("cartproduct", JSON.stringify(product));
     toast.success(`${product.name} is added`);
-    console.log(`Added ${product.name} to cart`);
-
-      setAddedToCart((prev) => [...prev, id]);
+    setAddedToCart((prev) => [...prev, id]);
   };
 
   return (
@@ -213,7 +211,7 @@ const router=useRouter()
           <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 mb-12">
             {paginatedProducts.map((product) => (
              <Card
-  key={product.id}
+  key={product._id}
   className=" bg-white border border-gray-200 pb-4 pt-0 rounded-2xl overflow-hidden  mx-5"
 >
   <div className="relative overflow-hidden">
@@ -240,17 +238,17 @@ const router=useRouter()
     {/* Store Icons */}
     <div className="space-y-4 mt-auto">
                          <button
-                           onClick={() => router.push(`/${product.id}`)}
+                           onClick={() => router.push(`/${product._id}`)}
                         className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
                           View
                         </button>
   
                           <div className="flex items-center justify-center gap-4">
                               <ShoppingCart 
-                                onClick={() => carthandler(product.id)}
-      disabled={addedToCart.includes(product.id)}
+                                onClick={() => carthandler(product._id)}
+      disabled={addedToCart.includes(product._id)}
       className={` border-2  cursor-pointer h-[50px] w-[50px] rounded-lg ${
-        addedToCart.includes(product.id)
+        addedToCart.includes(product._id)
           ? "  bg-green-400  cursor-not-allowed"
           : "text-blue-600  hover:text-blue-700"
       } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}

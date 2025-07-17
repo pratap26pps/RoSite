@@ -56,7 +56,7 @@ const DressStyleCarousel = () => {
           }`}
         >
           <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight mb-4">
-            BROWSE BY <span className="text-blue-600">CATEGORY WATER PURIFY</span>
+            BROWSE BY <span className="text-blue-600">CATEGORY</span>
           </h1>
           <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full"></div>
         </div>

@@ -93,7 +93,7 @@ export default function YoutubeTrust() {
       <img
         src="/images/youtubelogo.jpg"  
         alt="RO Technical Xperts Logo"
-        className="w-full h-full object-contain rounded-2xl scale-125"
+        className="w-full h-full object-contain rounded-xl scale-125"
       />
     </div>
   </div>

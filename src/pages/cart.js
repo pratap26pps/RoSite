@@ -17,7 +17,7 @@ import {
   removeFromCart,
   increaseQty,
   decreaseQty,
-  addToCart,
+ 
 } from "../redux/slices/cartSlice";
 import { IndianRupee ,ShoppingCart} from "lucide-react";
  
@@ -28,20 +28,11 @@ const MyShoppingCart = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const user = useSelector((state) => state.auth.user);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [cartproducts, setcartproducts] = useState([]);
+  
   const router = useRouter();
-
-    useEffect(() => {
-     if (cartItems && cartItems.length > 0) {
-      setcartproducts(cartItems);  
-      localStorage.setItem("cartproduct", JSON.stringify(cartItems)); 
-    }
-    if (typeof window !== "undefined") {
-      const storedItems = JSON.parse(localStorage.getItem("cartproduct")) || [];
-      setcartproducts(storedItems);
-      dispatch(addToCart(storedItems))
-    }
-  }, []);
+  console.log(cartItems)
+   
+ 
 
   const theme = {
     bg: "bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50",
@@ -65,7 +56,6 @@ const MyShoppingCart = () => {
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
-    localStorage.removeItem("cartproduct");
     toast.success("Item removed from cart");
   };
 
@@ -81,7 +71,7 @@ const MyShoppingCart = () => {
     }
     router.push("/customer/billingorder");
   };
-console.log("cartproducts",cartproducts)
+ 
  
 
   return (
@@ -94,7 +84,7 @@ console.log("cartproducts",cartproducts)
             </div>
             <div>
               <h2 className="text-2xl font-bold text-black">Shopping Cart</h2>
-              <p className="text-gray-600">{cartproducts.length} items in your cart</p>
+              <p className="text-gray-600">{cartItems.length} items in your cart</p>
             </div>
           </div>
         </div>
@@ -104,7 +94,7 @@ console.log("cartproducts",cartproducts)
             <div className={`rounded-xl shadow p-6 ${theme.card}`}>
               <h3 className="text-xl font-semibold mb-6">Your Items</h3>
 
-              {cartproducts.length === 0 ? (
+              {cartItems.length === 0 ? (
                  <div className="text-center ">
                                 <div className="text-6xl mb-4 text-gray-400"><ShoppingCart className="w-24 h-24 mx-auto" /></div>
                                 <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
@@ -116,9 +106,9 @@ console.log("cartproducts",cartproducts)
                                 </button>
                               </div>
               ) : (
-                cartproducts.map((item) => (
+                cartItems.map((item) => (
                   <div
-                    key={item.id}
+                    key={item._id}
                     className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4  rounded-lg  mb-5 bg-gray-100"
                   >
                     <img
@@ -142,7 +132,7 @@ console.log("cartproducts",cartproducts)
                     </div>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => dispatch(decreaseQty(item.id))}
+                        onClick={() => dispatch(decreaseQty(item._id))}
                         className="bg-blue-100 p-1 cursor-pointer rounded disabled:opacity-50"
                         disabled={item.quantity === 1}
                       >
@@ -150,13 +140,13 @@ console.log("cartproducts",cartproducts)
                       </button>
                       <span className="w-6 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => dispatch(increaseQty(item.id))}
+                        onClick={() => dispatch(increaseQty(item._id))}
                         className="bg-blue-100 cursor-pointer p-1 rounded"
                       >
                         <PlusIcon className="h-4 w-4 text-blue-600" />
                       </button>
                     </div>
-                    <button onClick={() => handleRemove(item.id)}>
+                    <button onClick={() => handleRemove(item._id)}>
                       <TrashIcon className="h-5 w-5 cursor-pointer text-red-500" />
                     </button>
                   </div>
@@ -233,7 +223,6 @@ console.log("cartproducts",cartproducts)
               </button>
               <button
                 onClick={() => {
-                  toast.success("Redirecting...");
                   setIsCheckoutOpen(false);
                   handleCheckout();
                 }}

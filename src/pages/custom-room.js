@@ -476,15 +476,10 @@ return (
             {Object.entries(selectedComponents).map(([category, component]) => (
               <div key={category} className="flex justify-between text-sm">
                 <span className="text-gray-600">{component.name}</span>
-                <span className="font-medium">₹{component.price.toLocaleString()}</span>
+         
               </div>
             ))}
-            <div className="border-t pt-2 mt-4">
-              <div className="flex justify-between font-semibold">
-                <span>Subtotal</span>
-                <span className="text-blue-600">₹{totalPrice.toLocaleString()}</span>
-              </div>
-            </div>
+ 
           </div>
         </motion.div>
       )}

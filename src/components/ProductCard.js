@@ -26,7 +26,7 @@ export function CarouselSize() {
  console.log("products",products)
 
     const carthandler = async (id) => {
-    const product = products.find((product) => product.id === id);
+    const product = products.find((product) => product._id === id);
     if (!product) return;
     dispatch(addToCart(product));
     toast.success(`${product.name} is added`);
@@ -58,31 +58,36 @@ export function CarouselSize() {
                 <div className="h-full">
                   <div className="bg-white rounded-2xl   transition-all duration-300 h-full flex flex-col justify-between border border-gray-200 overflow-hidden ">
                     {/* Image Container */}
-                    <div className="relative w-full h-56 overflow-hidden">
+                    <div className="relative w-full  overflow-hidden">
                       {product.bestSeller && (
                         <span className="absolute top-2 left-2 bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded z-20 shadow-md">
                           Best Seller
                         </span>
                       )}
+ 
                       <img
-                        src={product?.images?.[0]}
+                        src={product.images?.[0]}
                         alt={product.name}
                         fill
-                        className="object-contain transition-transform duration-300 pt-3"
-                        sizes="(max-width: 640px) 85vw, (max-width: 768px) 60vw, (max-width: 1024px) 45vw, (max-width: 1280px) 33vw, 25vw"
-                        priority={product.id <= 4}
+                        className="w-full h-48 object-cover transition-transform duration-300 "
+                          priority={product.id <= 4}
                       />
-                      <div className="absolute flex top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-full text-sm font-semibold z-20">
-                        <IndianRupee className="w-5 h-5" /> {product.price}
+                      <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
+                        {product?.category?.name}
                       </div>
+     
                     </div>
 
                     {/* Content */}
-                    <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
+                    <div className=" sm:p-5 md:p-6 flex-1 flex flex-col">
+                      <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
+                        <IndianRupee className="w-5 h-5" /> {product.price}
+                      </div>
                       <div className="flex-1">
                         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-700 transition-colors">
                           {product.name}
                         </h3>
+                           <p className="text-sm text-gray-500">SKU: {product?.skuid}</p>
                         <p className="text-sm sm:text-base text-gray-600 line-clamp-2 mb-4">
                           {product.description}
                         </p>
@@ -91,17 +96,17 @@ export function CarouselSize() {
                       {/* Action Section */}
                       <div className="space-y-4 mt-auto">
                         <button
-                           onClick={() => router.push(`/${product.id}`)}
+                           onClick={() => router.push(`/${product._id}`)}
                         className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
                           View
                         </button>
 
                         <div className="flex items-center justify-center gap-4">
                                   <ShoppingCart
-                                onClick={() => carthandler(product.id)}
-      disabled={addedToCart?.includes(product.id)}
+                                onClick={() => carthandler(product._id)}
+      disabled={addedToCart?.includes(product._id)}
       className={` border-2 cursor-pointer  h-[50px] w-[50px] rounded-lg ${
-        addedToCart.includes(product.id)
+        addedToCart.includes(product._id)
           ? "  bg-green-400  cursor-not-allowed"
           : "text-blue-600  hover:text-blue-700"
       } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
