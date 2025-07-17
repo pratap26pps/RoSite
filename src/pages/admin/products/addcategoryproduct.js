@@ -7,6 +7,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { addCategory,setCategories } from "@/src/redux/slices/categorySlice";
 import { setProducts,addProduct } from "@/src/redux/slices/productSlice";
 import toast from "react-hot-toast";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function AddCategoryProduct() {
 
@@ -15,6 +24,8 @@ export default function AddCategoryProduct() {
   const products = useSelector((state) => state.product.products);
   const [categoryName, setCategoryName] = useState("");
   const [categoryDesc, setCategoryDesc] = useState("");
+  const [categoryImg, setCategoryImg] = useState([]);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [productForm, setProductForm] = useState({
     name: "",
@@ -22,6 +33,8 @@ export default function AddCategoryProduct() {
     quantity: "",
     images: [],
     description: "",
+    flipkartLink: "",
+    amazonLink: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -29,7 +42,17 @@ export default function AddCategoryProduct() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [uploading, setUploading] = useState(false);
-
+  const [uploading2, setUploading2] = useState(false);
+  const [editCategory, setEditCategory] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editCategoryName, setEditCategoryName] = useState("");
+  const [editCategoryDesc, setEditCategoryDesc] = useState("");
+  const [editCategoryImg, setEditCategoryImg] = useState("");
+  const [editUploading, setEditUploading] = useState(false);
+  const [editIsCustomCategory, setEditIsCustomCategory] = useState(false);
+  const [showOnlyCustomCategories, setShowOnlyCustomCategories] = useState(false);
+  const [showOnlyHomeCategories, setShowOnlyHomeCategories] = useState(false);
+    console.log("allCategories",categories);
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
@@ -72,10 +95,13 @@ export default function AddCategoryProduct() {
       _id: Date.now().toString(),
       name: categoryName,
       description: categoryDesc,
+      categoryType: isCustomCategory ? "customcategory" : "homecategory",
+      catImage:categoryImg,
     };
     dispatch(addCategory(newCategory));
     setCategoryName("");
     setCategoryDesc("");
+    setCategoryImg("");
     setSelectedCategory(newCategory._id);
     setMessage({ type: 'success', text: 'Category added successfully!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
@@ -90,11 +116,36 @@ export default function AddCategoryProduct() {
       _id: Date.now().toString(),
       category: selectedCategory,
       images: productForm.images,
+      flipkartLink: productForm.flipkartLink,
+      amazonLink: productForm.amazonLink,
     };
     dispatch(addProduct(newProduct));
-    setProductForm({ name: "", price: "", quantity: "", images: [], description: "" });
+    setProductForm({ name: "", price: "", quantity: "", images: [], description: "", flipkartLink: "", amazonLink: "" });
     setMessage({ type: 'success', text: 'Product added successfully!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+  };
+
+    const handleImageChangeforcategory = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading2(true);
+    const formData = new FormData();
+    files.forEach(file => formData.append('image', file));
+    try {
+      const response = await fetch('/api/uploadproductimages', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (response.ok && (result.urls || result.url)) {
+        // Accept both array and single url
+        setCategoryImg(result.urls || result.url);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    } finally {
+      setUploading2(false);
+    }
   };
 
   // Handle image upload (multiple)
@@ -121,10 +172,20 @@ export default function AddCategoryProduct() {
     }
   };
 
+
   // Add all products for this category to DB
   const handleAddAllToDB = async (catId) => {
+    console.log("catId",catId);
+    console.log("allCategories",categories);
+    console.log("products",products);
+    const category = categories.find(c => c._id === catId);  
+     if (!category) return;
     const catProducts = products.filter(p => (p.category === catId));
     if (!catProducts.length) return;
+
+    console.log("category",category);
+    console.log("catProducts",catProducts);
+
     setIsLoading(true);
     setMessage({ type: '', text: '' });
     try {
@@ -132,7 +193,7 @@ export default function AddCategoryProduct() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          categories: [],
+             categories: [category],
           products: {
             [catId]: catProducts
           }
@@ -144,7 +205,7 @@ export default function AddCategoryProduct() {
         toast.success('Categories and products processed successfully');
         // Remove products for this category from redux
         dispatch(setProducts(products.filter(p => p.category !== catId)));
-        setProductForm({ name: "", price: "", quantity: "", images: [], description: "" });
+        setProductForm({ name: "", price: "", quantity: "", images: [], description: "", flipkartLink: "", amazonLink: "" });
         setTimeout(() => setMessage({ type: '', text: '' }), 3000);
       } else {
         setMessage({ type: 'error', text: result.message || 'Failed to add products' });
@@ -154,6 +215,70 @@ export default function AddCategoryProduct() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Edit handlers
+  const openEditModal = (cat) => {
+    setEditCategory(cat);
+    setEditCategoryName(cat.name);
+    setEditCategoryDesc(cat.description || "");
+    setEditCategoryImg(cat.catImage || "");
+    setEditIsCustomCategory(cat.categoryType === "customcategory");
+    setEditModalOpen(true);
+  };
+  const handleEditImageChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setEditUploading(true);
+    const formData = new FormData();
+    files.forEach(file => formData.append('image', file));
+    try {
+      const response = await fetch('/api/uploadproductimages', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (response.ok && (result.urls || result.url)) {
+        setEditCategoryImg(result.urls || result.url);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    } finally {
+      setEditUploading(false);
+    }
+  };
+  const handleEditCategorySave = async () => {
+    if (!editCategoryName.trim()) return;
+    const updatedCategory = {
+      ...editCategory,
+      name: editCategoryName,
+      description: editCategoryDesc,
+      catImage: editCategoryImg,
+      categoryType: editIsCustomCategory ? "customcategory" : "homecategory",
+    };
+    // Backend or local update
+    if (allCategories.some(c => c._id === editCategory._id)) {
+      // Backend update
+      try {
+        const res = await fetch(`/api/admin/${editCategory._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedCategory),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setAllCategories(prev => prev.map(c => c._id === editCategory._id ? updatedCategory : c));
+          toast.success('Category updated');
+        }
+      } catch (err) {
+        toast.error('Update failed');
+      }
+    } else {
+      // Local redux update
+      dispatch(setCategories(categories.map(c => c._id === editCategory._id ? updatedCategory : c)));
+      toast.success('Category updated');
+    }
+    setEditModalOpen(false);
   };
 
   return (
@@ -169,139 +294,304 @@ export default function AddCategoryProduct() {
             {message.text}
           </div>
         )}
-        {/* Category Selection and Add Category Form */}
-        <Card className="mb-10 p-8 bg-white/90 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-2xl rounded-2xl transition-colors">
-          <div className="flex flex-col md:justify-between gap-4 items-end">
-            <div className="flex-1 w-full">
-             
-              <h3 className="text-lg font-bold text-blue-600 dark:text-cyan-300 mb-2">Select Existing Category</h3>
-              {/* Custom select-like dropdown for unique categories with delete logic */}
-              <div className="relative w-72" ref={dropdownRef}>
-                <div
-                  className="p-2 border border-blue-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer select-none flex justify-between items-center"
-                  onClick={() => setDropdownOpen((open) => !open)}
-                >
-                  <span>
-                    {(() => {
-                      if (!selectedCategory) return 'Select a category';
-                      const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
-                      return cat ? cat.name : 'Select a category';
-                    })()}
-                  </span>
-                  <svg className={`w-4 h-4 ml-2 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                </div>
-                {dropdownOpen && (
-                  <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-blue-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
-                    {(() => {
-                      const seen = new Set();
-                      const uniqueBackend = allCategories.filter(cat => {
-                        if (seen.has(cat.name)) return false;
-                        seen.add(cat.name);
-                        return true;
-                      });
-                      const uniqueLocal = categories.filter(cat => {
-                        if (seen.has(cat.name)) return false;
-                        seen.add(cat.name);
-                        return true;
-                      });
-                      return [
-                        ...uniqueBackend.map(cat => (
-                          <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
-                            <span
-                              className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
-                              onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
-                            >
-                              {cat.name}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="ml-2 px-2 py-1 cursor-pointer text-xs"
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                try {
-                                  const res = await fetch(`/api/admin/${cat._id}`, { method: 'DELETE' });
-                                  const data = await res.json();
-                                  if (res.ok && data.success) {
-                                    setAllCategories(prev => prev.filter(c => c._id !== cat._id));
-                                    if (selectedCategory === cat._id) setSelectedCategory(null);
-                                    toast.success(data.message)
-                                  }
-                                } catch (err) { 
-                                  console.log(err)
-                                }
-                              }}
-                            >Delete</Button>
-                          </li>
-                        )),
-                        ...uniqueLocal.map(cat => (
-                          <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
-                            <span
-                              className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
-                              onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
-                            >
-                              {cat.name}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="ml-2 px-2 py-1 text-xs"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                dispatch(setCategories(categories.filter(c => c._id !== cat._id)));
-                                if (selectedCategory === cat._id) setSelectedCategory(null);
-                              }}
-                            >Delete</Button>
-                          </li>
-                        ))
-                      ];
-                    })()}
-                  </ul>
-                )}
-              </div>
+
+<Card className="mb-10 p-6 sm:p-8 bg-white/90 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-2xl rounded-2xl transition-colors">
+  <div className="flex flex-col lg:flex-row gap-8 w-full">
+    
+    {/* Category Form */}
+    <form onSubmit={handleAddCategory} className="flex flex-col gap-4 w-full lg:w-3/5">
+      <h3 className="text-xl font-bold text-blue-600 dark:text-cyan-300">Add New Category</h3>
+
+      {/* Checkbox */}
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="customCategory"
+          checked={isCustomCategory}
+          onChange={(e) => setIsCustomCategory(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
+          Mark as Custom Category
+        </Label>
+      </div>
+
+      {/* Image Input */}
+      <div>
+        <Label htmlFor="categoryImage" className="font-semibold pb-1">Category Image</Label>
+        <Input
+          id="categoryImage"
+          type="file"
+          accept="image/*"
+          multiple
+          required
+          onChange={handleImageChangeforcategory}
+          className="block w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+        {uploading2 ? (
+          <p className="text-sm text-gray-500 mt-2">Uploading... please wait</p>
+        ) : (
+          categoryImg.length !== 0 && (
+            <div className="flex gap-2 mt-2 flex-wrap">
+              <img src={categoryImg} alt="category" className="w-14 h-14 object-cover rounded border border-blue-200 dark:border-cyan-700 shadow" />
             </div>
-            <form onSubmit={handleAddCategory} className="flex flex-col sm:flex-row gap-4 items-end flex-1 w-full">
-              <div className="flex-1 w-full">
-                <Label htmlFor="categoryName" className="font-semibold">Category Name</Label>
-                <Input
-                  id="categoryName"
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="e.g. RO Purifier"
-                  className="mt-1 border-blue-200 dark:border-gray-700 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"
-                  required
-                />
-              </div>
-              <div className="flex-1 w-full">
-                <Label htmlFor="categoryDesc" className="font-semibold">Description</Label>
-                <Input
-                  id="categoryDesc"
-                  value={categoryDesc}
-                  onChange={(e) => setCategoryDesc(e.target.value)}
-                  placeholder="Optional description"
-                  className="mt-1 border-blue-100 dark:border-gray-700 focus:ring-blue-300 dark:bg-gray-900 dark:text-white"
-                />
-              </div>
-              <Button type="submit" className="h-12 cursor-pointer mt-4 sm:mt-0 w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-cyan-700 dark:to-blue-800 text-white font-bold shadow-md hover:from-blue-600 hover:to-cyan-600">Add Category</Button>
-            </form>
-          </div>
-        </Card>
+          )
+        )}
+      </div>
+
+      {/* Name Input */}
+      <div>
+        <Label htmlFor="categoryName" className="font-semibold pb-1">Category Name</Label>
+        <Input
+          id="categoryName"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          placeholder="e.g. RO Purifier"
+          className="mt-1 border-blue-200 dark:border-gray-700 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"
+          required
+        />
+      </div>
+
+      {/* Description Input */}
+      <div>
+        <Label htmlFor="categoryDesc" className="font-semibold pb-1">Description</Label>
+        <textarea
+          id="categoryDesc"
+          value={categoryDesc}
+          onChange={e => setCategoryDesc(e.target.value)}
+          className="block w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          placeholder="Optional description"
+        />
+      </div>
+
+      {/* Submit */}
+      <Button
+        type="submit"
+        className="h-12 w-full cursor-pointer sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-cyan-700 dark:to-blue-800 text-white font-bold shadow-md hover:from-blue-600 hover:to-cyan-600"
+      >
+        Add Category
+      </Button>
+    </form>
+
+    {/* Existing Categories Dropdown */}
+    <div className="w-full lg:w-2/5">
+      <h3 className="text-xl font-bold text-blue-600 dark:text-cyan-300 mb-2">Select Existing Category</h3>
+      <div className="flex items-center mb-2 gap-6">
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="showOnlyCustomCategories"
+            checked={showOnlyCustomCategories}
+            onChange={e => {
+              setShowOnlyCustomCategories(e.target.checked);
+              if (e.target.checked) setShowOnlyHomeCategories(false);
+            }}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="showOnlyCustomCategories" className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show only custom categories</label>
+        </div>
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="showOnlyHomeCategories"
+            checked={showOnlyHomeCategories}
+            onChange={e => {
+              setShowOnlyHomeCategories(e.target.checked);
+              if (e.target.checked) setShowOnlyCustomCategories(false);
+            }}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="showOnlyHomeCategories" className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show only home categories</label>
+        </div>
+      </div>
+      <div className="relative w-full max-w-xs" ref={dropdownRef}>
+        <div
+          className="p-2 border border-blue-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer select-none flex justify-between items-center"
+          onClick={() => setDropdownOpen((open) => !open)}
+        >
+          <span>
+            {(() => {
+              if (!selectedCategory) return 'Select a category';
+              const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
+              return cat ? cat.name : 'Select a category';
+            })()}
+          </span>
+          <svg className={`w-4 h-4 ml-2 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </div>
+
+        {/* Dropdown Items */}
+        {dropdownOpen && (
+          <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-blue-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+            {(() => {
+              const seen = new Set();
+              const uniqueBackend = allCategories.filter(cat => {
+                if (seen.has(cat.name)) return false;
+                seen.add(cat.name);
+                return true;
+              });
+              const uniqueLocal = categories.filter(cat => {
+                if (seen.has(cat.name)) return false;
+                seen.add(cat.name);
+                return true;
+              });
+              const filteredBackend = showOnlyCustomCategories
+                ? uniqueBackend.filter(cat => cat.categoryType === "customcategory")
+                : showOnlyHomeCategories
+                  ? uniqueBackend.filter(cat => cat.categoryType !== "customcategory")
+                  : uniqueBackend;
+              const filteredLocal = showOnlyCustomCategories
+                ? uniqueLocal.filter(cat => cat.categoryType === "customcategory")
+                : showOnlyHomeCategories
+                  ? uniqueLocal.filter(cat => cat.categoryType !== "customcategory")
+                  : uniqueLocal;
+              return [
+                ...filteredBackend.map(cat => (
+                  <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
+                    <span
+                      className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
+                      onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
+                    >
+                      {cat.name}
+                    </span>
+                     <Button
+                      size="sm"
+              
+                      className="ml-2 cursor-pointer px-2 py-1 text-xs"
+                      onClick={e => {
+                        e.stopPropagation();
+                        openEditModal(cat);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="ml-2 px-2 py-1 cursor-pointer text-xs"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        try {
+                          const res = await fetch(`/api/admin/${cat._id}`, { method: 'DELETE' });
+                          const data = await res.json();
+                          if (res.ok && data.success) {
+                            setAllCategories(prev => prev.filter(c => c._id !== cat._id));
+                            if (selectedCategory === cat._id) setSelectedCategory(null);
+                            toast.success(data.message)
+                          }
+                        } catch (err) { 
+                          console.log(err)
+                        }
+                      }}
+                    >Delete</Button>
+                   
+                  </li>
+                )),
+                ...filteredLocal.map(cat => (
+                  <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
+                    <span
+                      className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
+                      onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
+                    >
+                      {cat.name}
+                    </span>
+                     <Button
+                      size="sm"
+           
+                      className="ml-2 px-2 py-1 text-xs"
+                      onClick={e => {
+                        e.stopPropagation();
+                        openEditModal(cat);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="ml-2 px-2 py-1 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(setCategories(categories.filter(c => c._id !== cat._id)));
+                        if (selectedCategory === cat._id) setSelectedCategory(null);
+                      }}
+                    >Delete</Button>
+                   
+                  </li>
+                ))
+              ];
+            })()}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+</Card>
+
+{/* Edit Category Modal */}
+<Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+  <DialogContent className="bg-white text-black">
+    <DialogHeader>
+      <DialogTitle>Edit Category</DialogTitle>
+    </DialogHeader>
+    <div className="flex flex-col gap-4">
+      <label className="font-semibold">Category Name</label>
+      <Input value={editCategoryName} onChange={e => setEditCategoryName(e.target.value)} />
+      <label className="font-semibold">Description</label>
+      <Input value={editCategoryDesc} onChange={e => setEditCategoryDesc(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="editCustomCategory"
+          checked={editIsCustomCategory}
+          onChange={e => setEditIsCustomCategory(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label htmlFor="editCustomCategory" className="text-sm font-medium">Mark as Custom Category</label>
+      </div>
+      <label className="font-semibold">Image</label>
+      <Input type="file" accept="image/*" onChange={handleEditImageChange} />
+      {editUploading ? <span>Uploading...</span> : editCategoryImg && <img src={editCategoryImg} alt="preview" className="w-16 h-16 object-cover rounded border mt-2" />}
+    </div>
+    <DialogFooter>
+      <Button onClick={handleEditCategorySave} className="bg-blue-600 text-white">Save</Button>
+      <DialogClose asChild>
+        <Button  className="cursor-pointer ">Cancel</Button>
+      </DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+
         {/* Product Form for Selected Category */}
+
         {selectedCategory && (() => {
           // Find selected category in backend or local
           const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
           if (!cat) return null;
+          console.log("cat",cat)
           // Get products for this category from redux
           const catProducts = products.filter(p => p.category === (cat._id || cat._id));
           return (
             <Card key={cat._id || cat._id} className="p-6 sm:p-8 bg-white/95 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-xl rounded-2xl transition-all hover:shadow-2xl mb-10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-blue-50 dark:border-gray-700 pb-4">
                 <div>
+                  {
+                     cat?.catImage &&(
+                    <img               
+                    src={cat?.catImage}
+                    alt={cat?.name}
+                    className="w-14 h-14 object-cover rounded border border-blue-200 dark:border-cyan-700 shadow"
+                  />
+                     )
+                  }
+                 
                   <h3 className="text-xl font-bold text-blue-700 dark:text-cyan-300 flex items-center gap-2">
                     <span className="inline-block w-2 h-2 bg-blue-400 dark:bg-cyan-400 rounded-full"></span>
-                    {cat.name}
+                    {cat?.name}
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">{cat.description}</p>
+                  <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">categoryType: {cat?.categoryType || "homecategory" } </p>
+                  <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">Description: {cat?.description}</p>
+
                 </div>
               </div>
               {/* Product Form for this category */}
@@ -352,19 +642,43 @@ export default function AddCategoryProduct() {
                     className="mt-1 border-blue-200 dark:border-gray-700 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"
                   />
                   {/* Preview uploaded images */}
-                  <div className="flex gap-2 mt-2 flex-wrap">
+                  {
+                    uploading ? "uploading.. please wait" :   <div className="flex gap-2 mt-2 flex-wrap">
                     {productForm.images && productForm.images.map((img, idx) => (
                       <img key={idx} src={img} alt={`preview-${idx}`} className="w-14 h-14 object-cover rounded border border-blue-200 dark:border-cyan-700 shadow" />
                     ))}
                   </div>
+                  }
+                
                 </div>
-                <div>
-                  <Label htmlFor="productDesc" className="font-semibold">Description</Label>
-                  <Input
-                    id="productDesc"
+                 <div>
+                <Label htmlFor="productDesc" className="font-semibold pb-1">Description</Label>
+                <textarea
+                     id="productDesc"
                     value={productForm.description}
                     onChange={(e) => setProductForm((prev) => ({ ...prev, description: e.target.value }))}
-                    placeholder="Short description"
+                   className="block w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                  placeholder="Short description"
+                />
+              </div>
+                
+                <div>
+                  <Label htmlFor="flipkartLink" className="font-semibold">Flipkart Link</Label>
+                  <Input
+                    id="flipkartLink"
+                    value={productForm.flipkartLink}
+                    onChange={e => setProductForm(prev => ({ ...prev, flipkartLink: e.target.value }))}
+                    placeholder="e.g. https://www.flipkart.com/product"
+                    className="mt-1 border-blue-200 dark:border-gray-700 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="amazonLink" className="font-semibold">Amazon Link</Label>
+                  <Input
+                    id="amazonLink"
+                    value={productForm.amazonLink}
+                    onChange={e => setProductForm(prev => ({ ...prev, amazonLink: e.target.value }))}
+                    placeholder="e.g. https://www.amazon.in/product"
                     className="mt-1 border-blue-200 dark:border-gray-700 focus:ring-blue-400 dark:bg-gray-900 dark:text-white"
                   />
                 </div>
@@ -381,7 +695,7 @@ export default function AddCategoryProduct() {
               {catProducts.length > 0 && (
                 <div className="flex justify-end mt-4">
                   <Button 
-                    onClick={() => handleAddAllToDB(cat._id || cat._id)}
+                    onClick={() => handleAddAllToDB(cat._id || cat.id)}
                     disabled={isLoading}
                     className="bg-gradient-to-r from-green-500 to-blue-500 dark:from-green-700 dark:to-blue-700 text-white font-bold shadow hover:from-green-600 hover:to-blue-600 disabled:opacity-50"
                   >

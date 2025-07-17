@@ -3,6 +3,7 @@ import Category from '../../../models/Category';
 import Product from '../../../models/Product';
 import { generateProductCode } from '@/src/lib/generateProductCode';
 export default async function handler(req, res) {
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
@@ -11,7 +12,8 @@ export default async function handler(req, res) {
         await dbConnect();
 
         const { categories, products } = req.body;
-
+     console.log("categories",categories);
+     console.log("products",products);
         // Validate input
         if (!categories || !Array.isArray(categories)) {
             return res.status(400).json({ message: 'Categories array is required' });
@@ -26,25 +28,29 @@ export default async function handler(req, res) {
         // Process categories and their products
         for (const categoryData of categories) {
             try {
-                // Check if category already exists
-                const existingCategory = await Category.findOne({ 
-                    name: categoryData.name 
-                });
-                
+       
+
+               if (categoryData._id) {
+                const existingCategory = await Category.findById(categoryData._id);
+
                 if (existingCategory) {
-                    results.errors.push({
-                        type: 'category',
-                        data: categoryData,
-                        error: `Category "${categoryData.name}" already exists. Please use a different name.`
-                    });
-                    continue;
+                results.errors.push({
+                type: 'category',
+                data: categoryData,
+                error: `Category with ID "${categoryData._id}" already exists. Skipping creation.`,
+                });
+                continue;
                 }
+                }
+
 
                 // Create category
                 const category = new Category({
-                    name: categoryData.name,
-                    description: categoryData.description || '',
-                    isActive: true
+                name: categoryData.name,
+                description: categoryData.description || '',
+                catImage: categoryData.catImage ,  
+                categoryType: categoryData.categoryType === "customcategory" ? "customcategory" : "homecategory",
+                isActive: true
                 });
 
                 const savedCategory = await category.save();
@@ -78,6 +84,8 @@ export default async function handler(req, res) {
                                 price: parseFloat(productData.price),
                                 quantity: parseInt(productData.quantity),
                                 description: productData.description || '',
+                                amazonLink: productData.amazonLink, 
+                                flipkartLink: productData.flipkartLink, 
                                 category: savedCategory._id,
                                 images: imagesArr,
                                 isActive: true

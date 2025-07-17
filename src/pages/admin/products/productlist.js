@@ -25,6 +25,7 @@ import {
 import { Ban, Pencil, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { setProducts,updateProduct,removeProduct } from "@/src/redux/slices/productSlice";
+import { setCategories } from "@/src/redux/slices/categorySlice";
  
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -42,22 +43,30 @@ export default function ProductHistory() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [loading, setloading] = useState(false);
     const [selectedImageIdx, setSelectedImageIdx] = useState(null);
+   const [categoriesList, setAllCategories] = useState([]);
 
 
-    const categoriesList=[
-        {
-            _id:"687539dd86db9394128efa46",
-            name: "asdasd",
-        },
-         {
-            _id:"68764fdea48d1d6c06c70ad5",
-            name: "roo",
-        },
-         {
-            _id:"68753306b4bf47befac0bd74",
-            name: "new cat",
+ 
+
+
+      // Fetch all categories from backend on mount
+      useEffect(() => {
+        async function fetchCategories() {
+          try {
+            const res = await fetch('/api/categories');
+            const data = await res.json();
+            if (data.success && Array.isArray(data.categories)) {
+              setAllCategories(data.categories);
+              dispatch(setCategories(data.categories));
+            }
+          } catch (err) {
+           console.log(err)
+          }
         }
-    ]
+        fetchCategories();
+      }, [dispatch]);
+
+      
 
     const filteredProducts = products.filter(
         (p) =>

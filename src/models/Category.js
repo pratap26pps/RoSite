@@ -8,6 +8,10 @@ const categorySchema = new mongoose.Schema(
             unique: true,
             trim: true,
         },
+        catImage :{
+            type: String,
+            required: true,
+        },
         slug: {
             type: String,
             unique: true,
@@ -22,15 +26,12 @@ const categorySchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
         }],
-        parent: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category',
-            default: null,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+        categoryType: {
+         type: String,
+       enum: ["homecategory", "customcategory"],
+       default: "homecategory"
+      }
+        
     },
     {
         timestamps: true,
