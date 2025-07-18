@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory,setCategories } from "@/src/redux/slices/categorySlice";
-import { setProducts } from "@/src/redux/slices/productSlice";
+import { addProduct  } from "@/src/redux/slices/productSlice";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -20,11 +20,15 @@ export default function AddCategoryProduct() {
 
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.category.categories);
-  const products = useSelector((state) => state.product.products);
   const [categoryName, setCategoryName] = useState("");
   const [categoryDesc, setCategoryDesc] = useState("");
   const [categoryImg, setCategoryImg] = useState([]);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [isHomeCategory, setIsHomeCategory] = useState(false);
+
+    const [isCustomProduct, setIsCustomProduct] = useState(false);
+  const [isHomeProduct, setIsHomeProduct] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [productForm, setProductForm] = useState({
     name: "",
@@ -90,7 +94,21 @@ export default function AddCategoryProduct() {
     }
     fetchCategories();
   }, [dispatch]);
+console.log("cat product",catProducts)
 
+  const getCategoryType = () => {
+  if (isCustomCategory && isHomeCategory) return "customplushome";
+  if (isCustomCategory) return "customcategory";
+  if (isHomeCategory) return "homecategory";
+  return "homecategory"; // default
+};
+
+  const getProductType = () => {
+  if (isCustomProduct && isHomeProduct) return "customplushome";
+  if (isCustomProduct) return "customproduct";
+  if (isHomeProduct) return "homeproduct";
+  return "homeproduct"; // default
+};
   // Add a new category
   const handleAddCategory = async(e) => {
     e.preventDefault();
@@ -98,7 +116,8 @@ export default function AddCategoryProduct() {
     const newCategory = {
       name: categoryName,
       description: categoryDesc,
-      categoryType: isCustomCategory ? "customcategory" : "homecategory",
+ 
+     categoryType: getCategoryType(),
       catImage:categoryImg,
     };
     try {
@@ -111,7 +130,8 @@ export default function AddCategoryProduct() {
     const data = await res.json();
     if (data.success) {
     console.log("Category added:", data.category);
-    dispatch(addCategory(newCategory));      
+    dispatch(addCategory(newCategory)); 
+    dispatch(setCategories(data.categories));     
     setCategoryName("");
     setCategoryDesc("");
     setCategoryImg("");
@@ -132,6 +152,7 @@ export default function AddCategoryProduct() {
     if (!selectedCategory || !productForm.name.trim() ||!productForm.quantity || !productForm.price) return;
     const newProduct = {
       ...productForm,
+      productType: getProductType(),
       category: selectedCategory,
       images: productForm.images,
       flipkartLink: productForm.flipkartLink,
@@ -210,8 +231,9 @@ export default function AddCategoryProduct() {
       const result = await response.json();
       if (response.ok && result.products && result.products.length > 0) {
         setMessage({ type: 'success', text: 'Categories and products processed successfully' });
+        dispatch(addProduct(result.products))
         toast.success('Categories and products processed successfully');
-        setCatProducts([]);
+        
         setProductForm({ name: "", price: "", quantity: "", images: [], description: "", flipkartLink: "", amazonLink: "" });
         setTimeout(() => setMessage({ type: '', text: '' }), 3000);
       } else {
@@ -315,7 +337,20 @@ export default function AddCategoryProduct() {
       <h3 className="text-xl font-bold text-blue-600 dark:text-cyan-300">Add New Category</h3>
 
       {/* Checkbox */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col lg:flex-row lg:gap-5">
+       <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="isHomeCategory"
+          checked={isHomeCategory}
+          onChange={(e) => setIsHomeCategory(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
+          Mark as Home Category
+        </Label>
+      </div>
+     <div className="flex items-center gap-2">
         <input
           type="checkbox"
           id="customCategory"
@@ -327,7 +362,8 @@ export default function AddCategoryProduct() {
           Mark as Custom Category
         </Label>
       </div>
-
+      </div>
+    
       {/* Image Input */}
       <div>
         <Label htmlFor="categoryImage" className="font-semibold pb-1">Category Image</Label>
@@ -388,34 +424,7 @@ export default function AddCategoryProduct() {
     {/* Existing Categories Dropdown */}
     <div className="w-full lg:w-2/5">
       <h3 className="text-xl font-bold text-blue-600 dark:text-cyan-300 mb-2">Select Existing Category</h3>
-      <div className="flex items-center mb-2 gap-6">
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="showOnlyCustomCategories"
-            checked={showOnlyCustomCategories}
-            onChange={e => {
-              setShowOnlyCustomCategories(e.target.checked);
-              if (e.target.checked) setShowOnlyHomeCategories(false);
-            }}
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <label htmlFor="showOnlyCustomCategories" className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show only custom categories</label>
-        </div>
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="showOnlyHomeCategories"
-            checked={showOnlyHomeCategories}
-            onChange={e => {
-              setShowOnlyHomeCategories(e.target.checked);
-              if (e.target.checked) setShowOnlyCustomCategories(false);
-            }}
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <label htmlFor="showOnlyHomeCategories" className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show only home categories</label>
-        </div>
-      </div>
+    
       <div className="relative w-full max-w-xs" ref={dropdownRef}>
         <div
           className="p-2 border border-blue-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer select-none flex justify-between items-center"
@@ -459,12 +468,13 @@ export default function AddCategoryProduct() {
               return [
                 ...filteredBackend.map(cat => (
                   <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
-                    <span
+                    <div
                       className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
                       onClick={() => { setSelectedCategory(cat._id); setDropdownOpen(false); }}
                     >
-                      {cat.name}
-                    </span>
+                     <p>{cat.name}</p> 
+                     <p className="text-gray-600">{cat.categoryType}</p> 
+                    </div>
                      <Button
                       size="sm"
               
@@ -606,8 +616,35 @@ export default function AddCategoryProduct() {
                 </div>
               </div>
               {/* Product Form for this category */}
-
+                 {/* Checkbox */}
+      <div className="flex flex-col lg:flex-row lg:gap-5">
+       <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="isHomeProduct"
+          checked={isHomeProduct}
+          onChange={(e) => setIsHomeProduct(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
+          Mark as Custom Product
+        </Label>
+      </div>
+     <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="isCustomProduct"
+          checked={isCustomProduct}
+          onChange={(e) => setIsCustomProduct(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
+          Mark as Home Product
+        </Label>
+      </div>
+      </div>
               <form onSubmit={handleAddProduct} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-blue-50/40 dark:bg-gray-900/60 p-4 rounded-xl border border-blue-100 dark:border-gray-700 relative">
+               
                 <div>
                   <Label htmlFor="productName" className="font-semibold">Product Name</Label>
                   <Input

@@ -13,7 +13,7 @@ import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
 import { setProducts } from "../redux/slices/productSlice";
-
+import { setCategories } from "../redux/slices/categorySlice";
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,
 });
@@ -72,7 +72,22 @@ function AuthSyncWrapper({ children }) {
         fetchProducts();
     }, [dispatch]);
    
-
+    useEffect(() => {
+      async function fetchCategories() {
+        try {
+          const res = await fetch('/api/categories');
+          const data = await res.json();
+          if (data.success && Array.isArray(data.categories)) {
+            
+              
+            dispatch(setCategories(data.categories));
+          }
+        } catch (err) {
+         console.log(err)
+        }
+      }
+      fetchCategories();
+    }, [dispatch]);
 
 
 

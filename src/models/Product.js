@@ -55,6 +55,11 @@ const ProductSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    productType: {
+         type: String,
+       enum: ["homecategory", "customproduct", "customplushome"],
+       default: "homeproduct"
+      }
     
 }, { 
     timestamps: true 

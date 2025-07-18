@@ -24,8 +24,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Ban, Pencil, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { setProducts,updateProduct,removeProduct } from "@/src/redux/slices/productSlice";
-import { setCategories } from "@/src/redux/slices/categorySlice";
+import {  updateProduct,removeProduct } from "@/src/redux/slices/productSlice";
+import { addCategory } from "@/src/redux/slices/categorySlice";
  
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -37,18 +37,15 @@ import toast from "react-hot-toast";
 export default function ProductHistory() {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.product.products);
+    const categories = useSelector((state) => state.category.categories)
     const [searchTerm, setSearchTerm] = useState("");
     const [deleteId, setDeleteId] = useState(null);
     const [editProduct, setEditProduct] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [loading, setloading] = useState(false);
     const [selectedImageIdx, setSelectedImageIdx] = useState(null);
-   const [categoriesList, setAllCategories] = useState([]);
-
-
  
-
-
+ 
       // Fetch all categories from backend on mount
       useEffect(() => {
         async function fetchCategories() {
@@ -56,8 +53,8 @@ export default function ProductHistory() {
             const res = await fetch('/api/categories');
             const data = await res.json();
             if (data.success && Array.isArray(data.categories)) {
-              setAllCategories(data.categories);
-              dispatch(setCategories(data.categories));
+           
+              dispatch(addCategory(data.categories));
             }
           } catch (err) {
            console.log(err)
@@ -95,28 +92,7 @@ export default function ProductHistory() {
             setDeleteId(null);
         }
     };
-
-  // Handle image upload (multiple)
-  const handleImageChange = async (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-    const formData = new FormData();
-    files.forEach(file => formData.append('image', file));
-    try {
-      const response = await fetch('/api/uploadproductimages', {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-      if (response.ok && result.urls) {
-        setEditProduct((prev) => ({ ...prev, images: result.urls }));
-      }
-    } catch (error) {
-      console.error('Error uploading images:', error);
-    }
-  };
-
-
+ 
     const handleUpdateProduct = async (id) => {
         if (!id) return;
         console.log("editproduct",editProduct)
@@ -194,6 +170,25 @@ export default function ProductHistory() {
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">{new Date(product?.updatedAt).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800 text-center">
                                                     <div className="flex justify-center gap-2">
+                                                    
+                                                   {product.quantity === 0 ? (
+                                                        <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="flex items-center gap-1 border border-red-400 text-red-400 bg-white cursor-pointer"
+                                                        disabled
+                                                        >
+                                                         Out of Stock
+                                                        </Button>
+                                                        ) : <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="flex items-center gap-1 border border-green-400 text-green-500 bg-white"
+                                                        
+                                                    >
+                                                        In Stock
+                                                    </Button>}
+
                                                         {/* edit conformation dialog */}
                                                         <Button
                                                             size="sm"
@@ -280,7 +275,7 @@ export default function ProductHistory() {
                                                                                 <SelectValue className=" text-black" placeholder="Select category"  />
                                                                             </SelectTrigger>
                                                                             <SelectContent>
-                                                                                {categoriesList.map((cat) => (
+                                                                                {categories.map((cat) => (
                                                                                 
                                                                                     <SelectItem key={cat?._id} value={cat?._id}>
                                                                                         {cat.name}
@@ -316,54 +311,7 @@ export default function ProductHistory() {
                                                                 </div>
                                                             </Modal>
                                                         )}
-                                                      {/*  for out of stock */}
-                                                        <AlertDialog>
-                                                            <AlertDialogTrigger asChild>
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="outline"
-                                                                    className="flex items-center gap-1 border border-red-400 text-red-400 bg-white cursor-pointer"
-                                                                    disabled={product.quantity === 0}
-                                                                >
-                                                                    <Ban className="w-4 h-4" /> Out of Stock
-                                                                </Button>
-                                                            </AlertDialogTrigger>
-                                                            <AlertDialogContent className="bg-white border border-gray-200  ">
-                                                                <AlertDialogHeader>
-                                                                    <AlertDialogTitle className="text-gray-900 dark:text-cyan-200">Mark as Out of Stock</AlertDialogTitle>
-                                                                    <AlertDialogDescription className="text-gray-600 dark:text-gray-300">
-                                                                        Are you sure you want to mark <b>{product.name}</b> as out of stock? This will set its quantity to 0.
-                                                                    </AlertDialogDescription>
-                                                                </AlertDialogHeader>
-                                                                <AlertDialogFooter>
-                                                                    <AlertDialogCancel className="dark:bg-gray-800 dark:text-cyan-200 cursor-pointer dark:border-gray-700">Cancel</AlertDialogCancel>
-                                                                    <AlertDialogAction
-                                                                        onClick={async () => {
-                                                                            try {
-                                                                                const updatedProduct = { ...product, quantity: 0, id: product._id };
-                                                                                const res = await fetch('/api/admin/editproduct', {
-                                                                                    method: 'PATCH',
-                                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                                    body: JSON.stringify(updatedProduct)
-                                                                                });
-                                                                                const data = await res.json();
-                                                                                if (res.ok && data.success) {
-                                                                                    dispatch(updateProduct(data.product));
-                                                                                    toast.success('Marked as out of stock');
-                                                                                } else {
-                                                                                    toast.error(data.message || 'Failed to update');
-                                                                                }
-                                                                            } catch (err) {
-                                                                                toast.error('Failed to update');
-                                                                            }
-                                                                        }}
-                                                                        className="bg-blue-600 cursor-pointer dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800"
-                                                                    >
-                                                                        Confirm
-                                                                    </AlertDialogAction>
-                                                                </AlertDialogFooter>
-                                                            </AlertDialogContent>
-                                                        </AlertDialog>
+                                                     
                                                         
                                                         {/* delete confirmation dialog */}
                                                         <AlertDialog>

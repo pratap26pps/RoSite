@@ -103,12 +103,28 @@ const productId = params?.productId;
          <div className="text-gray-700 dark:text-gray-200 text-base">
            quantity: {selectedProduct.quantity}
           </div>
+         <div className="text-base">
+            {selectedProduct.quantity === 0 ? (
+              <span className="text-red-500 font-semibold">Out of Stock</span>
+            ) : (
+              <span className="text-green-600 font-semibold">
+                In Stock ({selectedProduct.quantity})
+              </span>
+            )}
+          </div>
+
           <button
             onClick={() => router.push("/customer/billingorder")}
-            className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg mt-4 shadow hover:bg-gray-900 transition"
+            disabled={selectedProduct.quantity === 0}
+            className={`w-full text-center py-2 rounded-xl font-bold text-lg mt-4 shadow transition ${
+              selectedProduct.quantity === 0
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-900"
+            }`}
           >
             Proceed To Checkout
           </button>
+
         </div>
       </div>
 

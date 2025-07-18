@@ -26,9 +26,9 @@ const categorySchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
         }],
-        categoryType: {
+        productType: {
          type: String,
-       enum: ["homecategory", "customcategory"],
+       enum: ["customplushome", "customproduct", "homeproduct"],
        default: "homecategory"
       }
         

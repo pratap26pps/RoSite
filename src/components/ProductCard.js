@@ -26,7 +26,7 @@ export function CarouselSize() {
  console.log("products",products)
 
  const homeCategoryProducts = products.filter(
-  (product) => product.category?.categoryType === "homecategory"
+  (product) => product.productType === "homeproduct" || product.productType === "customplushome"
 );
 
 
@@ -86,13 +86,26 @@ export function CarouselSize() {
 
                     {/* Content */}
                     <div className=" sm:p-5 md:p-6 flex-1 flex flex-col">
-                      <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
+
+                    <div className="flex justify-between">
+                        <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
                         <IndianRupee className="w-5 h-5" /> {product.price}
                       </div>
+                      <div className="text-sm text-gray-500">
+                        {product?.quantity === 0 ? (
+                          <span className="text-red-500 font-medium">Out of Stock</span>
+                        ) : (
+                          <span className="text-green-600 font-medium">In Stock</span>
+                        )}
+                      </div>
+                    </div>
+
                       <div className="flex-1">
                         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-700 transition-colors">
                           {product.name}
                         </h3>
+                           <p className="text-sm text-gray-500">quantity: {product?.quantity}</p>
+                        
                            <p className="text-sm text-gray-500">SKU: {product?.skuid}</p>
                         <p className="text-sm sm:text-base text-gray-600 line-clamp-2 mb-4">
                           {product.description}
