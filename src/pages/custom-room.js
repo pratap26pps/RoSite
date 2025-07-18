@@ -16,7 +16,7 @@ export default function BuildPage() {
 
   // Only use categories of type "customcategory" (or change as needed)
   const buildCategories = useMemo(
-    () => categories.filter((cat) => cat.categoryType === "customcategory"),
+    () => categories.filter((cat) => (cat.categoryType === "customcategory" || cat.categoryType === "customplushome") && cat.name !== "janne na tu"),
     [categories]
   );
 
@@ -34,6 +34,7 @@ const allSteps = [
 ];
 
 
+ 
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedComponents, setSelectedComponents] = useState({});
@@ -54,7 +55,7 @@ const currentCategoryProducts = useMemo(() => {
   return products.filter((prod) => {
     // If product has category object
     if (typeof prod.category === "object" && prod.category._id) {
-      return prod.category._id === matchedCategory._id;
+      return prod.category._id === matchedCategory._id && (prod.productType === "customproduct" || prod.productType === "customplushome")  ;
     }
 
     // If product has category string
@@ -70,7 +71,8 @@ const currentCategoryProducts = useMemo(() => {
    console.log("STEP ID:", currentStepObj.id);
 
 console.log("Current Category Products:", currentCategoryProducts);
- 
+   
+
 
   // Calculate total price
   const totalPrice = Object.values(selectedComponents).reduce(

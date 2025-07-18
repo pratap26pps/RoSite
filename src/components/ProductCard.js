@@ -28,7 +28,7 @@ export function CarouselSize() {
  const homeCategoryProducts = products.filter(
   (product) => product.productType === "homeproduct" || product.productType === "customplushome"
 );
-
+console.log("homeCategoryProducts",homeCategoryProducts)
 
 
     const carthandler = async (id) => {

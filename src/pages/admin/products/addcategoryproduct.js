@@ -626,8 +626,8 @@ console.log("cat product",catProducts)
           onChange={(e) => setIsHomeProduct(e.target.checked)}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
-        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
-          Mark as Custom Product
+        <Label htmlFor="isHomeProduct" className="text-sm text-gray-700 dark:text-gray-300">
+        Mark as Home Product
         </Label>
       </div>
      <div className="flex items-center gap-2">
@@ -638,8 +638,8 @@ console.log("cat product",catProducts)
           onChange={(e) => setIsCustomProduct(e.target.checked)}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
-        <Label htmlFor="customCategory" className="text-sm text-gray-700 dark:text-gray-300">
-          Mark as Home Product
+        <Label htmlFor="isCustomProduct" className="text-sm text-gray-700 dark:text-gray-300">
+                    Mark as Custom Product
         </Label>
       </div>
       </div>

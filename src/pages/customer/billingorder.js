@@ -108,7 +108,7 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <Label className="text-gray-700">First Name</Label>
-                <Input placeholder="Full name" value={user?.name || user.firstName  +  user.lastName} readOnly className="bg-white border-gray-300 text-black" /> 
+                <Input placeholder="Full name" value={user?.name || user?.firstName  +  user?.lastName} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
               <div>
                 <Label className="text-gray-700">Email</Label>

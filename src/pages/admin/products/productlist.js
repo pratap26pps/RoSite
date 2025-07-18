@@ -67,8 +67,8 @@ export default function ProductHistory() {
 
     const filteredProducts = products.filter(
         (p) =>
-            p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (p.category && p.category.name && p.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            p?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (p?.category && p?.category?.name && p?.category?.name?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const handleDelete = async (id) => {
@@ -153,8 +153,8 @@ export default function ProductHistory() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredProducts.length > 0 ? (
-                                        filteredProducts.map((product) => (
+                                    {filteredProducts?.length > 0 ? (
+                                        filteredProducts?.map((product) => (
                                             <TableRow key={product.id} className="hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
                                                 <TableCell className="border-b border-gray-100 dark:border-gray-800">
                                                     <img

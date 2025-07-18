@@ -49,14 +49,14 @@ const router=useRouter()
 
 const filteredProducts = dummyProducts.filter((product) => {
   const matchSearch =
-    product.name.toLowerCase().includes(search.toLowerCase()) ||
-    product.sqNumber.toLowerCase().includes(search.toLowerCase());
+    product?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+    product?.sqNumber?.toLowerCase()?.includes(search.toLowerCase());
 
   const matchCategory =
     selectedCategory === "All" || product?.category?.name === selectedCategory;
 
   const matchPrice =
-    product.price >= priceRange[0] && product.price <= priceRange[1];
+    product?.price >= priceRange[0] && product.price <= priceRange[1];
 
   const matchCategoryIdFromParams =
     !categoryId || product?.category?._id === categoryId;
