@@ -18,11 +18,16 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "react-hot-toast";
 
 export default function MicroAdminManagement() {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [deleteUser, setDeleteUser] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -54,18 +59,31 @@ export default function MicroAdminManagement() {
     setSearchTerm(searchValue);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    const user = customers.find((c) => c.id === id);
+    setDeleteUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteUser) return;
+    setIsDeleting(true);
     try {
-      const res = await fetch(`/api/admin/deleteuser?id=${id}`, {
+      const res = await fetch(`/api/admin/deleteuser?id=${deleteUser.id}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        setCustomers((prev) => prev.filter((c) => c.id !== id));
+        setCustomers((prev) => prev.filter((c) => c.id !== deleteUser.id));
+        toast.success("Microadmin deleted successfully");
+        setShowDeleteModal(false);
+        setDeleteUser(null);
       } else {
-        console.error("Failed to delete user");
+        toast.error("Failed to delete microadmin");
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Server error");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -144,6 +162,22 @@ export default function MicroAdminManagement() {
           </TableBody>
         </Table>
       </div>
+      {showDeleteModal && deleteUser && (
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+          <DialogContent className="max-w-md bg-white dark:bg-gray-900 border border-blue-100 dark:border-gray-700 rounded-xl shadow-xl">
+            <DialogHeader>
+              <DialogTitle className="text-red-700 dark:text-red-300">Delete Microadmin</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 text-gray-700">
+              <p>Are you sure you want to delete <span className="font-bold text-red-600">{deleteUser.name}</span>?</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={isDeleting}>Cancel</Button>
+              <Button onClick={confirmDelete} loading={isDeleting} className="bg-red-600 text-white">Delete</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

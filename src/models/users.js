@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
         image: { type: String, default: "/images/avatar.png" }, 
         
         password: { type: String ,default: "" },  
-        role: { type: String, enum: ["admin", "customer"], default: "customer" },
+        role: { type: String, enum: ["admin", "customer","microadmin"], default: "customer" },
     },
     { timestamps: true }
 );

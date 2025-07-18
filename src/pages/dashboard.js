@@ -20,7 +20,6 @@ import {
   Package, 
   CheckCircle, 
   Eye, 
-  Phone, 
   Truck, 
   Clock, 
   ClipboardList,
@@ -32,7 +31,6 @@ import {
   X,
   MapPin
 } from "lucide-react";
-import { useRef } from 'react';
 import MyShoppingCart from './cart';
 import AddReview from './admin/addreview';
 import MicroAdminManagement from './admin/microadmin';
@@ -85,6 +83,17 @@ const AdminDashboard = () => {
     { key: 'Product-History', label: 'Product-History', icon: <Package className="w-5 h-5" /> },
    
   ];
+
+     const MicroAdminItems = [
+    { key: 'overview', label: 'Overview', icon: <BarChart3 className="w-5 h-5" /> },
+    { key: 'orders', label: 'Orders', icon: <ShoppingCart className="w-5 h-5" /> },
+    { key: 'customers', label: 'Customers', icon: <Users className="w-5 h-5" /> },
+    { key: 'Add Category/Product', label: 'Add Category/Product', icon: <Plus className="w-5 h-5" /> },
+    { key: 'Add Review', label: 'Add Review', icon: <Plus className="w-5 h-5" /> },
+    { key: 'Product-History', label: 'Product-History', icon: <Package className="w-5 h-5" /> },
+   
+  ];
+
     const CustomerItems = [
     { key: 'overview', label: 'Overview', icon: <BarChart3 className="w-5 h-5" /> },
     { key: 'orders', label: 'My Orders', icon: <ClipboardList className="w-5 h-5" /> },
@@ -425,6 +434,38 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
       }
     }
 
+   if (user.role === "microadmin"){
+    switch (selectedMenuItem) {
+      case 'overview':
+        return <OverviewContent />;
+      case 'orders':
+        return (
+         <OrderManagement/>
+        );
+      case 'customers':
+        return (
+          <CustomerManagement/>
+        );
+         
+      case 'Add Category/Product':
+        return (
+          <AddCategoryProduct/>
+        );
+         case 'Add Review':
+        return (
+          <AddReview/>
+        );
+      case 'Product-History':
+        return (
+            <ProductHistory/>        
+        );
+     
+      default:
+        return <OverviewContent />;
+    }
+
+  }
+
     // Admin-specific content
     switch (selectedMenuItem) {
       case 'overview':
@@ -538,60 +579,74 @@ const handleChange = (e) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 overflow-y-auto">
-              {
-                user.role === "admin" ? 
-              
-              <ul className="space-y-2">
-                {AdminItems.map(item => (
-                  <li key={item.key}>
-                    <button
-                      onClick={() => {
-                        setSelectedMenuItem(item.key);
-                        // Close sidebar on mobile after clicking menu item
-                        if (window.innerWidth < 1024) {
-                          setSidebarOpen(false);
-                        }
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                        selectedMenuItem === item.key
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
-                      }`}
-                    >
-                      <span className="text-xl">{item.icon}</span>
-                      {!collapsed && <span className="font-medium">{item.label}</span>}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              :
-              
-              <ul className="space-y-2">
-                {CustomerItems.map(item => (
-                  <li key={item.key}>
-                    <button
-                      onClick={() => {
-                        setSelectedMenuItem(item.key);
-                        // Close sidebar on mobile after clicking menu item
-                        if (window.innerWidth < 1024) {
-                          setSidebarOpen(false);
-                        }
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                        selectedMenuItem === item.key
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1'
-                      }`}
-                    >
-                      <span className="text-xl">{item.icon}</span>
-                      {!collapsed && <span className="font-medium">{item.label}</span>}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              }
-            </nav>
+        {/* Navigation */}
+<nav className="flex-1 p-4 overflow-y-auto">
+  {user.role === "admin" ? (
+    <ul className="space-y-2">
+      {AdminItems.map((item) => (
+        <li key={item.key}>
+          <button
+            onClick={() => {
+              setSelectedMenuItem(item.key);
+              if (window.innerWidth < 1024) setSidebarOpen(false);
+            }}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              selectedMenuItem === item.key
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1"
+            }`}
+          >
+            <span className="text-xl">{item.icon}</span>
+            {!collapsed && <span className="font-medium">{item.label}</span>}
+          </button>
+        </li>
+      ))}
+    </ul>
+  ) : user.role === "microadmin" ? (
+    <ul className="space-y-2">
+      {MicroAdminItems.map((item) => (
+        <li key={item.key}>
+          <button
+            onClick={() => {
+              setSelectedMenuItem(item.key);
+              if (window.innerWidth < 1024) setSidebarOpen(false);
+            }}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              selectedMenuItem === item.key
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1"
+            }`}
+          >
+            <span className="text-xl">{item.icon}</span>
+            {!collapsed && <span className="font-medium">{item.label}</span>}
+          </button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul className="space-y-2">
+      {CustomerItems.map((item) => (
+        <li key={item.key}>
+          <button
+            onClick={() => {
+              setSelectedMenuItem(item.key);
+              if (window.innerWidth < 1024) setSidebarOpen(false);
+            }}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              selectedMenuItem === item.key
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:translate-x-1"
+            }`}
+          >
+            <span className="text-xl">{item.icon}</span>
+            {!collapsed && <span className="font-medium">{item.label}</span>}
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
+</nav>
+
 
             {/* Profile Actions - Bottom of Sidebar */}
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">

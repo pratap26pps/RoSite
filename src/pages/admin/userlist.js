@@ -12,6 +12,7 @@ import {
 import { Table, TableHead, TableBody, TableRow, TableCell, TableHeader } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-hot-toast";
  
 
 export default function CustomerManagement() {
@@ -21,6 +22,9 @@ export default function CustomerManagement() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [editUser, setEditUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -51,11 +55,43 @@ export default function CustomerManagement() {
  
 
   const handleRoleChange = (id, newRole) => {
-    setCustomers((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, role: newRole } : c
-      )
-    );
+    if (newRole === "microadmin") {
+      const user = customers.find((c) => c.id === id);
+      setEditUser(user);
+      setShowEditModal(true);
+    } else {
+      setCustomers((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, role: newRole } : c))
+      );
+      // Optionally, handle other role changes here
+    }
+  };
+
+  const handleUpdateRole = async () => {
+    if (!editUser) return;
+    setIsUpdating(true);
+    try {
+      const res = await fetch("/api/admin/update-user-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: editUser.id, newRole: "microadmin" }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCustomers((prev) =>
+          prev.map((c) => (c.id === editUser.id ? { ...c, role: "microadmin" } : c))
+        );
+        toast.success("Role updated to microadmin");
+        setShowEditModal(false);
+        setEditUser(null);
+      } else {
+        toast.error(data.message || "Failed to update role");
+      }
+    } catch (err) {
+      toast.error("Server error");
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   // Filter customers by name (case-insensitive, partial match)
@@ -145,6 +181,22 @@ export default function CustomerManagement() {
           </TableBody>
         </Table>
       </div>
+      {showEditModal && editUser && (
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent className="max-w-md bg-white dark:bg-gray-900 border border-blue-100 dark:border-gray-700 rounded-xl shadow-xl">
+            <DialogHeader>
+              <DialogTitle className="text-blue-700 dark:text-cyan-300">Update Role for {editUser.name}</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 text-gray-700">
+              <p>Are you sure you want to update the role to <span className="font-bold text-blue-600">microadmin</span>?</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowEditModal(false)} disabled={isUpdating}>Cancel</Button>
+              <Button onClick={handleUpdateRole} loading={isUpdating} className="bg-blue-600 text-white">Confirm</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
