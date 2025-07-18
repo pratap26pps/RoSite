@@ -9,13 +9,12 @@ export default async function handler(req, res) {
     try {
         await dbConnect();
 
-        const categories = await Category.find({ isActive: true })
+        const categories = await Category.find()
             .populate({
                 path: 'products',
-                match: { isActive: true },
-                select: 'name price quantity description image'
+                select: 'name price quantity description images skuid flipkartLink slug amazonLink isTopSeller '
             })
-            .select('name description products')
+            .select('name description products categoryType catImage')
             .sort({ createdAt: -1 });
 
         return res.status(200).json({

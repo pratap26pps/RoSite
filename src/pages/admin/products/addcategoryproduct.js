@@ -5,11 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory,setCategories } from "@/src/redux/slices/categorySlice";
-import { setProducts,addProduct } from "@/src/redux/slices/productSlice";
+import { setProducts } from "@/src/redux/slices/productSlice";
 import toast from "react-hot-toast";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -36,10 +35,14 @@ export default function AddCategoryProduct() {
     flipkartLink: "",
     amazonLink: "",
   });
+  const [catProducts, setCatProducts] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
   const [allCategories, setAllCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const dropdownRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [uploading2, setUploading2] = useState(false);
@@ -52,7 +55,7 @@ export default function AddCategoryProduct() {
   const [editIsCustomCategory, setEditIsCustomCategory] = useState(false);
   const [showOnlyCustomCategories, setShowOnlyCustomCategories] = useState(false);
   const [showOnlyHomeCategories, setShowOnlyHomeCategories] = useState(false);
-    console.log("allCategories",categories);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
@@ -78,6 +81,7 @@ export default function AddCategoryProduct() {
         const data = await res.json();
         if (data.success && Array.isArray(data.categories)) {
           setAllCategories(data.categories);
+              console.log("allCategories",data.categories);
           dispatch(setCategories(data.categories));
         }
       } catch (err) {
@@ -88,23 +92,38 @@ export default function AddCategoryProduct() {
   }, [dispatch]);
 
   // Add a new category
-  const handleAddCategory = (e) => {
+  const handleAddCategory = async(e) => {
     e.preventDefault();
     if (!categoryName.trim()) return;
     const newCategory = {
-      _id: Date.now().toString(),
       name: categoryName,
       description: categoryDesc,
       categoryType: isCustomCategory ? "customcategory" : "homecategory",
       catImage:categoryImg,
     };
-    dispatch(addCategory(newCategory));
+    try {
+    const res = await fetch("/api/admin/addcategory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCategory),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+    console.log("Category added:", data.category);
+    dispatch(addCategory(newCategory));      
     setCategoryName("");
     setCategoryDesc("");
     setCategoryImg("");
-    setSelectedCategory(newCategory._id);
+
     setMessage({ type: 'success', text: 'Category added successfully!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    } else {
+      console.warn(data.message);
+    }
+  } catch (error) {
+    console.error("Add category error:", error);
+  }
   };
 
   // Add a product to the selected category (local redux)
@@ -113,13 +132,12 @@ export default function AddCategoryProduct() {
     if (!selectedCategory || !productForm.name.trim() ||!productForm.quantity || !productForm.price) return;
     const newProduct = {
       ...productForm,
-      _id: Date.now().toString(),
       category: selectedCategory,
       images: productForm.images,
       flipkartLink: productForm.flipkartLink,
       amazonLink: productForm.amazonLink,
     };
-    dispatch(addProduct(newProduct));
+      setCatProducts(prev => [...prev, newProduct]);
     setProductForm({ name: "", price: "", quantity: "", images: [], description: "", flipkartLink: "", amazonLink: "" });
     setMessage({ type: 'success', text: 'Product added successfully!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
@@ -132,14 +150,14 @@ export default function AddCategoryProduct() {
     const formData = new FormData();
     files.forEach(file => formData.append('image', file));
     try {
-      const response = await fetch('/api/uploadproductimages', {
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
       const result = await response.json();
-      if (response.ok && (result.urls || result.url)) {
+      if (response.ok && (result.url )) {
         // Accept both array and single url
-        setCategoryImg(result.urls || result.url);
+        setCategoryImg(result.url);
       }
     } catch (error) {
       console.error('Error uploading images:', error);
@@ -174,17 +192,9 @@ export default function AddCategoryProduct() {
 
 
   // Add all products for this category to DB
-  const handleAddAllToDB = async (catId) => {
-    console.log("catId",catId);
-    console.log("allCategories",categories);
-    console.log("products",products);
-    const category = categories.find(c => c._id === catId);  
-     if (!category) return;
-    const catProducts = products.filter(p => (p.category === catId));
-    if (!catProducts.length) return;
-
-    console.log("category",category);
-    console.log("catProducts",catProducts);
+  const handleAddAllToDB = async ( ) => {
+    console.log("selectedCategory",selectedCategory)
+    if (!selectedCategory || catProducts.length === 0) return;
 
     setIsLoading(true);
     setMessage({ type: '', text: '' });
@@ -193,18 +203,15 @@ export default function AddCategoryProduct() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-             categories: [category],
-          products: {
-            [catId]: catProducts
-          }
+             categoryId: selectedCategory,
+             products: catProducts,
         })
       });
       const result = await response.json();
       if (response.ok && result.products && result.products.length > 0) {
         setMessage({ type: 'success', text: 'Categories and products processed successfully' });
         toast.success('Categories and products processed successfully');
-        // Remove products for this category from redux
-        dispatch(setProducts(products.filter(p => p.category !== catId)));
+        setCatProducts([]);
         setProductForm({ name: "", price: "", quantity: "", images: [], description: "", flipkartLink: "", amazonLink: "" });
         setTimeout(() => setMessage({ type: '', text: '' }), 3000);
       } else {
@@ -569,10 +576,9 @@ export default function AddCategoryProduct() {
           const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
           if (!cat) return null;
           console.log("cat",cat)
-          // Get products for this category from redux
-          const catProducts = products.filter(p => p.category === (cat._id || cat._id));
+     
           return (
-            <Card key={cat._id || cat._id} className="p-6 sm:p-8 bg-white/95 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-xl rounded-2xl transition-all hover:shadow-2xl mb-10">
+            <Card key={cat._id} className="p-6 sm:p-8 bg-white/95 dark:bg-gray-800 border border-blue-100 dark:border-gray-700 shadow-xl rounded-2xl transition-all hover:shadow-2xl mb-10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-blue-50 dark:border-gray-700 pb-4">
                 <div>
                   {
@@ -595,6 +601,7 @@ export default function AddCategoryProduct() {
                 </div>
               </div>
               {/* Product Form for this category */}
+
               <form onSubmit={handleAddProduct} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-blue-50/40 dark:bg-gray-900/60 p-4 rounded-xl border border-blue-100 dark:border-gray-700 relative">
                 <div>
                   <Label htmlFor="productName" className="font-semibold">Product Name</Label>
@@ -692,10 +699,11 @@ export default function AddCategoryProduct() {
                 </div>
               </form>
               {/* Show Add All to Database button only if there are products for this category */}
+
               {catProducts.length > 0 && (
                 <div className="flex justify-end mt-4">
                   <Button 
-                    onClick={() => handleAddAllToDB(cat._id || cat.id)}
+                    onClick={() => handleAddAllToDB()}
                     disabled={isLoading}
                     className="bg-gradient-to-r from-green-500 to-blue-500 dark:from-green-700 dark:to-blue-700 text-white font-bold shadow hover:from-green-600 hover:to-blue-600 disabled:opacity-50"
                   >
@@ -704,43 +712,51 @@ export default function AddCategoryProduct() {
                 </div>
               )}
               {/* List products for this category */}
-              {catProducts.length > 0 && (
-                <div className="mt-6">
-                  <h4 className="font-semibold text-blue-700 dark:text-cyan-300 mb-2 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-cyan-400 dark:bg-cyan-600 rounded-full"></span>
-                    Products in {cat.name}:
-                  </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Total Products: {catProducts.length}
-                  </p>
-                  <div className="grid gap-3">
-                    {catProducts.map((prod) => (
-                      <div key={prod._id} className="flex items-center gap-4 p-3 bg-cyan-50 dark:bg-gray-900 rounded-xl border border-blue-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
-                        {prod.images && prod.images.length > 0 && (
-                          <div className="flex gap-2">
-                            {prod.images.map((img, idx) => (
+
+            {catProducts.filter(p => p.category === selectedCategory).length > 0 && (
+              <div className="mt-6 space-y-4">
+                <h4 className="text-lg font-semibold text-blue-600 dark:text-cyan-300">Products for this Category:</h4>
+                {catProducts
+                  .filter(p => p.category === selectedCategory)
+                  .map((product, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 border border-blue-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 shadow-sm"
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                        <div>
+                          <h5 className="text-md font-bold text-gray-800 dark:text-white">{product.name}</h5>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">₹ {product.price} &bull; Qty: {product.quantity}</p>
+                          {product.description && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{product.description}</p>
+                          )}
+                          <div className="flex gap-2 mt-2">
+                            {product.flipkartLink && (
+                              <a href={product.flipkartLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm">Flipkart</a>
+                            )}
+                            {product.amazonLink && (
+                              <a href={product.amazonLink} target="_blank" rel="noopener noreferrer" className="text-yellow-600 underline text-sm">Amazon</a>
+                            )}
+                          </div>
+                        </div>
+                        {product.images && product.images.length > 0 && (
+                          <div className="flex gap-2 mt-2 sm:mt-0 flex-wrap">
+                            {product.images.map((img, imgIdx) => (
                               <img
-                                key={idx}
+                                key={imgIdx}
                                 src={img}
-                                alt={prod.name}
-                                className="w-14 h-14 object-cover rounded border border-blue-200 dark:border-cyan-700 shadow"
+                                alt={`img-${imgIdx}`}
+                                className="w-14 h-14 object-cover rounded border border-blue-200 dark:border-cyan-700"
                               />
                             ))}
                           </div>
                         )}
-                        <div className="flex-1">
-                          <div className="font-semibold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                            {prod.name}
-                            <span className="inline-block bg-blue-100 dark:bg-cyan-900 text-blue-700 dark:text-cyan-300 text-xs px-2 py-0.5 rounded-full font-medium">₹{prod.price}</span>
-                            <span className="inline-block bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs px-2 py-0.5 rounded-full font-medium">Qty: {prod.quantity}</span>
-                          </div>
-                          <div className="text-gray-500 dark:text-gray-300 text-sm mt-1">{prod.description}</div>
-                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    </div>
+                  ))}
+              </div>
+            )}
+
             </Card>
           );
         })()}
