@@ -57,7 +57,7 @@ const ProductSchema = new mongoose.Schema({
     },
     productType: {
          type: String,
-       enum: ["homecategory", "customproduct", "customplushome"],
+       enum: ["homeproduct", "customproduct", "customplushome"],
        default: "homeproduct"
       }
     

@@ -169,41 +169,7 @@ export default function Certifications() {
               to delivering the highest quality water purification solutions with the utmost safety and reliability.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {[
-              {
-                icon: Shield,
-                title: "Quality Assured",
-                description: "ISO certified quality management systems ensure consistent excellence"
-              },
-              {
-                icon: CheckCircle,
-                title: "Safety First",
-                description: "OHSAS certified safety protocols protect our team and customers"
-              },
-              {
-                icon: Zap,
-                title: "Technical Excellence",
-                description: "Advanced technical certifications for superior system performance"
-              },
-              {
-                icon: Star,
-                title: "Customer Focus",
-                description: "Service excellence certifications guarantee outstanding support"
-              }
-            ].map((item, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <item.icon className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+ 
         </div>
       </section>
 

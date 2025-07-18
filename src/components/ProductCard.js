@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/carousel";
 
  import { useSelector } from "react-redux";
-
+import Link from "next/link";
 export function CarouselSize() {
 
   const router=useRouter();
@@ -130,8 +130,36 @@ export function CarouselSize() {
           : "text-blue-600  hover:text-blue-700"
       } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
                              />
-                          <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"   className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
-                          <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"   className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
+ {/* Amazon */}
+  {product.amazonLink ? (
+    <Link
+      href={product.amazonLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-yellow-600 underline font-medium"
+    >
+ <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
+   
+    </Link>
+  ) : (
+    <span className="text-gray-500 italic">Amazon: Coming Soon</span>
+  )}
+                             
+  {/* Flipkart */}
+  {product?.flipkartLink ? (
+    <Link
+      href={product?.flipkartLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 underline font-medium"
+    >
+  <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
+
+    </Link>
+  ) : (
+    <span className="text-gray-500 italic">Flipkart: Coming Soon</span>
+  )}
+
                         </div>
                       </div>
                     </div>

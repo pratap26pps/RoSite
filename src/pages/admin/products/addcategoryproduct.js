@@ -433,7 +433,7 @@ console.log("cat product",catProducts)
           <span>
             {(() => {
               if (!selectedCategory) return 'Select a category';
-              const cat = allCategories.find(c => c._id === selectedCategory) || categories.find(c => c._id === selectedCategory);
+              const cat = allCategories.find(c => c._id === selectedCategory) || categories?.find(c => c._id === selectedCategory);
               return cat ? cat.name : 'Select a category';
             })()}
           </span>
@@ -445,12 +445,12 @@ console.log("cat product",catProducts)
           <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-blue-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
             {(() => {
               const seen = new Set();
-              const uniqueBackend = allCategories.filter(cat => {
+              const uniqueBackend = allCategories?.filter(cat => {
                 if (seen.has(cat.name)) return false;
                 seen.add(cat.name);
                 return true;
               });
-              const uniqueLocal = categories.filter(cat => {
+              const uniqueLocal = categories?.filter(cat => {
                 if (seen.has(cat.name)) return false;
                 seen.add(cat.name);
                 return true;
@@ -466,7 +466,7 @@ console.log("cat product",catProducts)
                   ? uniqueLocal.filter(cat => cat.categoryType !== "customcategory")
                   : uniqueLocal;
               return [
-                ...filteredBackend.map(cat => (
+                ...filteredBackend?.map(cat => (
                   <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
                     <div
                       className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
@@ -508,7 +508,7 @@ console.log("cat product",catProducts)
                    
                   </li>
                 )),
-                ...filteredLocal.map(cat => (
+                ...filteredLocal?.map(cat => (
                   <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
                     <span
                       className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}

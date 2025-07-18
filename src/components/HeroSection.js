@@ -149,12 +149,16 @@ export default function HeroSection() {
             </div>
 
             <div className={`flex flex-col sm:flex-row gap-4 mt-6  ${animateButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} transition-opacity duration-1000`}>
-              <button             className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex   justify-center gap-2 shadow-md transition text-sm sm:text-base"
+              <button    
+              onClick={() => router.push("/shop")}
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex   justify-center gap-2 shadow-md transition text-sm sm:text-base"
 >
                 <ShoppingBag className="w-5 h-5" />
                 Order Now
               </button>
-              <button             className="border border-blue-400 cursor-pointer text-blue-600 hover:bg-blue-50 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex justify-center gap-2 transition text-sm sm:text-base">
+              <button    
+              onClick={() => router.push("/about")}
+              className="border border-blue-400 cursor-pointer text-blue-600 hover:bg-blue-50 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex justify-center gap-2 transition text-sm sm:text-base">
                 <Search className="w-5 h-5" />
                 Read More
               </button>

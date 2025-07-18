@@ -23,14 +23,17 @@ import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch,useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
-import { stringify } from "querystring";
- 
- 
-
-const categories = ["All", "RO", "UV", "Carbon"];
+import Link from "next/link";
+ import { useSearchParams } from "next/navigation";
 const PRODUCTS_PER_PAGE = 6;
 
 export default function ShopPage() {
+
+    const searchParams = useSearchParams();
+  const categoryId = searchParams.get("id");
+
+ 
+
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 20000]);
@@ -39,19 +42,28 @@ export default function ShopPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tempPriceRange, setTempPriceRange] = useState([0, 20000]); 
    const dummyProducts = useSelector((state) => state.product.products);
-
+ const categories = useSelector((state) => state.category.categories)
+   
 const router=useRouter()
  const dispatch = useDispatch()
-  const filteredProducts = dummyProducts.filter((product) => {
-    const matchSearch =
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.sqNumber.toLowerCase().includes(search.toLowerCase());
-    const matchCategory =
-      selectedCategory === "All" ||  product?.category?.name === selectedCategory;
-    const matchPrice =
-      product.price >= priceRange[0] && product.price <= priceRange[1];
-    return matchSearch && matchCategory && matchPrice;
-  });
+
+const filteredProducts = dummyProducts.filter((product) => {
+  const matchSearch =
+    product.name.toLowerCase().includes(search.toLowerCase()) ||
+    product.sqNumber.toLowerCase().includes(search.toLowerCase());
+
+  const matchCategory =
+    selectedCategory === "All" || product?.category?.name === selectedCategory;
+
+  const matchPrice =
+    product.price >= priceRange[0] && product.price <= priceRange[1];
+
+  const matchCategoryIdFromParams =
+    !categoryId || product?.category?._id === categoryId;
+
+  return matchSearch && matchCategory && matchPrice && matchCategoryIdFromParams;
+});
+
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
@@ -146,14 +158,14 @@ const router=useRouter()
                setSidebarOpen(false);
               }}  >
                 <SelectTrigger className="bg-slate-800/50  w-full rounded-xl h-12">
-                  <SelectValue  placeholder="Select Category" />
+                    <SelectValue placeholder="Choose Category" className="text-white"/>
                 </SelectTrigger>
                 <SelectContent  className="bg-slate-800   text-slate-100 border-slate-600 rounded-xl">
-                  {categories.map((category) => (
-                    <SelectItem  key={category} value={category}   className=" hover:bg-slate-700 focus:bg-slate-700">
-                      {category}
-                    </SelectItem>
-                  ))}
+                 {categories.map((category) => (
+                  <SelectItem key={category._id} value={category.name} >
+                    {category.name}
+                  </SelectItem>
+                ))}
                 </SelectContent>
               </Select>
             </div>
@@ -188,16 +200,16 @@ const router=useRouter()
   </div>
 
   {/* Apply Button */}
-  <button
-    onClick={() => {
-      setPriceRange(tempPriceRange);
-      setSidebarOpen(false);
-    }}
-    className="mt-2 bg-gray-500  text-white font-semibold px-4 cursor-pointer py-2 rounded-lg w-full"
-  >
-    Apply Price Filter
-  </button>
-</div>
+              <button
+                onClick={() => {
+                  setPriceRange(tempPriceRange);
+                  setSidebarOpen(false);
+                }}
+                className="mt-2 bg-gray-500  text-white font-semibold px-4 cursor-pointer py-2 rounded-lg w-full"
+              >
+                Apply Price Filter
+              </button>
+            </div>
 
 
             <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
@@ -227,16 +239,27 @@ const router=useRouter()
 
   <CardContent className="space-y-1">
     <div className="space-y-2">
+                    <div className="flex justify-between">
+                        <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
+                        <IndianRupee className="w-5 h-5" /> {product.price}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {product?.quantity === 0 ? (
+                          <span className="text-red-500 font-medium">Out of Stock</span>
+                        ) : (
+                          <span className="text-green-600 font-medium">In Stock</span>
+                        )}
+                      </div>
+                    </div>
       <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500">SQ: {product?.skuid}</p>
-      <div className="text-xl font-semibold text-blue-600">
-        ₹{product.price.toLocaleString()}
-      </div>
+      <p className="text-sm text-gray-500">Sku: {product?.skuid}</p>
+      <p className="text-sm text-gray-500">quantity: {product?.quantity}</p>
+      
     </div>
 
     
     {/* Store Icons */}
-    <div className="space-y-4 mt-auto">
+                  <div className="space-y-4 mt-auto">
                          <button
                            onClick={() => router.push(`/${product._id}`)}
                         className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
@@ -246,19 +269,48 @@ const router=useRouter()
                           <div className="flex items-center justify-center gap-4">
                               <ShoppingCart 
                                 onClick={() => carthandler(product._id)}
-      disabled={addedToCart.includes(product._id)}
-      className={` border-2  cursor-pointer h-[50px] w-[50px] rounded-lg ${
-        addedToCart.includes(product._id)
-          ? "  bg-green-400  cursor-not-allowed"
-          : "text-blue-600  hover:text-blue-700"
-      } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
+                            disabled={addedToCart.includes(product._id)}
+                            className={` border-2  cursor-pointer h-[50px] w-[50px] rounded-lg ${
+                              addedToCart.includes(product._id)
+                                ? "  bg-green-400  cursor-not-allowed"
+                                : "text-blue-600  hover:text-blue-700"
+                            } font-semibold py-2 rounded-lg flex items-center justify-center gap-2`}
                              />
-                            <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
+                             {/* Amazon */}
+                            {product.amazonLink ? (
+                              <a
+                                href={product.amazonLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-yellow-600 underline font-medium"
+                              >
+                          <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
+                            
+                              </a>
+                            ) : (
+                              <span className="text-gray-500 italic">Amazon: Coming Soon</span>
+                            )}
+                                                      
+                            {/* Flipkart */}
+                            {product?.flipkartLink ? (
+                              <Link
+                                href={product?.flipkartLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline font-medium"
+                              >
                             <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
+
+                              </Link>
+                            ) : (
+                              <span className="text-gray-500 italic">Flipkart: Coming Soon</span>
+                            )}
+
+                            
                           </div>
                         </div>
-  </CardContent>
-</Card>
+                </CardContent>
+          </Card>
 
             ))}
 

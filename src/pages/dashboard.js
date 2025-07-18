@@ -35,6 +35,7 @@ import {
 import { useRef } from 'react';
 import MyShoppingCart from './cart';
 import AddReview from './admin/addreview';
+import MicroAdminManagement from './admin/microadmin';
 const AdminDashboard = () => {
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
@@ -438,7 +439,7 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
         );
          case 'Micro Admin':
         return (
-          <CustomerManagement/>
+          <MicroAdminManagement/>
         );
       case 'Add Category/Product':
         return (

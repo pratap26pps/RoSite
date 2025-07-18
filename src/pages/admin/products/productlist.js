@@ -44,7 +44,7 @@ export default function ProductHistory() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [loading, setloading] = useState(false);
     const [selectedImageIdx, setSelectedImageIdx] = useState(null);
- 
+ console.log("product",products)
  
       // Fetch all categories from backend on mount
       useEffect(() => {
@@ -123,7 +123,7 @@ export default function ProductHistory() {
     };
 
     return (
-        <div className="w-full px-1 sm:px-4   min-h-screen transition-colors duration-300">
+        <div className="w-full px-1 sm:px-4    min-h-screen transition-colors duration-300">
             <div className="w-full max-w-7xl mx-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 shadow-lg rounded-xl p-2 sm:p-6 md:p-10 border border-gray-200 dark:border-gray-800">
                 {/* Search */}
                 <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-center items-center gap-2">
@@ -258,11 +258,12 @@ export default function ProductHistory() {
                                                                     </div>
                                                                     <div>
                                                                         <Label className="mb-1 text-gray-800">Description</Label>
-                                                                        <Input
+                                                                        <textarea
                                                                             type="text"
                                                                             value={editProduct?.description || ""}
                                                                             onChange={e => setEditProduct({ ...editProduct, description: e.target.value })}
                                                                             placeholder="Enter product description"
+                                                                            className="w-full border-1 p-1 text-gray-700"
                                                                         />
                                                                     </div>
                                                                     <div >
@@ -298,6 +299,22 @@ export default function ProductHistory() {
                                                                             type="number"
                                                                             value={editProduct?.quantity || ""}
                                                                             onChange={(e) => setEditProduct({ ...editProduct, quantity: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="mb-1 text-gray-800">flipkartLink</Label>
+                                                                        <Input
+                                                                            type="text"
+                                                                            value={editProduct?.flipkartLink || ""}
+                                                                            onChange={(e) => setEditProduct({ ...editProduct, flipkartLink: e.target.value })}
+                                                                        />
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="mb-1 text-gray-800">amazonLink</Label>
+                                                                        <Input
+                                                                            type="text"
+                                                                            value={editProduct?.amazonLink || ""}
+                                                                            onChange={(e) => setEditProduct({ ...editProduct, amazonLink: e.target.value })}
                                                                         />
                                                                     </div>
                                                                     <div className="flex  justify-end gap-2 mt-6">
@@ -372,7 +389,7 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
   }, [isOpen]);
   if (!isOpen) return null;
   return (
-    <div className={`fixed inset-0 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}
+    <div className={`fixed inset-0  pt-20 flex items-center justify-center px-4 ${modalClassName || 'z-50'}`}
       style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(8px)' }}>
       <div
         className="bg-white rounded-xl shadow-2xl ring-4 ring-blue-400/20 w-full max-w-lg transform transition-all overflow-hidden focus:outline-none"

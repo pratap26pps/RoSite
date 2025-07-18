@@ -1,12 +1,15 @@
+"use client"; 
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
- 
+import { useRouter } from "next/navigation"; 
 
 const DressStyleCarousel = () => {
+  const router = useRouter();
+
   const categories = useSelector((state) => state.category.categories);
  console.log("categories",categories)
  const buildCategories = categories.filter(
-  (cat) => cat.categoryType === "customplushome"  ||    cat.categoryType === "homecategory"
+  (cat) => cat.categoryType === "homecategory"  ||    cat.categoryType === "customplushome"
 );
   const [isVisible, setIsVisible] = useState(false);
 
@@ -29,10 +32,11 @@ const DressStyleCarousel = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 cursor-pointer gap-6">
           {buildCategories.map((style) => (
             <div
               key={style._id}
+               onClick={() => router.push(`/shop?id=${style._id}`)}
               className="transition-all duration-500 rounded-2xl border border-blue-100 hover:border-blue-300 group overflow-hidden shadow hover:shadow-lg bg-white"
             >
               <div className="p-5 flex flex-col h-full">
