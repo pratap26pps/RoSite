@@ -38,22 +38,63 @@ export default function CheckoutPage() {
   const recentproduct = cartItems || product;
 const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
 
-  const checkouthandler =(id)=>{
- if (!recentproduct || recentproduct.length === 0) {
-    toast.error("No items to place an order.");
-    return;
-  }
+  const [country, setCountry] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  dispatch(
-    placeOrder({
-      items: recentproduct,
-      total: total * 1.05,
-    })
-  );
-  toast.success("Order placed successfully!");
- 
-  }
+  const validate = () => {
+    const newErrors = {};
+    if (!country) newErrors.country = "Country is required";
+    if (!address) newErrors.address = "Address is required";
+    if (!city) newErrors.city = "City is required";
+    if (!postalCode) newErrors.postalCode = "Postal code is required";
+    if (!recentproduct || recentproduct.length === 0) newErrors.items = "No items to order";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
+  const checkouthandler = async () => {
+    if (!validate()) return;
+    setIsPlacingOrder(true);
+    try {
+      const res = await fetch("/api/customer/placeorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: user?._id,
+          items: recentproduct.map((item) => ({
+            product: item._id,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          totalAmount: total,
+          shippingAddress: {
+            address,
+            city,
+            postalCode,
+            country,
+          },
+          paymentMethod: "cod",
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Order placed successfully!");
+        // Optionally redirect or clear cart
+      } else {
+        toast.error(data.message || "Failed to place order");
+      }
+    } catch (err) {
+      toast.error("Server error");
+    } finally {
+      setIsPlacingOrder(false);
+    }
+  };
+
+  const isFormValid = country && address && city && postalCode && recentproduct && recentproduct.length > 0;
 
   return (
     <div className="min-h-screen bg-white relative py-24 px-4 md:px-8">
@@ -67,7 +108,7 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <Label className="text-gray-700">First Name</Label>
-                <Input placeholder="Full name" value={user?.name || ""} readOnly className="bg-white border-gray-300 text-black" /> 
+                <Input placeholder="Full name" value={user?.name || user.firstName  +  user.lastName} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
               <div>
                 <Label className="text-gray-700">Email</Label>
@@ -79,15 +120,27 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
               </div>
               <div className="sm:col-span-2">
                 <Label className="text-gray-700">Country / Region *</Label>
-                <Input placeholder="e.g., India" className="bg-white border-gray-300 text-black" />
+                <Input placeholder="e.g., India" className="bg-white border-gray-300 text-black" value={country} onChange={e => setCountry(e.target.value)} />
+                {errors.country && <span className="text-red-500 text-xs">{errors.country}</span>}
               </div>
               <div className="sm:col-span-2">
                 <Label className="text-gray-700">Street address *</Label>
-                <Input placeholder="House number and street name" className="bg-white border-gray-300 text-black" />
+                <Input placeholder="House number and street name" className="bg-white border-gray-300 text-black" value={address} onChange={e => setAddress(e.target.value)} />
+                {errors.address && <span className="text-red-500 text-xs">{errors.address}</span>}
               </div>
               <div className="sm:col-span-2">
                 <Label className="text-gray-700">Apartment, suite, etc. (optional)</Label>
                 <Input placeholder="Apartment, suite, etc." className="bg-white border-gray-300 text-black" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-gray-700">City *</Label>
+                <Input placeholder="City" className="bg-white border-gray-300 text-black" value={city} onChange={e => setCity(e.target.value)} />
+                {errors.city && <span className="text-red-500 text-xs">{errors.city}</span>}
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-gray-700">Postal Code *</Label>
+                <Input placeholder="Postal Code" className="bg-white border-gray-300 text-black" value={postalCode} onChange={e => setPostalCode(e.target.value)} />
+                {errors.postalCode && <span className="text-red-500 text-xs">{errors.postalCode}</span>}
               </div>
             </div>
           </CardContent>
@@ -108,7 +161,7 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
               {recentproduct?.length > 0 ? (
                 recentproduct.map((item) => (
                   <div key={item.id} className="flex items-center justify-between mb-3 text-gray-700">
-                    <img src={item?.image} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
+                    <img src={item?.images} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
                     <span className="flex-1 ml-4">{item.name} × {item.quantity}</span>
                     <span className="font-semibold">₹{item.price * item.quantity}</span>
                   </div>
@@ -128,33 +181,26 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quant
             </div>
 
             {/* Payment Methods */}
-            <RadioGroup defaultValue="bank" className="space-y-4 mt-6">
-              <div className="flex items-start gap-3">
-                <RadioGroupItem value="bank" />
-                <div>
-                  <span className="font-medium flex items-center gap-2"><Banknote className="w-5 h-5 text-blue-600" /> Direct bank transfer</span>
-                  <p className="text-sm mt-1 text-blue-600 bg-blue-100 p-2 rounded">
-                    Make your payment directly into our bank account. Please use
-                    your Order ID as the payment reference. Your order will not
-                    be shipped until the funds have cleared.
-                  </p>
-                </div>
+            <RadioGroup value="cod" className="space-y-4 mt-6">
+              <div className="flex items-center gap-2 opacity-50 pointer-events-none">
+                <RadioGroupItem value="bank" disabled />
+                <span className="flex items-center gap-2"><Banknote className="w-5 h-5 text-blue-600" /> Direct bank transfer</span>
               </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="check" />
+              <div className="flex items-center gap-2 opacity-50 pointer-events-none">
+                <RadioGroupItem value="check" disabled />
                 <span className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-blue-600" /> Check payments</span>
               </div>
               <div className="flex items-center gap-2">
-                <RadioGroupItem value="cod" />
+                <RadioGroupItem value="cod" checked readOnly />
                 <span className="flex items-center gap-2"><Wallet className="w-5 h-5 text-blue-600" /> Cash on delivery</span>
               </div>
-            
             </RadioGroup>
 
             <Button 
                onClick={checkouthandler}
+               disabled={isPlacingOrder || !isFormValid}
             className="w-full mt-6 text-white bg-blue-600 hover:bg-blue-700 py-3 text-lg font-semibold rounded-xl shadow">
-              Place order
+              {isPlacingOrder ? "Placing order..." : "Place order"}
             </Button>
           </CardContent>
         </Card>

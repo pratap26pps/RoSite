@@ -34,7 +34,12 @@ import {
 import MyShoppingCart from './cart';
 import AddReview from './admin/addreview';
 import MicroAdminManagement from './admin/microadmin';
+import OrderHistory from './customer/orderhistory';
+
+
 const AdminDashboard = () => {
+
+  
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
     const router = useRouter();
@@ -370,54 +375,7 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
           );
         case 'orders':
           return (
-            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">My Orders</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-900/50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {ordersState.map(order => (
-                      <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                          {order.product}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                            {getStatusIcon(order.status)} <span className="ml-1">{order.status.toUpperCase()}</span>
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                          {order.date}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex space-x-2">
-                            <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" onClick={() => { setSelectedOrder(order); setOrderModalOpen(true); }}><Eye className="w-4 h-4" /></button>
-                           <button className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" onClick={() => { setTrackOrder(order); setTrackModalOpen(true); }} title="Track Order"><MapPin className="w-4 h-4" /></button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <OrderHistory/>
           );
         case 'cart':
           return ( 

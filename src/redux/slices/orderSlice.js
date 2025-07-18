@@ -25,8 +25,11 @@ const orderSlice = createSlice({
       const order = state.orders.find((o) => o.id === id);
       if (order) order.status = status;
     },
+    setOrders(state, action) {
+      state.orders = action.payload;
+    },
   },
 });
 
-export const { placeOrder, updateOrderStatus } = orderSlice.actions;
+export const { placeOrder, updateOrderStatus, setOrders } = orderSlice.actions;
 export default orderSlice.reducer;

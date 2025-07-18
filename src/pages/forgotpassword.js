@@ -37,7 +37,7 @@ const Forgotpassword = () => {
   };
 
   return (
-    <div className="min-h-screen relative  flex items-center justify-center lg:py-20  pt-20 px-4">
+    <div className="min-h-screen bg-gray-100 relative  flex items-center justify-center lg:py-20  pt-20 px-4">
       <div className="bg-blue-200 shadow-xl rounded-2xl max-w-md w-full px-8 py-10 space-y-6">
         <h2 className="text-2xl font-bold text-center text-blue-700">
           {emailsend ? "Check Your Email" : "Reset Your Password"}

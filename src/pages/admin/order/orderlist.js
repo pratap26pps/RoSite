@@ -2,73 +2,34 @@
 import { useState } from "react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 export default function OrderManagement() {
-  const [orders, setOrders] = useState([
-    {
-      id: 'ORD-001',
-      customer: 'Alice Johnson',
-      product: 'Wireless Headphones',
-      quantity: 2,
-      amount: '129.99',
-      status: 'delivered',
-      date: '2024-01-14',
-      address: '123 Main St, New York',
-      trackingAddress: 'Mumbai Central Warehouse',
-      trackingHistory: [
-        { timestamp: '2024-01-14 10:30', location: 'Order Confirmed', status: 'confirmed' },
-        { timestamp: '2024-01-14 14:20', location: 'Mumbai Central Warehouse', status: 'processing' },
-        { timestamp: '2024-01-15 09:15', location: 'Out for Delivery - Andheri West', status: 'shipped' },
-        { timestamp: '2024-01-15 16:45', location: 'Delivered to Customer', status: 'delivered' }
-      ]
-    },
-    {
-      id: 'ORD-002',
-      customer: 'Bob Smith',
-      product: 'Smart Watch',
-      quantity: 1,
-      amount: '299.99',
-      status: 'pending',
-      date: '2024-01-15',
-      address: '456 Oak Ave, Los Angeles',
-      trackingAddress: 'Bandra East Hub',
-      trackingHistory: [
-        { timestamp: '2024-01-15 11:15', location: 'Order Confirmed', status: 'confirmed' },
-        { timestamp: '2024-01-15 15:30', location: 'Bandra East Hub', status: 'processing' }
-      ]
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Carol Davis',
-      product: 'Laptop Stand',
-      quantity: 3,
-      amount: '49.99',
-      status: 'shipped',
-      date: '2024-01-13',
-      address: '789 Pine Rd, Chicago',
-      trackingAddress: 'Dadar West Distribution Center',
-      trackingHistory: [
-        { timestamp: '2024-01-13 12:00', location: 'Order Confirmed', status: 'confirmed' },
-        { timestamp: '2024-01-13 16:45', location: 'Dadar West Distribution Center', status: 'processing' },
-        { timestamp: '2024-01-14 08:30', location: 'Out for Delivery - Dadar West', status: 'shipped' }
-      ]
-    },
-    {
-      id: 'ORD-004',
-      customer: 'David Wilson',
-      product: 'Bluetooth Speaker',
-      quantity: 1,
-      amount: '89.99',
-      status: 'processing',
-      date: '2024-01-15',
-      address: '321 Elm St, Miami',
-      trackingAddress: 'Mumbai Central Warehouse',
-      trackingHistory: [
-        { timestamp: '2024-01-15 12:30', location: 'Order Confirmed', status: 'confirmed' },
-        { timestamp: '2024-01-15 17:20', location: 'Mumbai Central Warehouse', status: 'processing' }
-      ]
-    }
-  ]);
+  // Get all orders from redux
+  const { orders: reduxOrders } = useSelector((state) => state.order);
+
+  // Map redux orders to table format
+  const orders = useMemo(() => {
+    return reduxOrders.map(order => {
+      const customer = order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() : '';
+      const productNames = order.items && order.items.length > 0 ? order.items.map(item => item.product?.name || '').join(', ') : '';
+      const quantity = order.items && order.items.length > 0 ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
+      return {
+        id: order.orderId || order._id,
+        customer,
+        product: productNames,
+        quantity,
+        amount: order.totalAmount,
+        status: order.status,
+        date: order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '',
+        address: order.shippingAddress ? `${order.shippingAddress.address}, ${order.shippingAddress.city}` : '',
+        trackingAddress: order.trackingAddress || '',
+        trackingHistory: order.trackingHistory || [],
+        raw: order,
+      };
+    });
+  }, [reduxOrders]);
   
   const [viewOrder, setViewOrder] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
@@ -225,7 +186,7 @@ export default function OrderManagement() {
               className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" 
               title="Show/Hide Tracking History"
             >
-              <span role="img" aria-label="Tracking">📊</span>
+              <span role="img" aria-label="Tracking">Track</span>
             </button>
              {/* Edit Tracking Address Button */}
             <button 
@@ -233,10 +194,10 @@ export default function OrderManagement() {
                 setEditTrackingAddress(order);
                 setNewTrackingAddress(order.trackingAddress);
               }}
-              className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300" 
+              className="text-gray-900" 
               title="Edit Tracking Address"
             >
-              <span role="img" aria-label="Edit Tracking">✏️</span>
+              <span role="img" aria-label="Edit Tracking">Edit</span>
             </button>
 
             
@@ -244,7 +205,7 @@ export default function OrderManagement() {
             <Dialog open={!!viewOrder && viewOrder.id === order.id} onOpenChange={(open) => setViewOrder(open ? order : null)}>
               <DialogTrigger asChild>
                 <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" title="View">
-                  <span role="img" aria-label="View">👁️</span>
+                  <span role="img" aria-label="View">View</span>
                 </button>
               </DialogTrigger>
               <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
@@ -271,7 +232,7 @@ export default function OrderManagement() {
             <Dialog open={!!deleteOrder && deleteOrder.id === order.id} onOpenChange={(open) => setDeleteOrder(open ? order : null)}>
               <DialogTrigger asChild>
                 <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Delete">
-                  <span role="img" aria-label="Delete">🗑️</span>
+                  <span role="img" aria-label="Delete">Delete</span>
                 </button>
               </DialogTrigger>
               <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
@@ -337,16 +298,16 @@ export default function OrderManagement() {
               <p className="text-sm text-gray-600 dark:text-gray-400">{editTrackingAddress?.id}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Current Tracking Address</label>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{editTrackingAddress?.trackingAddress}</p>
+              <label className="block text-sm text-gray-800 font-medium mb-1">Current Tracking Address</label>
+              <p className="text-sm text-gray-800 dark:text-gray-400">{editTrackingAddress?.trackingAddress}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">New Tracking Address</label>
+              <label className="block text-sm text-gray-800 font-medium mb-1">New Tracking Address</label>
               <input 
                 type="text" 
                 value={newTrackingAddress} 
                 onChange={(e) => setNewTrackingAddress(e.target.value)}
-                className="w-full border rounded px-2 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                className="w-full border rounded px-2 py-1 dark:bg-gray-800 text-black dark:border-gray-700"
                 placeholder="Enter new tracking address"
               />
             </div>

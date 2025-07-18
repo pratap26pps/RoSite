@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
 import { setProducts } from "../redux/slices/productSlice";
 import { setCategories } from "../redux/slices/categorySlice";
+import { setOrders } from "../redux/slices/orderSlice";
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,
 });
@@ -87,6 +88,21 @@ function AuthSyncWrapper({ children }) {
         }
       }
       fetchCategories();
+    }, [dispatch]);
+
+    useEffect(() => {
+      async function fetchOrders() {
+        try {
+          const res = await fetch('/api/customer/getorders');
+          const data = await res.json();
+          if (Array.isArray(data.orders)) {
+            dispatch(setOrders(data.orders));
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      fetchOrders();
     }, [dispatch]);
 
 
