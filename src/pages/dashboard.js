@@ -506,7 +506,7 @@ const handleChange = (e) => {
   );
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50 pb-24 pt-2 relative'>
+    <div className='min-h-screen w-full bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-50 pb-24 pt-2 relative'>
       {(orderModalOpen || trackModalOpen || profileModalVisible || deleteModalVisible) && (
         <div className="fixed inset-0 z-[100] bg-white/10 backdrop-blur-sm transition-all"></div>
       )}

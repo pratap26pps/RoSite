@@ -289,7 +289,12 @@ export default function AddCategoryProduct() {
   };
 
   return (
-    <div className="min-h-screen w-full px-2 sm:px-6  transition-colors duration-300">
+    <>
+    
+    
+   
+ <div className="w-full px-2 sm:px-6 transition-colors duration-300">
+
       <div className="max-w-4xl mx-auto">
         {/* Message Display */}
         {message.text && (
@@ -762,5 +767,6 @@ export default function AddCategoryProduct() {
         })()}
       </div>
     </div>
+     </>
   );
 } 

@@ -25,6 +25,12 @@ export function CarouselSize() {
  const products = useSelector((state) => state.product.products);
  console.log("products",products)
 
+ const homeCategoryProducts = products.filter(
+  (product) => product.category?.categoryType === "homecategory"
+);
+
+
+
     const carthandler = async (id) => {
     const product = products.find((product) => product._id === id);
     if (!product) return;
@@ -50,9 +56,9 @@ export function CarouselSize() {
           className="w-full relative"
         >
           <CarouselContent className="-ml-2 md:-ml-4">
-            {products.map((product) => (
+            {homeCategoryProducts.map((product) => (
               <CarouselItem
-                key={product.id}
+                key={product._id}
                 className="pl-2 md:pl-4 basis-[85%] xs:basis-[80%] sm:basis-[60%] md:basis-[45%] lg:basis-[33.333%] xl:basis-[25%]"
               >
                 <div className="h-full">

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
     const products = await Product.find({})
-      .populate({ path: 'category', select: 'name' })
+      .populate({ path: 'category'})
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, products });
   } catch (error) {

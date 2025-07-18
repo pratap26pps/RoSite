@@ -14,6 +14,7 @@ import {
   ArrowRight,
   ShoppingCart
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const components = {
   filters: [
@@ -150,7 +151,9 @@ const steps = [
   { id: "uv", name: "UV Protection", icon: Shield },
   { id: "review", name: "Review", icon: CheckCircle }
 ];
+
 export default function BuildPage() {
+
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedComponents, setSelectedComponents] = useState({});
   const [savedConfigs, setSavedConfigs] = useState([]);
@@ -161,6 +164,15 @@ export default function BuildPage() {
   const totalPrice = Object.values(selectedComponents).reduce((sum, component) => sum + component.price, 0);
   const installationPrice = 999;
   const finalPrice = totalPrice + installationPrice;
+
+
+ const products = useSelector((state) => state.product.products);
+ console.log("products",products)
+
+ const homeCategoryProducts = products.filter(
+  (product) => product.category?.categoryType === "customcategory"
+);
+console.log("homeCategoryProducts",homeCategoryProducts)
 
   const handleComponentSelect = (component) => {
     setSelectedComponents(prev => ({
