@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import {
   NavigationMenu,
@@ -28,9 +28,27 @@ export default function PremiumNavigation() {
   const router = useRouter();
     const dispatch = useDispatch();
     const { cartItems } = useSelector((state) => state.cart);
+    const [localCartCount, setLocalCartCount] = useState(0);
+
+    useEffect(() => {
+      if ((!cartItems || cartItems.length === 0) && typeof window !== 'undefined') {
+        const stored = localStorage.getItem('cartItems');
+        if (stored) {
+          try {
+            setLocalCartCount(JSON.parse(stored).length);
+          } catch {
+            setLocalCartCount(0);
+          }
+        } else {
+          setLocalCartCount(0);
+        }
+      }
+    }, [cartItems]);
+
+    const totalItems = (cartItems && cartItems.length > 0) ? cartItems.length : localCartCount;
+
     console.log("cartItems in nav ",cartItems?.length)
    const user = useSelector((state) => state.auth.user);
-  const totalItems = cartItems?.length;
 
    const handleLogout = async () => {
     try {

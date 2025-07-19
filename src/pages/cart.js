@@ -30,7 +30,23 @@ const MyShoppingCart = () => {
   const allProducts = useSelector((state) => state.product.products);
   const user = useSelector((state) => state.auth.user);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  
+  const [localCart, setLocalCart] = useState([]);
+
+  useEffect(() => {
+    if ((!cartItems || cartItems.length === 0) && typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) {
+        try {
+          setLocalCart(JSON.parse(stored));
+        } catch {
+          setLocalCart([]);
+        }
+      }
+    }
+  }, [cartItems]);
+
+  const displayCartItems = (cartItems && cartItems.length > 0) ? cartItems : localCart;
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const skuid = searchParams.get("skuid");
@@ -40,7 +56,7 @@ const MyShoppingCart = () => {
   if (skuid) {
     singleProduct = allProducts.find((p) => p.skuid === skuid);
   }
-  const displayItems = skuid && singleProduct ? [singleProduct] : cartItems;
+  const displayItems = skuid && singleProduct ? [singleProduct] : displayCartItems;
 
   console.log(displayItems)
    
@@ -68,6 +84,17 @@ const MyShoppingCart = () => {
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
+    // Remove from localStorage as well
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) {
+        try {
+          const arr = JSON.parse(stored).filter((item) => item._id !== id);
+          localStorage.setItem('cartItems', JSON.stringify(arr));
+          setLocalCart(arr);
+        } catch {}
+      }
+    }
     toast.success("Item removed from cart");
   };
 

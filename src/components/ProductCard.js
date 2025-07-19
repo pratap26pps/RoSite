@@ -23,6 +23,7 @@ export function CarouselSize() {
   const dispatch = useDispatch();
   const [addedToCart, setAddedToCart] = useState([]);
  const products = useSelector((state) => state.product.products);
+ const cartItems = useSelector((state) => state.cart.cartItems);
  console.log("products",products)
 
  const homeCategoryProducts = products.filter(
@@ -35,6 +36,9 @@ console.log("homeCategoryProducts",homeCategoryProducts)
     const product = products.find((product) => product._id === id);
     if (!product) return;
     dispatch(addToCart(product));
+    // Store updated cart in localStorage
+    const updatedCart = [...cartItems, { ...product, quantity: 1 }];
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
     toast.success(`${product.name} is added`);
     setAddedToCart((prev) => [...prev, id]);
   };

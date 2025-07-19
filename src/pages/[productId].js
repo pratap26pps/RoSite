@@ -16,6 +16,7 @@ const productId = params?.productId;
   const productData = useSelector((state) => state.product.products);
   const selectedProduct = productData.find((item) => item.slug === productId);
   console.log(selectedProduct)
+  const cartItems = useSelector((state) => state.cart.cartItems);
 
   const [mainImg, setMainImg] = useState(
     selectedProduct?.images?.[0] || "/placeholder.jpg"
@@ -38,6 +39,8 @@ const productId = params?.productId;
     setAdding(true);
     try {
       dispatch(addToCart(selectedProduct));
+      const updatedCart = [...cartItems, { ...selectedProduct, quantity: 1 }];
+      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
       toast.success(`${selectedProduct.name} added to cart`);
     } catch (error) {
       console.log("error in product",error)

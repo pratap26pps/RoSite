@@ -45,6 +45,7 @@ export default function ShopPage() {
   const [tempPriceRange, setTempPriceRange] = useState([0, 20000]); 
    const dummyProducts = useSelector((state) => state.product.products);
  const categories = useSelector((state) => state.category.categories)
+ const cartItems = useSelector((state) => state.cart.cartItems);
    
 const router=useRouter()
  const dispatch = useDispatch()
@@ -132,6 +133,8 @@ filteredProducts = filteredProducts.sort((a, b) => {
         return;
       }
       dispatch(addToCart(product));
+      const updatedCart = [...cartItems, { ...product, quantity: 1 }];
+      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
       toast.success(`${product.name} added to cart`);
       setAddedToCart((prev) => [...prev, id]);
     } catch (error) {

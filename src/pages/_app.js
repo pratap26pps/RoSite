@@ -15,6 +15,7 @@ import { setUser } from "../redux/slices/authSlice";
 import { setProducts } from "../redux/slices/productSlice";
 import { setCategories } from "../redux/slices/categorySlice";
 import { setOrders } from "../redux/slices/orderSlice";
+import { Phone } from "lucide-react";
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,
 });
@@ -160,9 +161,8 @@ function FloatingContactButtons() {
         className="p-3 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center"
         aria-label="Call us"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.3 1.2a2 2 0 01-.45 1.95l-.7.7a16.001 16.001 0 006.586 6.586l.7-.7a2 2 0 011.95-.45l1.2.3A2 2 0 0121 16.72V19a2 2 0 01-2 2h-1C7.163 21 3 16.837 3 12V5z" />
-        </svg>
+       
+        <Phone className="w-5 h-5 text-white" />
       </a>
     </div>
   );
