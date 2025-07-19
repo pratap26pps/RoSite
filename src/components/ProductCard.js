@@ -39,8 +39,10 @@ console.log("homeCategoryProducts",homeCategoryProducts)
     setAddedToCart((prev) => [...prev, id]);
   };
 
+ 
+
   return (
-    <section className="relative font-sans overflow-hidden lg:-mt-48 mt-16">
+    <section className="relative font-sans overflow-hidden lg:-mt-68 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold  mb-4 tracking-tight">
@@ -79,7 +81,7 @@ console.log("homeCategoryProducts",homeCategoryProducts)
                           priority={product.id <= 4}
                       />
                       <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
-                        {product?.category?.name}
+                        {product?.category?.name.toUpperCase()}
                       </div>
      
                     </div>
@@ -89,25 +91,23 @@ console.log("homeCategoryProducts",homeCategoryProducts)
 
                     <div className="flex justify-between">
                         <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
-                        <IndianRupee className="w-5 h-5" /> {product.price}
+                        <IndianRupee className="w-5 h-5 mt-1" /> <p  className="text-xl">{product.price}</p>
                       </div>
                       <div className="text-sm text-gray-500">
                         {product?.quantity === 0 ? (
-                          <span className="text-red-500 font-medium">Out of Stock</span>
-                        ) : (
-                          <span className="text-green-600 font-medium">In Stock</span>
-                        )}
+                          <span className="text-red-500 border-2 border-red-500 px-2 py-1 rounded-full  font-medium">Out of Stock</span>
+                        ) :  ""}
                       </div>
                     </div>
 
                       <div className="flex-1">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-700 transition-colors">
+                        <h3 className="text-lg capitalize sm:text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-700 transition-colors">
                           {product.name}
                         </h3>
-                           <p className="text-sm text-gray-500">quantity: {product?.quantity}</p>
+                           <p className="text-sm text-gray-500">Quantity: {product?.quantity}</p>
                         
-                           <p className="text-sm text-gray-500">SKU: {product?.skuid}</p>
-                        <p className="text-sm sm:text-base text-gray-600 line-clamp-2 mb-4">
+                           <p className="text-sm text-gray-500">{product?.skuid.toUpperCase()}</p>
+                        <p className="text-sm capitalize sm:text-base text-gray-600 line-clamp-2 mb-4">
                           {product.description}
                         </p>
                       </div>
@@ -115,7 +115,7 @@ console.log("homeCategoryProducts",homeCategoryProducts)
                       {/* Action Section */}
                       <div className="space-y-4 mt-auto">
                         <button
-                           onClick={() => router.push(`/${product._id}`)}
+                           onClick={() => router.push(`/${product.slug}`)}
                         className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
                           View
                         </button>
@@ -141,9 +141,8 @@ console.log("homeCategoryProducts",homeCategoryProducts)
  <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
    
     </Link>
-  ) : (
-    <span className="text-gray-500 italic">Amazon: Coming Soon</span>
-  )}
+  ) :  ""
+  }
                              
   {/* Flipkart */}
   {product?.flipkartLink ? (
@@ -156,9 +155,8 @@ console.log("homeCategoryProducts",homeCategoryProducts)
   <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
 
     </Link>
-  ) : (
-    <span className="text-gray-500 italic">Flipkart: Coming Soon</span>
-  )}
+    ) :  ""
+  }
 
                         </div>
                       </div>

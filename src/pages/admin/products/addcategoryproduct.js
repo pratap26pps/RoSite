@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory,setCategories } from "@/src/redux/slices/categorySlice";
 import { addProduct  } from "@/src/redux/slices/productSlice";
+
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -25,7 +26,7 @@ export default function AddCategoryProduct() {
   const [categoryImg, setCategoryImg] = useState([]);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [isHomeCategory, setIsHomeCategory] = useState(false);
-
+  const user = useSelector((state) => state.auth.user);
     const [isCustomProduct, setIsCustomProduct] = useState(false);
   const [isHomeProduct, setIsHomeProduct] = useState(false);
 
@@ -59,6 +60,7 @@ export default function AddCategoryProduct() {
   const [editIsCustomCategory, setEditIsCustomCategory] = useState(false);
   const [showOnlyCustomCategories, setShowOnlyCustomCategories] = useState(false);
   const [showOnlyHomeCategories, setShowOnlyHomeCategories] = useState(false);
+  const [editIsHomeCategory, setEditIsHomeCategory] = useState(false);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -129,20 +131,20 @@ console.log("cat product",catProducts)
 
     const data = await res.json();
     if (data.success) {
-    console.log("Category added:", data.category);
-    dispatch(addCategory(newCategory)); 
-    dispatch(setCategories(data.categories));     
-    setCategoryName("");
-    setCategoryDesc("");
-    setCategoryImg("");
-
-    setMessage({ type: 'success', text: 'Category added successfully!' });
-    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      setAllCategories(data.categories);
+      dispatch(setCategories(data.categories));
+      setCategoryName("");
+      setCategoryDesc("");
+      setCategoryImg("");
+      setMessage({ type: 'success', text: 'Category added successfully!' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } else {
       console.warn(data.message);
+      toast.error(data.message)
     }
   } catch (error) {
     console.error("Add category error:", error);
+    toast.error("internal server error")
   }
   };
 
@@ -253,6 +255,7 @@ console.log("cat product",catProducts)
     setEditCategoryDesc(cat.description || "");
     setEditCategoryImg(cat.catImage || "");
     setEditIsCustomCategory(cat.categoryType === "customcategory");
+    setEditIsHomeCategory(cat.categoryType === "homecategory");
     setEditModalOpen(true);
   };
   const handleEditImageChange = async (e) => {
@@ -283,7 +286,7 @@ console.log("cat product",catProducts)
       name: editCategoryName,
       description: editCategoryDesc,
       catImage: editCategoryImg,
-      categoryType: editIsCustomCategory ? "customcategory" : "homecategory",
+      categoryType: (editIsCustomCategory && editIsHomeCategory) ? "customplushome" : (editIsCustomCategory ? "customcategory" : "homecategory"),
     };
     // Backend or local update
     if (allCategories.some(c => c._id === editCategory._id)) {
@@ -466,7 +469,7 @@ console.log("cat product",catProducts)
                   ? uniqueLocal.filter(cat => cat.categoryType !== "customcategory")
                   : uniqueLocal;
               return [
-                ...filteredBackend?.map(cat => (
+                ...(filteredBackend || []).map(cat => (
                   <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
                     <div
                       className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
@@ -486,6 +489,7 @@ console.log("cat product",catProducts)
                     >
                       Edit
                     </Button>
+                    {user?.role !== 'microadmin' && (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -505,10 +509,10 @@ console.log("cat product",catProducts)
                         }
                       }}
                     >Delete</Button>
-                   
+                    )}
                   </li>
                 )),
-                ...filteredLocal?.map(cat => (
+                ...(filteredLocal || []).map(cat => (
                   <li key={cat._id} className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer border-b border-blue-50 dark:border-gray-700 last:border-b-0">
                     <span
                       className={`flex-1 ${selectedCategory === cat._id ? 'font-semibold text-blue-700 dark:text-cyan-300' : ''}`}
@@ -527,6 +531,7 @@ console.log("cat product",catProducts)
                     >
                       Edit
                     </Button>
+                    {user?.role !== 'microadmin' && (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -537,7 +542,7 @@ console.log("cat product",catProducts)
                         if (selectedCategory === cat._id) setSelectedCategory(null);
                       }}
                     >Delete</Button>
-                   
+                    )}
                   </li>
                 ))
               ];
@@ -563,12 +568,22 @@ console.log("cat product",catProducts)
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
-          id="editCustomCategory"
+          id="editIsHomeCategory"
+          checked={editIsHomeCategory}
+          onChange={e => setEditIsHomeCategory(e.target.checked)}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label htmlFor="editIsHomeCategory" className="text-sm font-medium">Mark as Home Category</label>
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="editIsCustomCategory"
           checked={editIsCustomCategory}
           onChange={e => setEditIsCustomCategory(e.target.checked)}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
-        <label htmlFor="editCustomCategory" className="text-sm font-medium">Mark as Custom Category</label>
+        <label htmlFor="editIsCustomCategory" className="text-sm font-medium">Mark as Custom Category</label>
       </div>
       <label className="font-semibold">Image</label>
       <Input type="file" accept="image/*" onChange={handleEditImageChange} />

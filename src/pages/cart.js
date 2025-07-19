@@ -20,17 +20,29 @@ import {
  
 } from "../redux/slices/cartSlice";
 import { IndianRupee ,ShoppingCart} from "lucide-react";
+import { useSearchParams } from "next/navigation";
  
 
 const MyShoppingCart = () => {
   
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const allProducts = useSelector((state) => state.product.products);
   const user = useSelector((state) => state.auth.user);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   
   const router = useRouter();
-  console.log(cartItems)
+  const searchParams = useSearchParams();
+  const skuid = searchParams.get("skuid");
+
+  // If skuid is present, show only that product
+  let singleProduct = null;
+  if (skuid) {
+    singleProduct = allProducts.find((p) => p.skuid === skuid);
+  }
+  const displayItems = skuid && singleProduct ? [singleProduct] : cartItems;
+
+  console.log(displayItems)
    
  
 
@@ -41,15 +53,15 @@ const MyShoppingCart = () => {
     accent: "text-blue-600",
   };
 
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+  const subtotal = displayItems.reduce(
+    (acc, item) => acc + item.price * (item.quantity || 1),
     0
   );
-  const savings = cartItems.reduce(
-    (acc, item) => acc + (item.originalPrice - item.price) * item.quantity,
+  const savings = displayItems.reduce(
+    (acc, item) => acc + ((item.originalPrice || item.price) - item.price) * (item.quantity || 1),
     0
   );
-  const shipping = subtotal > 100 ? 0 : 15.99;
+  const shipping = subtotal > 100 ? 0 : 0.00;
   const tax = subtotal * 0.08;
  
   const total = subtotal + shipping + tax;
@@ -84,7 +96,7 @@ const MyShoppingCart = () => {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-black">Shopping Cart</h2>
-              <p className="text-gray-600">{cartItems.length} items in your cart</p>
+              <p className="text-gray-600">{displayItems.length} items in your cart</p>
             </div>
           </div>
         </div>
@@ -94,7 +106,7 @@ const MyShoppingCart = () => {
             <div className={`rounded-xl shadow p-6 ${theme.card}`}>
               <h3 className="text-xl font-semibold mb-6">Your Items</h3>
 
-              {cartItems.length === 0 ? (
+              {displayItems.length === 0 ? (
                  <div className="text-center ">
                                 <div className="text-6xl mb-4 text-gray-400"><ShoppingCart className="w-24 h-24 mx-auto" /></div>
                                 <h4 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h4>
@@ -106,7 +118,7 @@ const MyShoppingCart = () => {
                                 </button>
                               </div>
               ) : (
-                cartItems.map((item) => (
+                displayItems.map((item) => (
                   <div
                     key={item._id}
                     className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4  rounded-lg  mb-5 bg-gray-100"
@@ -121,34 +133,35 @@ const MyShoppingCart = () => {
                       <p className="text-sm text-gray-500">Category: {item?.category?.name}</p>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold flex text-blue-600">
-                          <IndianRupee className="w-5 h-5" /> {item?.price?.toFixed(2)}
+                          <IndianRupee className="w-5 h-5 mt-1" /><p className="text-xl"> {item?.price?.toFixed(2)}</p>
                         </span>
-                        {item.originalPrice > item.price && (
-                          <span className="line-through text-sm text-gray-400">
-                            <IndianRupee className="w-5 h-5" /> {item.originalPrice.toFixed(2)}
-                          </span>
-                        )}
+                        
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => dispatch(decreaseQty(item._id))}
-                        className="bg-blue-100 p-1 cursor-pointer rounded disabled:opacity-50"
-                        disabled={item.quantity === 1}
-                      >
-                        <MinusIcon className="h-4 w-4 text-blue-600" />
+                    {/* Only show quantity controls and remove if not skuid mode */}
+                    {!skuid && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => dispatch(decreaseQty(item._id))}
+                          className="bg-blue-100 p-1 cursor-pointer rounded disabled:opacity-50"
+                          disabled={item.quantity === 1}
+                        >
+                          <MinusIcon className="h-4 w-4 text-blue-600" />
+                        </button>
+                        <span className="w-6 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => dispatch(increaseQty(item._id))}
+                          className="bg-blue-100 cursor-pointer p-1 rounded"
+                        >
+                          <PlusIcon className="h-4 w-4 text-blue-600" />
+                        </button>
+                      </div>
+                    )}
+                    {!skuid && (
+                      <button onClick={() => handleRemove(item._id)}>
+                        <TrashIcon className="h-5 w-5 cursor-pointer text-red-500" />
                       </button>
-                      <span className="w-6 text-center">{item.quantity}</span>
-                      <button
-                        onClick={() => dispatch(increaseQty(item._id))}
-                        className="bg-blue-100 cursor-pointer p-1 rounded"
-                      >
-                        <PlusIcon className="h-4 w-4 text-blue-600" />
-                      </button>
-                    </div>
-                    <button onClick={() => handleRemove(item._id)}>
-                      <TrashIcon className="h-5 w-5 cursor-pointer text-red-500" />
-                    </button>
+                    )}
                   </div>
                 ))
               )}
@@ -160,26 +173,26 @@ const MyShoppingCart = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="flex"> <IndianRupee className="w-5 h-5" /> {subtotal.toFixed(2)}</span>
+                 <span className="flex"> <IndianRupee className="w-5 h-5 mt-1" /> <p className="text-2xl">{subtotal.toFixed(2)}</p> </span>
               </div>
               {savings > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>You saved</span>
-                  <span className="flex"> <IndianRupee className="w-5 h-5" /> {savings.toFixed(2)}</span>
+                  <span className="flex"> <IndianRupee className="w-5 h-5 mt-1" /> <p className="text-2xl">{savings.toFixed(2)}</p></span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span className="flex"> <IndianRupee className="w-5 h-5" />  {shipping === 0 ? "Free" : `${shipping.toFixed(2)}`}</span>
+                <span className="flex"> <IndianRupee className="w-5 h-5 mt-1" /><p className="text-2xl">{shipping === 0 ? "0.00" : `${shipping.toFixed(2)}`}</p>   </span>
               </div>
               <div className="flex justify-between">
                 <span>Tax</span>
-                <span className="flex"> <IndianRupee className="w-5 h-5" /> {tax.toFixed(2)}</span>
+                <span className="flex"> <IndianRupee className="w-5 h-5 mt-1" /><p className="text-2xl">{tax.toFixed(2)}</p> </span>
               </div>
               
               <div className="border-t pt-3 mt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span className="text-blue-600 flex"> <IndianRupee className="w-5 " /> {total.toFixed(2)}</span>
+                <span className="text-blue-600 flex"> <IndianRupee className="w-5 mt-1" /> <p className="text-2xl">{total.toFixed(2)}</p> </span>
               </div>
             </div>
 
@@ -198,10 +211,7 @@ const MyShoppingCart = () => {
                 <ShieldCheckIcon className="h-4 w-4 text-green-500" />
                 Secure 256-bit SSL encryption
               </div>
-              <div className="flex items-center gap-2">
-                <TruckIcon className="h-4 w-4 text-blue-500" />
-                Free shipping on orders over $100
-              </div>
+              
             </div>
           </div>
         </div>

@@ -104,24 +104,7 @@ export default function YoutubeTrust() {
 
       
       </div>
-
-      {/* Floating Animation */}
-      <style jsx>{`
-        .animate-float {
-          animation: float 8s ease-in-out infinite;
-        }
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-      `}</style>
+ 
     </section>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect,useState } from "react";
+import { useSearchParams } from "next/navigation";
  
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,9 @@ export default function CheckoutPage() {
 
     const user = useSelector((state) => state.auth.user);
     const { cartItems } = useSelector((state) => state.cart);
+    const searchParams = useSearchParams();
+    const skuid = searchParams.get("skuid");
+    const allProducts = useSelector((state) => state.product.products);
     console.log("User in billingorder:", user);
     console.log("cartItems in billingorder ",cartItems)
  
@@ -35,8 +39,15 @@ export default function CheckoutPage() {
     }
   }, []);
   
-  const recentproduct = cartItems || product;
-const total = recentproduct?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+  // If skuid is present, find the product
+  let singleProduct = null;
+  if (skuid) {
+    singleProduct = allProducts.find((p) => p.skuid === skuid);
+  }
+
+  // If skuid, use that product, else use cart
+  const recentproduct = skuid && singleProduct ? [singleProduct] : cartItems;
+const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0) || 0;
 
   const [country, setCountry] = useState("");
   const [address, setAddress] = useState("");

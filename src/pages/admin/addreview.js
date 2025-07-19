@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { useSelector } from 'react-redux';
 const AddReview = () => {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
@@ -9,6 +9,7 @@ const AddReview = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const user = useSelector((state) => state.auth.user);
 
   // Testimonials state
   const [testimonials, setTestimonials] = useState([]);
@@ -207,6 +208,7 @@ const AddReview = () => {
                     <div className="text-sm text-gray-500 dark:text-gray-300">{t.position}</div>
                     <div className="text-xs text-gray-700 dark:text-gray-200 mt-1 line-clamp-2">{t.description}</div>
                   </div>
+                  {user?.role !== 'microadmin' && (
                   <button
                     onClick={() => handleDelete(t._id)}
                     className="ml-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition disabled:opacity-60 disabled:cursor-not-allowed"
@@ -214,6 +216,7 @@ const AddReview = () => {
                   >
                     {deleteLoading === t._id ? 'Deleting...' : 'Delete'}
                   </button>
+                  )}
                 </li>
               ))}
             </ul>

@@ -62,23 +62,23 @@ export default function AmcEnquiry() {
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Name<span className="text-red-500">*</span></label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+            <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full border-2 border-gray-400 rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email<span className="text-red-500">*</span></label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+            <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full border-2 border-gray-400 rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Address<span className="text-red-500">*</span></label>
-            <input type="text" name="address" value={form.address} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+            <input type="text" name="address" value={form.address} onChange={handleChange} className="w-full border-2 border-gray-400 rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Mobile<span className="text-red-500">*</span></label>
-            <input type="tel" name="mobile" value={form.mobile} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
+            <input type="tel" name="mobile" value={form.mobile} onChange={handleChange} className="w-full border-2 border-gray-400 rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
             <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Message (optional)</label>
-            <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" rows={3} />
+            <textarea name="message" value={form.message} onChange={handleChange} className="w-full border-2 border-gray-400 rounded px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400" rows={3} />
           </div>
         </div>
         <button type="submit" disabled={loading} className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold py-2 px-4 rounded-xl transition disabled:opacity-60 shadow-lg">

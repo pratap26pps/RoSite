@@ -4,10 +4,13 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
-
+import { setOrders } from "@/src/redux/slices/orderSlice";
+import { useDispatch } from "react-redux";
 export default function OrderManagement() {
   // Get all orders from redux
   const { orders: reduxOrders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
 
   // Map redux orders to table format
   const orders = useMemo(() => {
@@ -35,13 +38,13 @@ export default function OrderManagement() {
   const [editOrder, setEditOrder] = useState(null);
   const [deleteOrder, setDeleteOrder] = useState(null);
   const [editForm, setEditForm] = useState({});
-  
-  // New states for tracking functionality
-  const [trackingOrder, setTrackingOrder] = useState(null);
-  const [showTrackingHistory, setShowTrackingHistory] = useState({});
+   
   const [editTrackingAddress, setEditTrackingAddress] = useState(null);
   const [newTrackingAddress, setNewTrackingAddress] = useState('');
   const [newTrackingEntry, setNewTrackingEntry] = useState({ location: '', status: 'processing' });
+
+  const [statusEdit, setStatusEdit] = useState({}); // { [orderId]: status }
+  const [statusLoading, setStatusLoading] = useState({}); // { [orderId]: boolean }
 
   const handleEditChange = (field, value) => {
     setEditForm((prev) => ({ ...prev, [field]: value }));
@@ -58,13 +61,7 @@ export default function OrderManagement() {
     setDeleteOrder(null);
   };
 
-  // New handlers for tracking functionality
-  const toggleTrackingHistory = (orderId) => {
-    setShowTrackingHistory(prev => ({
-      ...prev,
-      [orderId]: !prev[orderId]
-    }));
-  };
+   
 
   const handleUpdateTrackingAddress = () => {
     if (newTrackingAddress.trim()) {
@@ -78,76 +75,39 @@ export default function OrderManagement() {
     }
   };
 
-  const handleAddTrackingEntry = () => {
-    if (newTrackingEntry.location.trim()) {
-      const timestamp = new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).replace(',', '');
+  
 
-      setOrders(prev => prev.map(order => 
-        order.id === trackingOrder.id 
-          ? { 
-              ...order, 
-              trackingHistory: [
-                ...order.trackingHistory,
-                {
-                  timestamp,
-                  location: newTrackingEntry.location.trim(),
-                  status: newTrackingEntry.status
-                }
-              ]
-            }
-          : order
-      ));
-      setNewTrackingEntry({ location: '', status: 'processing' });
+  const handleStatusChange = (orderId, newStatus) => {
+    setStatusEdit(prev => ({ ...prev, [orderId]: newStatus }));
+  };
+
+  const handleStatusUpdate = async (orderId) => {
+    setStatusLoading(prev => ({ ...prev, [orderId]: true }));
+    try {
+      const res = await fetch('/api/admin/updateorder', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status: statusEdit[orderId] })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Update Redux orders immediately
+        dispatch(setOrders(reduxOrders.map(o => o._id === orderId ? data.order : o)));
+        setStatusEdit(prev => ({ ...prev, [orderId]: undefined }));
+      } else {
+        alert(data.message || 'Failed to update status');
+      }
+    } catch (err) {
+      alert('Failed to update status');
     }
+    setStatusLoading(prev => ({ ...prev, [orderId]: false }));
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      delivered: 'bg-green-100 text-green-800 border-green-200',
-      shipped: 'bg-blue-100 text-blue-800 border-blue-200',
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      processing: 'bg-purple-100 text-purple-800 border-purple-200',
-      cancelled: 'bg-red-100 text-red-800 border-red-200'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+ 
+  
+ 
 
-  const getStatusIcon = (status) => {
-    const icons = {
-      delivered: '✅',
-      shipped: '🚚',
-      pending: '⏳',
-      processing: '⚡'
-    };
-    return icons[status] || '⏳';
-  };
-
-  const getTrackingStatusColor = (status) => {
-    const colors = {
-      confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
-      processing: 'bg-purple-100 text-purple-800 border-purple-200',
-      shipped: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      delivered: 'bg-green-100 text-green-800 border-green-200'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
-
-  const getTrackingStatusIcon = (status) => {
-    const icons = {
-      confirmed: '📋',
-      processing: '⚡',
-      shipped: '🚚',
-      delivered: '✅'
-    };
-    return icons[status] || '📋';
-  };
+ 
 
   const OrderRow = ({ order }) => (
     <>
@@ -168,9 +128,27 @@ export default function OrderManagement() {
           <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-            {getStatusIcon(order.status)} {order.status.toUpperCase()}
-          </span>
+          <select
+            value={statusEdit[order.id] !== undefined ? statusEdit[order.id] : order.status}
+            onChange={e => handleStatusChange(order.id, e.target.value)}
+            className="border text-black rounded px-2 py-1"
+          >
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          {statusEdit[order.id] && statusEdit[order.id] !== order.status && (
+            <Button
+              size="sm"
+              className="ml-2 bg-blue-600 text-white"
+              loading={statusLoading[order.id]}
+              onClick={() => handleStatusUpdate(order.id)}
+            >
+              Update
+            </Button>
+          )}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
           {order.date}
@@ -180,14 +158,7 @@ export default function OrderManagement() {
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm">
           <div className="flex space-x-2">
-            {/* Tracking History Button */}
-            <button 
-              onClick={() => toggleTrackingHistory(order.id)}
-              className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" 
-              title="Show/Hide Tracking History"
-            >
-              <span role="img" aria-label="Tracking">Track</span>
-            </button>
+             
              {/* Edit Tracking Address Button */}
             <button 
               onClick={() => {
@@ -229,58 +200,30 @@ export default function OrderManagement() {
            
 
             {/* Delete Order Button */}
-            <Dialog open={!!deleteOrder && deleteOrder.id === order.id} onOpenChange={(open) => setDeleteOrder(open ? order : null)}>
-              <DialogTrigger asChild>
-                <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Delete">
-                  <span role="img" aria-label="Delete">Delete</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                <DialogHeader>
-                  <DialogTitle className="text-red-600 dark:text-red-400">Delete Order</DialogTitle>
-                </DialogHeader>
-                <div className="py-4 text-gray-800 dark:text-gray-100">Are you sure you want to delete order <b>{order.id}</b>?</div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setDeleteOrder(null)} className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">Cancel</Button>
-                  <Button onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">Delete</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            {user?.role !== 'microadmin' && (
+              <Dialog open={!!deleteOrder && deleteOrder.id === order.id} onOpenChange={(open) => setDeleteOrder(open ? order : null)}>
+                <DialogTrigger asChild>
+                  <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Delete">
+                    <span role="img" aria-label="Delete">Delete</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                  <DialogHeader>
+                    <DialogTitle className="text-red-600 dark:text-red-400">Delete Order</DialogTitle>
+                  </DialogHeader>
+                  <div className="py-4 text-gray-800 dark:text-gray-100">Are you sure you want to delete order <b>{order.id}</b>?</div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={() => setDeleteOrder(null)} className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">Cancel</Button>
+                    <Button onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">Delete</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         </td>
       </tr>
       
-      {/* Tracking History Row */}
-      {showTrackingHistory[order.id] && (
-        <tr className="bg-gray-50 dark:bg-gray-900/30">
-          <td colSpan="9" className="px-6 py-4">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100">Tracking History</h4>
-                <button
-                  onClick={() => setTrackingOrder(order)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-1 px-3 rounded transition-colors"
-                >
-                  Add Entry
-                </button>
-              </div>
-              <div className="space-y-2">
-                {order.trackingHistory.map((entry, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getTrackingStatusColor(entry.status)}`}>
-                      {getTrackingStatusIcon(entry.status)} {entry.status.toUpperCase()}
-                    </span>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{entry.location}</p>
-                      <p className="text-xs  text-gray-400">{entry.timestamp}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </td>
-        </tr>
-      )}
+       
     </>
   );
 
@@ -323,51 +266,7 @@ export default function OrderManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Tracking Entry Modal */}
-      <Dialog open={!!trackingOrder} onOpenChange={(open) => !open && setTrackingOrder(null)}>
-        <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-          <DialogHeader>
-            <DialogTitle className="text-blue-600 dark:text-blue-300">Add Tracking Entry</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm text-gray-800 font-medium mb-1">Order ID</label>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{trackingOrder?.id}</p>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-800 font-medium mb-1">Location</label>
-              <input 
-                type="text" 
-                value={newTrackingEntry.location} 
-                onChange={(e) => setNewTrackingEntry({...newTrackingEntry, location: e.target.value})}
-                className="w-full border rounded px-2 py-1 dark:bg-gray-800 text-gray-600 dark:border-gray-700"
-                placeholder="Enter location or status update"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-800 font-medium mb-1">Status</label>
-              <select 
-                value={newTrackingEntry.status} 
-                onChange={(e) => setNewTrackingEntry({...newTrackingEntry, status: e.target.value})}
-                className="w-full border rounded px-2 py-1 dark:bg-gray-800 text-gray-600 dark:border-gray-700"
-              >
-                <option value="confirmed">Confirmed</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-              </select>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setTrackingOrder(null)} className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
-                Cancel
-              </Button>
-              <Button onClick={handleAddTrackingEntry} className="bg-blue-600 text-white hover:bg-blue-700">
-                Add Entry
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+     
 
       {/* Main Table */}
       <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50">

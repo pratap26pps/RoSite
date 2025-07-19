@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { IndianRupee } from "lucide-react";
 import {
@@ -30,9 +30,11 @@ const PRODUCTS_PER_PAGE = 6;
 export default function ShopPage() {
 
     const searchParams = useSearchParams();
-  const categoryId = searchParams.get("id");
+    const categorySlug = searchParams.get("slug");
+  
 
  
+    const [sortOption, setSortOption] = useState("relevance");
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -47,10 +49,32 @@ export default function ShopPage() {
 const router=useRouter()
  const dispatch = useDispatch()
 
-const filteredProducts = dummyProducts.filter((product) => {
+// Sync temp price range with actual price range
+useEffect(() => {
+  setTempPriceRange(priceRange);
+}, [priceRange]);
+
+// Set selected category based on URL slug parameter
+useEffect(() => {
+  if (categorySlug && categories.length > 0) {
+    const categoryFromSlug = categories.find(category => category.slug === categorySlug);
+    if (categoryFromSlug) {
+      setSelectedCategory(categoryFromSlug.name);
+    }
+  }
+}, [categorySlug, categories]);
+
+// Reset to first page when filters change
+useEffect(() => {
+  setCurrentPage(1);
+}, [search, selectedCategory, priceRange, sortOption]);
+
+// Apply sorting and filtering
+let filteredProducts = dummyProducts.filter((product) => {
   const matchSearch =
     product?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-    product?.sqNumber?.toLowerCase()?.includes(search.toLowerCase());
+    product?.sqNumber?.toLowerCase()?.includes(search.toLowerCase()) ||
+    product?.skuid?.toLowerCase()?.includes(search.toLowerCase());
 
   const matchCategory =
     selectedCategory === "All" || product?.category?.name === selectedCategory;
@@ -59,9 +83,22 @@ const filteredProducts = dummyProducts.filter((product) => {
     product?.price >= priceRange[0] && product.price <= priceRange[1];
 
   const matchCategoryIdFromParams =
-    !categoryId || product?.category?._id === categoryId;
+    !categorySlug || product?.category?.slug === categorySlug;
 
   return matchSearch && matchCategory && matchPrice && matchCategoryIdFromParams;
+});
+
+// Apply sorting
+filteredProducts = filteredProducts.sort((a, b) => {
+  switch (sortOption) {
+    case "lowToHigh":
+      return a.price - b.price;
+    case "highToLow":
+      return b.price - a.price;
+    case "relevance":
+    default:
+      return 0; // Keep original order
+  }
 });
 
 
@@ -80,13 +117,27 @@ const filteredProducts = dummyProducts.filter((product) => {
   };
 
   const carthandler = async (id) => {
-    const product = filteredProducts.find((product) => product._id === id);
-    if (!product) return;
-
-    dispatch(addToCart(product));
-    // localStorage.setItem("cartproduct", JSON.stringify(product));
-    toast.success(`${product.name} is added`);
-    setAddedToCart((prev) => [...prev, id]);
+    try {
+      const product = dummyProducts.find((product) => product._id === id);
+      if (!product) {
+        toast.error("Product not found");
+        return;
+      }
+      if (product.quantity === 0) {
+        toast.error("Product is out of stock");
+        return;
+      }
+      if (addedToCart.includes(id)) {
+        toast.error("Product already in cart");
+        return;
+      }
+      dispatch(addToCart(product));
+      toast.success(`${product.name} added to cart`);
+      setAddedToCart((prev) => [...prev, id]);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add product to cart");
+    }
   };
 
   return (
@@ -135,12 +186,12 @@ const filteredProducts = dummyProducts.filter((product) => {
               </div>
               <div className="relative">
                 <Input
-                  placeholder="Name or SQ number"
+                  placeholder="Name, SQ number, or SKUID"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="bg-slate-800/50 border-slate-600   placeholder:text-gray-600   pl-4 pr-4 py-3 rounded-xl"
+                  className=" border-slate-600   placeholder:text-gray-600   pl-4 pr-4 py-3 rounded-xl"
                 />
-                <Search onClick={() => setSidebarOpen(false)} className="absolute right-3 top-3 w-5 h-5 text-slate-100" />
+                <Search onClick={() => setSidebarOpen(false)} className="absolute right-3 top-2 w-5 h-5 text-black" />
               </div>
             </div>
 
@@ -157,16 +208,19 @@ const filteredProducts = dummyProducts.filter((product) => {
                setSelectedCategory(value);
                setSidebarOpen(false);
               }}  >
-                <SelectTrigger className="bg-slate-800/50  w-full rounded-xl h-12">
-                    <SelectValue placeholder="Choose Category" className="text-white"/>
+                <SelectTrigger className=" w-full rounded-xl h-12">
+                    <SelectValue placeholder="Choose Category" className="text-black"/>
                 </SelectTrigger>
-                <SelectContent  className="bg-slate-800   text-slate-100 border-slate-600 rounded-xl">
-                 {categories.map((category) => (
-                  <SelectItem key={category._id} value={category.name} >
-                    {category.name}
-                  </SelectItem>
-                ))}
-                </SelectContent>
+                <SelectContent className="    text-black border-slate-600 rounded-xl">
+  <SelectItem value="All">
+    <p className="capitalize">All Categories</p>
+  </SelectItem>
+  {categories.map((category) => (
+    <SelectItem key={category._id} value={category.name} >
+      <p className="capitalize">{category.name}</p>
+    </SelectItem>
+  ))}
+</SelectContent>
               </Select>
             </div>
 
@@ -191,10 +245,10 @@ const filteredProducts = dummyProducts.filter((product) => {
 
   {/* Min and Max Labels */}
   <div className="flex justify-between text-sm">
-    <span className="bg-slate-700/50 px-3 py-1 rounded-lg">
+    <span className="  px-3 py-1 rounded-lg">
       ₹{tempPriceRange[0].toLocaleString()}
     </span>
-    <span className="bg-slate-700/50 px-3 py-1 rounded-lg">
+    <span className="  px-3 py-1 rounded-lg">
       ₹{tempPriceRange[1].toLocaleString()}
     </span>
   </div>
@@ -205,7 +259,7 @@ const filteredProducts = dummyProducts.filter((product) => {
                   setPriceRange(tempPriceRange);
                   setSidebarOpen(false);
                 }}
-                className="mt-2 bg-gray-500  text-white font-semibold px-4 cursor-pointer py-2 rounded-lg w-full"
+                className="mt-2    text-black border-2 font-semibold px-4 cursor-pointer py-2 rounded-lg w-full"
               >
                 Apply Price Filter
               </button>
@@ -214,6 +268,52 @@ const filteredProducts = dummyProducts.filter((product) => {
 
             <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-6"></div>
 
+            
+
+{/* Sorting Options */}
+<div className="space-y-3">
+  <div className="flex items-center gap-2 mb-3">
+    <h3 className="text-lg font-semibold">Sort By</h3>
+  </div>
+
+  <div className="space-y-2">
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="sort"
+        value="relevance"
+        checked={sortOption === "relevance"}
+        onChange={() => setSortOption("relevance")}
+        className="accent-blue-600"
+      />
+      Relevance
+    </label>
+
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="sort"
+        value="lowToHigh"
+        checked={sortOption === "lowToHigh"}
+        onChange={() => setSortOption("lowToHigh")}
+        className="accent-blue-600"
+      />
+      Price: Low to High
+    </label>
+
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="sort"
+        value="highToLow"
+        checked={sortOption === "highToLow"}
+        onChange={() => setSortOption("highToLow")}
+        className="accent-blue-600"
+      />
+      Price: High to Low
+    </label>
+  </div>
+</div>
             
           </div>
         </aside>
@@ -232,8 +332,8 @@ const filteredProducts = dummyProducts.filter((product) => {
       alt={product.name}
       className="w-full h-48 object-cover transition-transform duration-300 "
     />
-    <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
-       {product?.category?.name}
+    <div className="absolute capitalize top-4 right-4 bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full  ">
+       {product?.category?.name.toUpperCase()}
     </div>
   </div>
 
@@ -241,19 +341,17 @@ const filteredProducts = dummyProducts.filter((product) => {
     <div className="space-y-2">
                     <div className="flex justify-between">
                         <div className="flex right-3 text-blue-600 rounded-full text-sm font-semibold z-20">
-                        <IndianRupee className="w-5 h-5" /> {product.price}
+                        <IndianRupee className="w-5 h-5 mt-1" />  <p className="text-xl">{product.price}</p>
                       </div>
                       <div className="text-sm text-gray-500">
                         {product?.quantity === 0 ? (
-                          <span className="text-red-500 font-medium">Out of Stock</span>
-                        ) : (
-                          <span className="text-green-600 font-medium">In Stock</span>
-                        )}
+                          <span className="text-red-500 border-2 border-red-500 px-2 py-1 rounded-full  font-medium">Out of Stock</span>
+                        ) : ""}
                       </div>
                     </div>
-      <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500">Sku: {product?.skuid}</p>
-      <p className="text-sm text-gray-500">quantity: {product?.quantity}</p>
+      <h3 className="text-lg capitalize font-bold text-gray-800">{product.name}</h3>
+      <p className="text-sm text-gray-500">{product?.skuid.toUpperCase()}</p>
+      <p className="text-sm text-gray-500">Quantity: {product?.quantity}</p>
       
     </div>
 
@@ -261,7 +359,7 @@ const filteredProducts = dummyProducts.filter((product) => {
     {/* Store Icons */}
                   <div className="space-y-4 mt-auto">
                          <button
-                           onClick={() => router.push(`/${product._id}`)}
+                           onClick={() => router.push(`/${product.slug}`)}
                         className="w-full cursor-pointer bg-black text-white text-center py-2 rounded-xl font-bold text-lg">
                           View
                         </button>
@@ -269,8 +367,8 @@ const filteredProducts = dummyProducts.filter((product) => {
                           <div className="flex items-center justify-center gap-4">
                               <ShoppingCart 
                                 onClick={() => carthandler(product._id)}
-                            disabled={addedToCart.includes(product._id)}
-                            className={` border-2  cursor-pointer h-[50px] w-[50px] rounded-lg ${
+                            disabled={addedToCart.includes(product._id) || product?.quantity === 0}
+                            className={` border-2 cursor-pointer  h-[50px] w-[50px] rounded-lg ${
                               addedToCart.includes(product._id)
                                 ? "  bg-green-400  cursor-not-allowed"
                                 : "text-blue-600  hover:text-blue-700"
@@ -287,9 +385,7 @@ const filteredProducts = dummyProducts.filter((product) => {
                           <Image src="https://www.kent.co.in/images/icons/amazon-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Amazon" width={50} height={50} />
                             
                               </a>
-                            ) : (
-                              <span className="text-gray-500 italic">Amazon: Coming Soon</span>
-                            )}
+                            ) : ""}
                                                       
                             {/* Flipkart */}
                             {product?.flipkartLink ? (
@@ -302,9 +398,7 @@ const filteredProducts = dummyProducts.filter((product) => {
                             <Image src="https://www.kent.co.in/images/icons/flipkart-simple.svg"  className="cursor-pointer border-2 p-2  rounded-lg" alt="Flipkart" width={50} height={50} />
 
                               </Link>
-                            ) : (
-                              <span className="text-gray-500 italic">Flipkart: Coming Soon</span>
-                            )}
+                            ) : ""}
 
                             
                           </div>

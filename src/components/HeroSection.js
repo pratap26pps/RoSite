@@ -3,36 +3,48 @@ import { CarouselSize } from "./ProductCard";
  import YoutubeTrust from "../pages/youtube";
  import DressStyleCarousel from "./categoryproduct";
 import TestimonialSection from "./Testimonial";
-
-
 import { useEffect, useState } from "react";
 import { Truck, CalendarDays, Clock, Settings, ShoppingCart, ShoppingBag, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function HeroSection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [animateButtons, setAnimateButtons] = useState(false);
+
   const router = useRouter();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    "/images/cra.png",
+    "/images/craus.png",
+    "/images/crausel.jpeg",
+    "/images/waterfamily.png",
+  ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-      setAnimateButtons(true);
-    }, 300);
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 3000);  
+    return () => clearInterval(interval);
   }, []);
-
+ 
   return (
     <div className="relative w-full min-h-screen overflow-hidden text-gray-800 bg-white">
-<section className="relative w-full mt-20 min-h-screen overflow-hidden">
+  <section className="relative w-full mt-20 min-h-screen overflow-hidden">
   {/* 🔹 Background Image with Right-Bottom Cut */}
-  <div
-    className="absolute inset-0 h-[80vh] bg-cover bg-center brightness-95 mt-1 mr-5 ml-5 rounded-2xl"
-    style={{
-      backgroundImage: "url('/images/waterfamily.png')",
-      clipPath: "polygon(0 0, 100% 0, 100% 80%, 100% 100%, 50% 100%, 0 100%)",
-    }}
-  ></div>
+  <div className="absolute inset-0 h-[80vh] mt-1 mr-5 ml-5 rounded-2xl overflow-hidden">
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out rounded-2xl ${
+                index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+              style={{
+                backgroundImage: `url(${slide})`,
+                clipPath:
+                  "polygon(0 0, 100% 0, 100% 80%, 100% 100%, 50% 100%, 0 100%)",
+              }}
+            />
+          ))}
+        </div>
 
   {/* 🔹 Content Box */}
   <div className="relative z-10 w-full min-h-screen flex items-center justify-start px-4 mt-56 lg:mt-3 sm:px-0 py-10 sm:py-20">
@@ -148,7 +160,7 @@ export default function HeroSection() {
               ))}
             </div>
 
-            <div className={`flex flex-col sm:flex-row gap-4 mt-6  ${animateButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} transition-opacity duration-1000`}>
+            <div className={`flex flex-col sm:flex-row gap-4 mt-6    transition-opacity duration-1000`}>
               <button    
               onClick={() => router.push("/shop")}
               className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-full flex   justify-center gap-2 shadow-md transition text-sm sm:text-base"

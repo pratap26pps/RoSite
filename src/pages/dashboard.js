@@ -29,17 +29,18 @@ import {
   AlertTriangle,
   Menu,
   X,
-  MapPin
+  HelpCircle
 } from "lucide-react";
 import MyShoppingCart from './cart';
 import AddReview from './admin/addreview';
 import MicroAdminManagement from './admin/microadmin';
 import OrderHistory from './customer/orderhistory';
+import AdminAmcEnquiry from './admin/amcEnquiry';
 
 
 const AdminDashboard = () => {
 
-  
+  const allOrders = useSelector(state => state.order.orders);
     const user = useSelector((state) => state.auth.user);
     console.log("User in Dashboard:", user);
     const router = useRouter();
@@ -86,6 +87,7 @@ const AdminDashboard = () => {
     { key: 'Add Category/Product', label: 'Add Category/Product', icon: <Plus className="w-5 h-5" /> },
     { key: 'Add Review', label: 'Add Review', icon: <Plus className="w-5 h-5" /> },
     { key: 'Product-History', label: 'Product-History', icon: <Package className="w-5 h-5" /> },
+    { key: 'Amc-Enquiry', label: 'Amc-Enquiry', icon: <HelpCircle className="w-5 h-5" /> },
    
   ];
 
@@ -195,51 +197,15 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const [orders, setOrders] = useState([
-    {
-      id: 'ORD-001',
-      customer: 'Alice Johnson',
-      product: 'Wireless Headphones',
-      amount: '129.99',
-      status: 'delivered',
-      date: '2024-01-14',
-      address: '123 Main St, New York'
-    },
-    {
-      id: 'ORD-002',
-      customer: 'Bob Smith',
-      product: 'Smart Watch',
-      amount: '299.99',
-      status: 'pending',
-      date: '2024-01-15',
-      address: '456 Oak Ave, Los Angeles'
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Carol Davis',
-      product: 'Laptop Stand',
-      amount: '49.99',
-      status: 'shipped',
-      date: '2024-01-13',
-      address: '789 Pine Rd, Chicago'
-    },
-    {
-      id: 'ORD-004',
-      customer: 'David Wilson',
-      product: 'Bluetooth Speaker',
-      amount: '89.99',
-      status: 'processing',
-      date: '2024-01-15',
-      address: '321 Elm St, Miami'
-    }
-  ]);
+  
 
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [ordersState, setOrdersState] = useState(orders);
+ 
   const [trackModalOpen, setTrackModalOpen] = useState(false);
   const [trackOrder, setTrackOrder] = useState(null);
-
+ 
+console.log("trackOrder",trackOrder)
 
 const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
   useEffect(() => {
@@ -290,6 +256,8 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
   const renderContent = () => {
     // Customer-specific content
     if (user.role === "customer") {
+    
+      const myOrders = allOrders.filter(o => o.user?._id === user._id);
       switch (selectedMenuItem) {
         case 'overview':
           return (
@@ -298,20 +266,20 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
                 <StatCard
                   title="My Orders"
-                  value={ordersState.length}
+                  value={myOrders.length}
                   icon={<ShoppingCart className="w-8 h-8 text-blue-600" />}
                   color="text-blue-600"
                 />
                
                 <StatCard
                   title="Active Orders"
-                  value={ordersState.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length}
+                  value={myOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length}
                   icon={<Package className="w-8 h-8 text-purple-600" />}
                   color="text-purple-600"
                 />
                 <StatCard
                   title="Delivered"
-                  value={ordersState.filter(o => o.status === 'delivered').length}
+                  value={myOrders.filter(o => o.status === 'delivered').length}
                   icon={<CheckCircle className="w-8 h-8 text-green-600" />}
                   color="text-green-600"
                 />
@@ -330,7 +298,7 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
                         <thead className="bg-gray-50 dark:bg-gray-900/50">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Products</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
@@ -338,16 +306,26 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
                           </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                          {ordersState.slice(0, 3).map(order => (
-                            <tr key={order.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          {myOrders.slice(0, 3).map(order => (
+                            <tr key={order._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
+                                <span className="font-medium text-gray-900 dark:text-gray-100">{order._id}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                {order.product}
+                                <ul className="space-y-1">
+                                  {order.items?.map((item, idx) => (
+                                    <li key={item._id || idx} className="flex items-center gap-2">
+                                      {item.product?.images?.[0] && (
+                                        <img src={item.product.images[0]} alt={item.product.name} className="w-8 h-8 object-cover rounded border" />
+                                      )}
+                                      {item.product?.name}
+                                      <span className="text-xs text-gray-500">x{item.quantity}</span>
+                                    </li>
+                                  ))}
+                                </ul>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
+                                <span className="font-semibold text-gray-900 dark:text-gray-100">₹{order.totalAmount}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}> 
@@ -355,11 +333,11 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                {order.date}
+                                {order.createdAt ? new Date(order.createdAt).toLocaleString() : ''}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm">
                                  <button className="text-blue-600 border-2 rounded-2xl p-2 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" onClick={() => { setSelectedOrder(order); setOrderModalOpen(true); }}>View</button>
-                                 <button className="text-green-600 border-2 rounded-2xl p-2 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 ml-2" onClick={() => { setTrackOrder(order); setTrackModalOpen(true); }} title="Track Order">Track Location</button>
+                                 {/* <button className="text-green-600 border-2 rounded-2xl p-2 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 ml-2" onClick={() => { setTrackOrder(order); setTrackModalOpen(true); }} title="Track Order">Track Location</button> */}
                               </td>
                             </tr>
                           ))}
@@ -452,6 +430,10 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
         return (
             <ProductHistory/>        
         );
+        case 'Amc-Enquiry':
+          return (
+              <AdminAmcEnquiry/>        
+          );
      
       default:
         return <OverviewContent />;
@@ -694,48 +676,55 @@ const handleChange = (e) => {
       <Modal
         isOpen={orderModalOpen}
         onClose={() => setOrderModalOpen(false)}
-        title={selectedOrder ? `Order Details - ${selectedOrder.id}` : 'Order Details'}
+        title={selectedOrder ? `Order Details - ${selectedOrder._id}` : 'Order Details'}
         modalClassName="z-[110]"
       >
         {selectedOrder && (
-          <div className="space-y-4">
+          <div className="space-y-4 text-gray-900">
             <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Product:</strong> {selectedOrder.product}</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {selectedOrder.amount}</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Status:</strong> {selectedOrder.status}</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Date:</strong> {selectedOrder.date}</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Address:</strong> {selectedOrder.address}</p>
-            </div>
-            <div className="flex justify-end">
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                onClick={() => {
-                  setOrdersState(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: 'cancelled' } : o));
-                  setOrderModalOpen(false);
-                }}
-              >
-                Cancel Order
-              </button>
+              <div className="mb-2"><span className="font-semibold">Order ID:</span> {selectedOrder._id}</div>
+              <div className="mb-2"><span className="font-semibold">Status:</span> {selectedOrder.status}</div>
+              <div className="mb-2"><span className="font-semibold">Total:</span> ₹{selectedOrder.totalAmount}</div>
+              <div className="mb-2"><span className="font-semibold">Date:</span> {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : ''}</div>
+              <div className="mb-2"><span className="font-semibold">Shipping Address:</span> {selectedOrder.shippingAddress?.address}, {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.country} - {selectedOrder.shippingAddress?.postalCode}</div>
+              <div className="mt-4">
+                <span className="font-semibold">Products:</span>
+                <ul className="mt-2 space-y-2">
+                  {selectedOrder.items?.map((item, idx) => (
+                    <li key={item._id || idx} className="flex items-center gap-3 border-b pb-2 last:border-b-0">
+                      {item.product?.images?.[0] && (
+                        <img src={item.product.images[0]} alt={item.product.name} className="w-10 h-10 object-cover rounded border" />
+                      )}
+                      <div>
+                        <div className="font-semibold">{item.product?.name}</div>
+                        <div className="text-xs text-gray-500">Qty: {item.quantity} | Price: ₹{item.price}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
             </div>
           </div>
         )}
       </Modal>
-      <Modal
+      {/* <Modal
         isOpen={trackModalOpen}
         onClose={() => setTrackModalOpen(false)}
-        title={trackOrder ? `Track Order - ${trackOrder.id}` : 'Track Order'}
+        title={trackOrder ? `Track Order - ${trackOrder._id}` : 'Track Order'}
         modalClassName="z-[110]"
       >
         {trackOrder && (
           <div className="space-y-4">
             <div>
               <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Address:</strong> {trackOrder.address}</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Status:</strong> {trackOrder.status}</p>
               <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Date:</strong> {trackOrder.date}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Status:</strong> {trackOrder.status}</p>
+             
             </div>
           </div>
         )}
-      </Modal>
+      </Modal> */}
       {/* Profile Modal */}
       <Modal
         isOpen={profileModalVisible}

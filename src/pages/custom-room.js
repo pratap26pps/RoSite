@@ -16,7 +16,7 @@ export default function BuildPage() {
 
   // Only use categories of type "customcategory" (or change as needed)
   const buildCategories = useMemo(
-    () => categories.filter((cat) => (cat.categoryType === "customcategory" || cat.categoryType === "customplushome") && cat.name !== "janne na tu"),
+    () => categories.filter((cat) => (cat.categoryType === "customcategory" || cat.categoryType === "customplushome")  ),
     [categories]
   );
 
@@ -54,17 +54,17 @@ const currentCategoryProducts = useMemo(() => {
 
   return products.filter((prod) => {
     // If product has category object
-    if (typeof prod.category === "object" && prod.category._id) {
-      return prod.category._id === matchedCategory._id && (prod.productType === "customproduct" || prod.productType === "customplushome")  ;
+    if (typeof prod?.category === "object" && prod?.category?._id) {
+      return prod?.category?._id === matchedCategory?._id && (prod?.productType === "customproduct" || prod?.productType === "customplushome")  ;
     }
 
     // If product has category string
-    if (typeof prod.category === "string") {
-      return prod.category === matchedCategory._id;
+    if (typeof prod?.category === "string") {
+      return prod?.category === matchedCategory?._id;
     }
 
     // Or, if product ID is listed in category's products array
-    return productIdsFromCategory.includes(prod._id);
+    return productIdsFromCategory?.includes(prod?._id);
   });
 }, [products, matchedCategory, isReviewStep]);
 

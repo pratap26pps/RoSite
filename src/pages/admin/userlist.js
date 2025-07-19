@@ -13,6 +13,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell, TableHeader } from "@
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
+import { useSelector } from 'react-redux';
  
 
 export default function CustomerManagement() {
@@ -25,6 +26,8 @@ export default function CustomerManagement() {
   const [editUser, setEditUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -131,24 +134,28 @@ export default function CustomerManagement() {
           </TableHeader>
           <TableBody>
             {filteredCustomers.map((customer) => (
-              <TableRow key={customer.id} className="hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
-                <TableCell className="font-semibold">{customer.name}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.mobile}</TableCell>
+              <TableRow key={customer?.id} className="hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
+                <TableCell className="font-semibold">{customer?.name}</TableCell>
+                <TableCell>{customer?.email}</TableCell>
+                <TableCell>{customer?.mobile}</TableCell>
                 
                 <TableCell>
-                  <Select
-                    value={customer.role}
-                    onValueChange={(val) => handleRoleChange(customer.id, val)}
-                  >
-                    <SelectTrigger className="w-32 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-blue-200 dark:border-gray-700">
-                      <SelectItem value="customer">Customer</SelectItem>
-                      <SelectItem value="microadmin">Microadmin</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {user?.role === 'admin' ? (
+                    <Select
+                      value={customer.role}
+                      onValueChange={(val) => handleRoleChange(customer.id, val)}
+                    >
+                      <SelectTrigger className="w-32 border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-blue-200 dark:border-gray-700">
+                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="microadmin">Microadmin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span className="capitalize text-gray-700 dark:text-gray-300">{customer.role}</span>
+                  )}
                 </TableCell>
                 <TableCell className="text-center space-x-2">
                   <Dialog>

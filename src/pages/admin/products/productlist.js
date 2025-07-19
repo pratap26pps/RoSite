@@ -33,11 +33,13 @@ import toast from "react-hot-toast";
 
 
 
-
 export default function ProductHistory() {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.product.products);
     const categories = useSelector((state) => state.category.categories)
+
+    const user = useSelector((state) => state.auth.user);
+    
     const [searchTerm, setSearchTerm] = useState("");
     const [deleteId, setDeleteId] = useState(null);
     const [editProduct, setEditProduct] = useState(null);
@@ -331,6 +333,7 @@ export default function ProductHistory() {
                                                      
                                                         
                                                         {/* delete confirmation dialog */}
+                                                        {user?.role !== 'microadmin' && (
                                                         <AlertDialog>
                                                             <AlertDialogTrigger asChild>
                                                                 <Button
@@ -355,7 +358,7 @@ export default function ProductHistory() {
                                                                 </AlertDialogFooter>
                                                             </AlertDialogContent>
                                                         </AlertDialog>
-                                                        
+                                                             )} 
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

@@ -1,40 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ShoppingCart, DollarSign, Users, CheckCircle, Eye, Pencil, Trash2, User, CreditCard, Truck, Clock, Bolt } from "lucide-react";
+import { ShoppingCart, DollarSign, IndianRupee, Users, CheckCircle, Eye, Pencil, Trash2, User, CreditCard, Truck, Clock, Bolt } from "lucide-react";
+import { startOfWeek, startOfMonth, startOfYear, format, getISOWeek, getYear, getMonth, getDate } from 'date-fns';
 
 export default function OverviewContent() {
-  // Dashboard stats
-  const [dashboardData] = useState({
-    totalOrders: 1247,
-    totalRevenue: 98450,
-    TotalUsers: 3421,
-    deliveredOrders: 1089,
-     
-  });
-
-  // Recent orders
-  const [orders] = useState([
-    {
-      id: 'ORD-001', customer: 'Alice Johnson', product: 'Wireless Headphones', amount: '129.99', status: 'delivered', date: '2024-01-14', address: '123 Main St, New York'
-    },
-    {
-      id: 'ORD-002', customer: 'Bob Smith', product: 'Smart Watch', amount: '299.99', status: 'pending', date: '2024-01-15', address: '456 Oak Ave, Los Angeles'
-    },
-    {
-      id: 'ORD-003', customer: 'Carol Davis', product: 'Laptop Stand', amount: '49.99', status: 'shipped', date: '2024-01-13', address: '789 Pine Rd, Chicago'
-    },
-    {
-      id: 'ORD-004', customer: 'David Wilson', product: 'Bluetooth Speaker', amount: '89.99', status: 'processing', date: '2024-01-15', address: '321 Elm St, Miami'
-    }
-  ]);
-
+  // Fetch recent orders from Redux
+  const reduxOrders = useSelector(state => state.order.orders);
+  const orders = [...reduxOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+   console.log("reduxOrders",reduxOrders)
+  const [viewOrder, setViewOrder] = useState(null);
   // Recent activity
-  const [recentActivity] = useState([
-    { id: 1, action: 'New order received', time: '2 minutes ago', type: 'order' },
-    { id: 2, action: 'User registered', time: '5 minutes ago', type: 'user' },
-    { id: 3, action: 'Payment processed', time: '10 minutes ago', type: 'payment' },
-    { id: 4, action: 'Order shipped', time: '15 minutes ago', type: 'shipping' }
-  ]);
+ 
 
   // Sample data for the bar chart
   const weeklyStats = [
@@ -66,23 +43,72 @@ export default function OverviewContent() {
 
   const [barView, setBarView] = useState('week');
   const [barData, setBarData] = useState([]);
-  const [barLoading, setBarLoading] = useState(true);
-  const [barError, setBarError] = useState('');
+  // Remove barLoading and barError logic
 
   useEffect(() => {
-    setBarLoading(true);
-    setBarError('');
-    fetch(`/api/order-stats`)
-      .then(res => res.json())
-      .then(data => {
-        setBarData(data[barView] || []);
-        setBarLoading(false);
-      })
-      .catch(() => {
-        setBarError('Failed to load stats');
-        setBarLoading(false);
+    // Compute barData from orders
+    let data = [];
+    if (barView === 'week') {
+      // Group by week of current month
+      const now = new Date();
+      const year = getYear(now);
+      const month = getMonth(now);
+      // Helper: get week of month (1-based)
+      function getWeekOfMonth(date) {
+        const firstDay = startOfMonth(date);
+        return Math.ceil((getDate(date) + firstDay.getDay()) / 7);
+      }
+      const weeks = {};
+      orders.forEach(order => {
+        const d = new Date(order.createdAt);
+        if (getYear(d) === year && getMonth(d) === month) {
+          const week = getWeekOfMonth(d);
+          if (!weeks[week]) weeks[week] = { label: `Week ${week}`, orders: 0, revenue: 0 };
+          weeks[week].orders += 1;
+          if (order.status === 'delivered') weeks[week].revenue += order.totalAmount || 0;
+        }
       });
-  }, [barView]);
+      // Always show all weeks in the month (1-5)
+      data = Array.from({ length: 5 }, (_, i) => weeks[i+1] || { label: `Week ${i+1}`, orders: 0, revenue: 0 });
+    } else if (barView === 'month') {
+      // Group by month of current year
+      const year = new Date().getFullYear();
+      const months = {};
+      orders.forEach(order => {
+        const d = new Date(order.createdAt);
+        if (getYear(d) === year) {
+          const month = format(d, 'MMM');
+          if (!months[month]) months[month] = { label: month, orders: 0, revenue: 0 };
+          months[month].orders += 1;
+          if (order.status === 'delivered') months[month].revenue += order.totalAmount || 0;
+        }
+      });
+      // Ensure months are in calendar order
+      const monthOrder = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      data = monthOrder.map(m => months[m] || { label: m, orders: 0, revenue: 0 });
+    } else if (barView === 'year') {
+      // Group by year
+      const years = {};
+      orders.forEach(order => {
+        const d = new Date(order.createdAt);
+        const year = getYear(d);
+        if (!years[year]) years[year] = { label: String(year), orders: 0, revenue: 0 };
+        years[year].orders += 1;
+        if (order.status === 'delivered') years[year].revenue += order.totalAmount || 0;
+      });
+      data = Object.values(years).sort((a, b) => a.label.localeCompare(b.label));
+    }
+    setBarData(data);
+  }, [barView, orders]);
+
+  // Real dashboard stats
+  const totalOrders = orders.length;
+  const deliveredRevenue = orders
+    .filter(o => o.status === 'delivered')
+    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+  const uniqueUserIds = new Set(orders.map(o => o.user?._id).filter(Boolean));
+  const totalUsers = uniqueUserIds.size;
 
   // Helpers
   const getStatusColor = (status) => {
@@ -123,51 +149,50 @@ export default function OverviewContent() {
     </div>
   );
 
-  // Order row
+  // Order row for new order structure
   const OrderRow = ({ order }) => (
     <tr className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className="font-medium text-gray-900 dark:text-gray-100">{order.id}</span>
+        <span className="font-medium text-gray-900 dark:text-gray-100">{order._id}</span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.customer}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.product}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+        {order.user?.firstName} {order.user?.lastName}
+        <div className="text-xs text-gray-500">{order.user?.email}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+        <ul className="space-y-1">
+          {order.items?.map((item, idx) => (
+            <li key={item._id || idx} className="flex items-center gap-2">
+              {item.product?.images?.[0] && (
+                <img src={item.product.images[0]} alt={item.product.name} className="w-8 h-8 object-cover rounded border" />
+              )}
+              <span className="font-semibold">{item.product?.name}</span>
+              <span className="text-xs text-gray-500">x{item.quantity}</span>
+              <span className="text-xs text-gray-500">₹{item.price}</span>
+            </li>
+          ))}
+        </ul>
+      </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className="font-semibold text-gray-900 dark:text-gray-100">{order.amount}</span>
+        <span className="font-semibold text-gray-900 dark:text-gray-100">₹{order.totalAmount}</span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>{getStatusIcon(order.status)} <span className="ml-1">{order.status.toUpperCase()}</span></span>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>{getStatusIcon(order.status)} <span className="ml-1">{order.status?.toUpperCase()}</span></span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.date}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{order.createdAt ? new Date(order.createdAt).toLocaleString() : ''}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <div className="flex space-x-2">
-          <button className="text-blue-600 cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View</button>
-          <button className="text-yellow-600 cursor-pointer hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">Edit</button>
-          <button className="text-red-600 cursor-pointer hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
-        </div> 
+          <button className="text-blue-600 cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" onClick={() => setViewOrder(order)}>View</button>
+        </div>
       </td>
     </tr>
   );
-
-  // Activity item
-  const ActivityItem = ({ activity }) => (
-    <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors">
-      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-        {activity.type === 'order' && <ShoppingCart className="w-4 h-4" />}
-        {activity.type === 'user' && <User className="w-4 h-4" />}
-        {activity.type === 'payment' && <CreditCard className="w-4 h-4" />}
-        {activity.type === 'shipping' && <Truck className="w-4 h-4" />}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-900 dark:text-gray-100">{activity.action}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
-      </div>
-    </div>
-  );
+ 
 
   return (
     <div className="space-y-8">
       {/* Bar Graph for Orders & Revenue per Week/Month/Year */}
-      <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 dark:border-gray-700/50 p-6">
+      <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Orders & Revenue</h3>
           <select
@@ -181,10 +206,8 @@ export default function OverviewContent() {
           </select>
         </div>
         <div className="w-full h-72 flex items-center justify-center">
-          {barLoading ? (
-            <div className="text-gray-500 dark:text-gray-300">Loading...</div>
-          ) : barError ? (
-            <div className="text-red-500">{barError}</div>
+          {barData.length === 0 ? (
+            <div className="text-gray-500 dark:text-gray-300">No data available.</div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -192,8 +215,8 @@ export default function OverviewContent() {
                 <XAxis dataKey="label" stroke="#6b7280" className="text-xs" />
                 <YAxis yAxisId="left" orientation="left" stroke="#6b7280" className="text-xs" />
                 <YAxis yAxisId="right" orientation="right" stroke="#6b7280" className="text-xs" tickFormatter={v => `₹${v/1000}k`} />
-                <Tooltip formatter={(value, name) => name === 'revenue' ? `₹${value}` : value} />
                 <Legend />
+                <Tooltip formatter={(value, name) => name === 'revenue' ? `₹${value}` : value} />
                 <Bar yAxisId="left" dataKey="orders" fill="#6366f1" name="Orders" radius={[4, 4, 0, 0]} />
                 <Bar yAxisId="right" dataKey="revenue" fill="#f59e42" name="Revenue" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -203,10 +226,10 @@ export default function OverviewContent() {
       </div>
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <StatCard title="Total Orders" value={dashboardData.totalOrders} icon={<ShoppingCart className="w-8 h-8 text-green-600" />} growth={dashboardData.orderGrowth} color="text-green-600" />
-        <StatCard title="Total Revenue" value={dashboardData.totalRevenue} icon={<DollarSign className="w-8 h-8 text-blue-600" />} growth={dashboardData.revenueGrowth} color="text-blue-600" />
-        <StatCard title="Active Users" value={dashboardData.TotalUsers} icon={<Users className="w-8 h-8 text-purple-600" />} growth={dashboardData.userGrowth} color="text-purple-600" />
-        <StatCard title="Delivered Orders" value={dashboardData.deliveredOrders} icon={<CheckCircle className="w-8 h-8 text-green-600" />} color="text-green-600" />
+        <StatCard title="Total Orders" value={totalOrders} icon={<ShoppingCart className="w-8 h-8 text-green-600" />} color="text-green-600" />
+        <StatCard title="Total Revenue" value={deliveredRevenue} icon={<IndianRupee className="w-8 h-8 text-blue-600" />} color="text-blue-600" />
+        <StatCard title="Active Users" value={totalUsers} icon={<Users className="w-8 h-8 text-purple-600" />} color="text-purple-600" />
+        <StatCard title="Delivered Orders" value={deliveredOrders} icon={<CheckCircle className="w-8 h-8 text-green-600" />} color="text-green-600" />
       </div>
 
       {/* Content Grid */}
@@ -223,8 +246,8 @@ export default function OverviewContent() {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Products</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
@@ -232,7 +255,7 @@ export default function OverviewContent() {
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {orders.slice(0, 5).map(order => (
-                    <OrderRow key={order.id} order={order} />
+                    <OrderRow key={order._id} order={order} />
                   ))}
                 </tbody>
               </table>
@@ -242,6 +265,46 @@ export default function OverviewContent() {
 
        
       </div>
+      {/* View Order Modal */}
+      {viewOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full p-8 relative overflow-y-auto max-h-[90vh]">
+            <button
+              onClick={() => setViewOrder(null)}
+              className="absolute top-3 right-3 text-gray-800 text-2xl font-bold"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h2 className="text-2xl font-bold text-blue-700 mb-4">Order Details</h2>
+            <div className="space-y-2 text-gray-800">
+              <div><span className="font-semibold">Order ID:</span> {viewOrder._id}</div>
+              <div><span className="font-semibold">Customer:</span> {viewOrder.user?.firstName} {viewOrder.user?.lastName} ({viewOrder.user?.email})</div>
+              <div><span className="font-semibold">Status:</span> {viewOrder.status}</div>
+              <div><span className="font-semibold">Total:</span> ₹{viewOrder.totalAmount}</div>
+              <div><span className="font-semibold">Payment Method:</span> {viewOrder.paymentMethod}</div>
+              <div><span className="font-semibold">Date:</span> {viewOrder.createdAt ? new Date(viewOrder.createdAt).toLocaleString() : ''}</div>
+              <div><span className="font-semibold">Shipping Address:</span> {viewOrder.shippingAddress?.address}, {viewOrder.shippingAddress?.city}, {viewOrder.shippingAddress?.country} - {viewOrder.shippingAddress?.postalCode}</div>
+              <div className="mt-4">
+                <span className="font-semibold">Products:</span>
+                <ul className="mt-2 space-y-2">
+                  {viewOrder.items?.map((item, idx) => (
+                    <li key={item._id || idx} className="flex items-center gap-3 border-b pb-2 last:border-b-0">
+                      {item.product?.images?.[0] && (
+                        <img src={item.product.images[0]} alt={item.product.name} className="w-10 h-10 object-cover rounded border" />
+                      )}
+                      <div>
+                        <div className="font-semibold">{item.product?.name}</div>
+                        <div className="text-xs text-gray-500">Qty: {item.quantity} | Price: ₹{item.price}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
