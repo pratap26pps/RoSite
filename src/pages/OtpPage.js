@@ -5,7 +5,7 @@ import { Sun, Moon, Shield, ArrowRight, RotateCcw } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
 
 const OTPPage = () => {
@@ -18,11 +18,18 @@ const OTPPage = () => {
   const email = searchParams.get("email");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const stored = localStorage.getItem("pendingSignup");
     if (stored) setPendingSignup(JSON.parse(stored));
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
   const handleOtpChange = (index, value) => {
     if (value.length <= 1 && /^\d*$/.test(value)) {
@@ -198,4 +205,5 @@ const OTPPage = () => {
   );
 };
 
+OTPPage.requireAuth = false;
 export default OTPPage;

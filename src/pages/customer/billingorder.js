@@ -254,3 +254,5 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
     </div>
   );
 }
+
+CheckoutPage.requiredRole = 'customer';

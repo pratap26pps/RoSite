@@ -117,3 +117,5 @@ export default function OrderHistory() {
             </div>
   );
 }
+
+OrderHistory.requiredRole = 'customer';

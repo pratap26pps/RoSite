@@ -1,13 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiArrowFromRight } from "react-icons/bi";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
-const Forgotpassword = () => {
+export default function ForgotPassword() {
+  const user = useSelector((state) => state.auth.user);
+  const router = useRouter();
   const [emailsend, setemailsend] = useState(false);
   const [email, setemail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
   const resetpasswordhandler = async (e) => {
     e.preventDefault();
@@ -96,6 +106,5 @@ const Forgotpassword = () => {
       </div>
     </div>
   );
-};
-
-export default Forgotpassword;
+}
+ForgotPassword.requireAuth = false;

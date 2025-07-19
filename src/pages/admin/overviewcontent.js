@@ -5,6 +5,7 @@ import { ShoppingCart, DollarSign, IndianRupee, Users, CheckCircle, Eye, Pencil,
 import { startOfWeek, startOfMonth, startOfYear, format, getISOWeek, getYear, getMonth, getDate } from 'date-fns';
 
 export default function OverviewContent() {
+  OverviewContent.requiredRole = 'admin';
   // Fetch recent orders from Redux
   const reduxOrders = useSelector(state => state.order.orders);
   const orders = [...reduxOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

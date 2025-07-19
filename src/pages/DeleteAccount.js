@@ -65,4 +65,6 @@ const DeleteAccount = () => {
   );
 };
 
+DeleteAccount.requireAuth = true;
+
 export default DeleteAccount;

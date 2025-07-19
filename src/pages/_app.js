@@ -10,12 +10,15 @@ import axios from "axios";
 import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slices/authSlice";
 import { setProducts } from "../redux/slices/productSlice";
 import { setCategories } from "../redux/slices/categorySlice";
 import { setOrders } from "../redux/slices/orderSlice";
 import { Phone } from "lucide-react";
+import { useRouter } from "next/router";
+import React from "react";
+
 const Chatbot = dynamic(() => import("../components/Chatbot"), {
   ssr: false,
 });
@@ -112,6 +115,23 @@ function AuthSyncWrapper({ children }) {
   return children;
 }
 
+function RouteProtector({ children, requiredRole, requireAuth }) {
+  const user = useSelector((state) => state.auth.user);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (requireAuth && !user) {
+      router.push("/authpage");
+    } else if (requiredRole && user?.role !== requiredRole) {
+      router.push("/authpage");
+    }
+  }, [user, requiredRole, requireAuth, router]);
+
+  if (requireAuth && !user) return null;
+  if (requiredRole && user?.role !== requiredRole) return null;
+  return children;
+}
+
 function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
 
@@ -169,13 +189,22 @@ function FloatingContactButtons() {
 }
 
 export default function App({ Component, pageProps: { session: sessionProp, ...pageProps } }) {
+  // Wrap with RouteProtector if needed
+  const { requiredRole, requireAuth } = Component;
+  let content = <Component {...pageProps} />;
+  if (requireAuth || requiredRole) {
+    content = (
+      <RouteProtector requiredRole={requiredRole} requireAuth={requireAuth}>
+        {content}
+      </RouteProtector>
+    );
+  }
   return (
     <SessionProvider session={sessionProp}>
       <Provider store={store}>
         <AuthSyncWrapper>
           <Navbar />
-          <Chatbot />
-          <Component {...pageProps} />
+          {content}
           <Toaster
             position="top-center"
             reverseOrder={false}
@@ -190,6 +219,7 @@ export default function App({ Component, pageProps: { session: sessionProp, ...p
           <Footer />
           <ScrollToTopButton />
           <FloatingContactButtons />
+          <Chatbot />
         </AuthSyncWrapper>
       </Provider>
     </SessionProvider>

@@ -414,3 +414,5 @@ const Modal = ({ isOpen, onClose, title, children, modalClassName }) => {
     </div>
   );
 };
+
+ProductHistory.requiredRole = 'admin';

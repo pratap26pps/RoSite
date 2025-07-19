@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "next-auth/react";
 import { setUser } from "../redux/slices/authSlice";
 import { Chrome, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
@@ -32,6 +32,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 export default function AuthPage() {
+  const user = useSelector((state) => state.auth.user);
   const [activeTab, setActiveTab] = useState("login");
   const [formData, setFormData] = useState({
     firstName: "",
@@ -48,6 +49,12 @@ export default function AuthPage() {
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
@@ -256,3 +263,4 @@ export default function AuthPage() {
     </div>
   );
 }
+AuthPage.requireAuth = false;

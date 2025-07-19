@@ -207,3 +207,5 @@ export default function CustomerManagement() {
     </div>
   );
 }
+
+CustomerManagement.requiredRole = 'admin';

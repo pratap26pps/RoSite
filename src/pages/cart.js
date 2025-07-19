@@ -275,4 +275,6 @@ const MyShoppingCart = () => {
   );
 };
 
+MyShoppingCart.requireAuth = true;
+
 export default MyShoppingCart;
