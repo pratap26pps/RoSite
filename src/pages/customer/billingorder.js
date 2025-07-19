@@ -49,6 +49,27 @@ export default function CheckoutPage() {
   const recentproduct = skuid && singleProduct ? [singleProduct] : cartItems;
 const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0) || 0;
 
+  const customConfigParam = searchParams.get("custom");
+  const [customConfig, setCustomConfig] = useState(null);
+
+  useEffect(() => {
+    if (customConfigParam === "1") {
+      const storedConfig = localStorage.getItem("custom-ro-config");
+      if (storedConfig) {
+        try {
+          setCustomConfig(JSON.parse(storedConfig));
+        } catch (e) {
+          setCustomConfig(null);
+        }
+      }
+    }
+  }, [customConfigParam]);
+
+  // If custom config, use that for order summary and placement
+  const isCustomOrder = !!customConfig;
+  const customProducts = isCustomOrder ? Object.values(customConfig.selectedComponents || {}) : [];
+  const customTotal = isCustomOrder ? customConfig.finalPrice : total;
+
   const [country, setCountry] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -71,17 +92,25 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
     if (!validate()) return;
     setIsPlacingOrder(true);
     try {
+      const itemsToOrder = isCustomOrder
+        ? customProducts.map((item) => ({
+            product: item._id,
+            quantity: 1,
+            price: item.price,
+          }))
+        : recentproduct.map((item) => ({
+            product: item._id,
+            quantity: item.quantity,
+            price: item.price,
+          }));
+
       const res = await fetch("/api/customer/placeorder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: user?._id,
-          items: recentproduct.map((item) => ({
-            product: item._id,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          totalAmount: total,
+          items: itemsToOrder,
+          totalAmount: isCustomOrder ? customTotal : total,
           shippingAddress: {
             address,
             city,
@@ -169,7 +198,15 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
                 <span>Product</span>
                 <span>Subtotal</span>
               </div>
-              {recentproduct?.length > 0 ? (
+              {isCustomOrder ? (
+                customProducts.map((item) => (
+                  <div key={item._id} className="flex items-center justify-between mb-3 text-gray-700">
+                    <img src={item?.images} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
+                    <span className="flex-1 ml-4">{item.name} × {item.quantity}</span>
+                    <span className="font-semibold">₹{item.price * item.quantity}</span>
+                  </div>
+                ))
+              ) : (
                 recentproduct.map((item) => (
                   <div key={item.id} className="flex items-center justify-between mb-3 text-gray-700">
                     <img src={item?.images} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
@@ -177,17 +214,15 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
                     <span className="font-semibold">₹{item.price * item.quantity}</span>
                   </div>
                 ))
-              ) : (
-                <p className="text-sm text-gray-500">No items in cart.</p>
               )}
               <hr className="my-3" />
               <div className="flex justify-between text-blue-700">
                 <span>Subtotal</span>
-                <span>₹{total}</span>
+                <span>₹{isCustomOrder ? customTotal : total}</span>
               </div>
               <div className="flex justify-between font-bold text-blue-800 text-lg mt-2">
                 <span>Total</span>
-                <span>₹{total}</span>
+                <span>₹{isCustomOrder ? customTotal : total}</span>
               </div>
             </div>
 

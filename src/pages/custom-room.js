@@ -41,10 +41,10 @@ const allSteps = [
 
   // Get current step info
   const currentStepObj = allSteps[currentStep];
-  const isReviewStep = currentStepObj.id === "review";
+  const isReviewStep = currentStepObj?.id === "review";
 
   // Get current category
-const matchedCategory = buildCategories.find(cat => cat._id === currentStepObj.id);
+const matchedCategory = buildCategories.find(cat => cat?._id === currentStepObj.id);
 const productIdsFromCategory = matchedCategory?.products || [];
 console.log("Matched Category:", matchedCategory);
 
@@ -178,7 +178,15 @@ console.log("Current Category Products:", currentCategoryProducts);
             </Button>
             <div className="w-full sm:w-auto sm:ml-auto">
               <Button
-                onClick={() => router.push("/customer/billingorder")}
+                onClick={() => {
+                  localStorage.setItem("custom-ro-config", JSON.stringify({
+                    selectedComponents,
+                    totalPrice,
+                    installationPrice,
+                    finalPrice
+                  }));
+                  router.push("/customer/billingorder?custom=1");
+                }}
                 className="w-full cursor-pointer sm:w-64 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 transition-all duration-300 rounded-xl px-6 py-4 text-base font-semibold flex items-center justify-center gap-2 shadow-lg"
               >
                 <ShoppingCart className="w-5 h-5 " />
@@ -225,7 +233,7 @@ console.log("Current Category Products:", currentCategoryProducts);
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="h-24 w-24 object-cover rounded-lg border"
+                      className="h-34 w-34 object-cover rounded-lg border"
                     />
                   ) : (
                     <div className="text-4xl text-blue-600">💧</div>
