@@ -7,37 +7,37 @@
  * Payment method constants
  */
 export const PAYMENT_METHODS = {
-  COD: 'cod',
-  RAZORPAY: 'razorpay',
-  BANK_TRANSFER: 'bank_transfer',
-  UPI: 'upi',
-  CARD: 'card',
-  WALLET: 'wallet'
+  COD: "cod",
+  RAZORPAY: "razorpay",
+  BANK_TRANSFER: "bank_transfer",
+  UPI: "upi",
+  CARD: "card",
+  WALLET: "wallet",
 };
 
 /**
  * Payment status constants
  */
 export const PAYMENT_STATUS = {
-  PENDING: 'pending',
-  PROCESSING: 'processing',
-  COMPLETED: 'completed',
-  FAILED: 'failed',
-  REFUNDED: 'refunded',
-  CANCELLED: 'cancelled'
+  PENDING: "pending",
+  PROCESSING: "processing",
+  COMPLETED: "completed",
+  FAILED: "failed",
+  REFUNDED: "refunded",
+  CANCELLED: "cancelled",
 };
 
 /**
  * Order status constants
  */
 export const ORDER_STATUS = {
-  PENDING: 'pending',
-  CONFIRMED: 'confirmed',
-  PROCESSING: 'processing',
-  SHIPPED: 'shipped',
-  DELIVERED: 'delivered',
-  CANCELLED: 'cancelled',
-  REFUNDED: 'refunded'
+  PENDING: "pending",
+  CONFIRMED: "confirmed",
+  PROCESSING: "processing",
+  SHIPPED: "shipped",
+  DELIVERED: "delivered",
+  CANCELLED: "cancelled",
+  REFUNDED: "refunded",
 };
 
 /**
@@ -46,11 +46,11 @@ export const ORDER_STATUS = {
  * @param {string} currency - Currency symbol (default: ₹)
  * @returns {string} Formatted amount
  */
-export const formatAmount = (amount, currency = '₹') => {
+export const formatAmount = (amount, currency = "₹") => {
   if (!amount || isNaN(amount)) return `${currency}0`;
-  return `${currency}${Number(amount).toLocaleString('en-IN', {
+  return `${currency}${Number(amount).toLocaleString("en-IN", {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   })}`;
 };
 
@@ -95,7 +95,7 @@ export const isValidPaymentStatus = (status) => {
  * @param {string} prefix - Prefix for receipt ID (default: 'RCPT')
  * @returns {string} Unique receipt ID
  */
-export const generateReceiptId = (prefix = 'RCPT') => {
+export const generateReceiptId = (prefix = "RCPT") => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
   return `${prefix}_${timestamp}_${random}`;
@@ -106,7 +106,7 @@ export const generateReceiptId = (prefix = 'RCPT') => {
  * @param {string} prefix - Prefix for order ID (default: 'ORD')
  * @returns {string} Unique order ID
  */
-export const generateOrderId = (prefix = 'ORD') => {
+export const generateOrderId = (prefix = "ORD") => {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
   return `${prefix}_${timestamp}_${random}`;
@@ -119,39 +119,41 @@ export const generateOrderId = (prefix = 'ORD') => {
  */
 export const validateOrderData = (orderData) => {
   const errors = [];
-  
+
   if (!orderData) {
-    errors.push('Order data is required');
+    errors.push("Order data is required");
     return { isValid: false, errors };
   }
 
-  const { user, items, totalAmount, shippingAddress, paymentMethod } = orderData;
+  const { user, items, totalAmount, shippingAddress, paymentMethod } =
+    orderData;
 
-  if (!user) errors.push('User information is required');
+  if (!user) errors.push("User information is required");
   if (!items || !Array.isArray(items) || items.length === 0) {
-    errors.push('Order items are required');
+    errors.push("Order items are required");
   }
   if (!totalAmount || totalAmount <= 0) {
-    errors.push('Valid total amount is required');
+    errors.push("Valid total amount is required");
   }
-  if (!shippingAddress) errors.push('Shipping address is required');
+  if (!shippingAddress) errors.push("Shipping address is required");
   if (!paymentMethod || !isValidPaymentMethod(paymentMethod)) {
-    errors.push('Valid payment method is required');
+    errors.push("Valid payment method is required");
   }
 
   // Validate shipping address
   if (shippingAddress) {
     const { address, city, postalCode, country } = shippingAddress;
-    if (!address) errors.push('Shipping address is required');
-    if (!city) errors.push('City is required');
-    if (!postalCode) errors.push('Postal code is required');
-    if (!country) errors.push('Country is required');
+    if (!address) errors.push("Shipping address is required");
+    if (!city) errors.push("City is required");
+    if (!postalCode) errors.push("Postal code is required");
+    if (!country) errors.push("Country is required");
   }
 
   // Validate items
   if (items && Array.isArray(items)) {
     items.forEach((item, index) => {
-      if (!item.product) errors.push(`Product ID is required for item ${index + 1}`);
+      if (!item.product)
+        errors.push(`Product ID is required for item ${index + 1}`);
       if (!item.quantity || item.quantity <= 0) {
         errors.push(`Valid quantity is required for item ${index + 1}`);
       }
@@ -163,7 +165,7 @@ export const validateOrderData = (orderData) => {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
@@ -174,7 +176,7 @@ export const validateOrderData = (orderData) => {
  */
 export const calculateOrderTotal = (items) => {
   if (!items || !Array.isArray(items)) return 0;
-  
+
   return items.reduce((total, item) => {
     const itemTotal = (item.price || 0) * (item.quantity || 0);
     return total + itemTotal;
@@ -188,14 +190,14 @@ export const calculateOrderTotal = (items) => {
  */
 export const getPaymentMethodDisplayName = (method) => {
   const displayNames = {
-    [PAYMENT_METHODS.COD]: 'Cash on Delivery',
-    [PAYMENT_METHODS.RAZORPAY]: 'Online Payment',
-    [PAYMENT_METHODS.BANK_TRANSFER]: 'Bank Transfer',
-    [PAYMENT_METHODS.UPI]: 'UPI Payment',
-    [PAYMENT_METHODS.CARD]: 'Card Payment',
-    [PAYMENT_METHODS.WALLET]: 'Wallet Payment'
+    [PAYMENT_METHODS.COD]: "Cash on Delivery",
+    [PAYMENT_METHODS.RAZORPAY]: "Online Payment",
+    [PAYMENT_METHODS.BANK_TRANSFER]: "Bank Transfer",
+    [PAYMENT_METHODS.UPI]: "UPI Payment",
+    [PAYMENT_METHODS.CARD]: "Card Payment",
+    [PAYMENT_METHODS.WALLET]: "Wallet Payment",
   };
-  
+
   return displayNames[method] || method;
 };
 
@@ -206,15 +208,15 @@ export const getPaymentMethodDisplayName = (method) => {
  */
 export const getPaymentStatusDisplay = (status) => {
   const statusInfo = {
-    [PAYMENT_STATUS.PENDING]: { name: 'Pending', color: 'yellow' },
-    [PAYMENT_STATUS.PROCESSING]: { name: 'Processing', color: 'blue' },
-    [PAYMENT_STATUS.COMPLETED]: { name: 'Completed', color: 'green' },
-    [PAYMENT_STATUS.FAILED]: { name: 'Failed', color: 'red' },
-    [PAYMENT_STATUS.REFUNDED]: { name: 'Refunded', color: 'purple' },
-    [PAYMENT_STATUS.CANCELLED]: { name: 'Cancelled', color: 'gray' }
+    [PAYMENT_STATUS.PENDING]: { name: "Pending", color: "yellow" },
+    [PAYMENT_STATUS.PROCESSING]: { name: "Processing", color: "blue" },
+    [PAYMENT_STATUS.COMPLETED]: { name: "Completed", color: "green" },
+    [PAYMENT_STATUS.FAILED]: { name: "Failed", color: "red" },
+    [PAYMENT_STATUS.REFUNDED]: { name: "Refunded", color: "purple" },
+    [PAYMENT_STATUS.CANCELLED]: { name: "Cancelled", color: "gray" },
   };
-  
-  return statusInfo[status] || { name: status, color: 'gray' };
+
+  return statusInfo[status] || { name: status, color: "gray" };
 };
 
 /**
@@ -227,9 +229,9 @@ export const requiresOnlineProcessing = (method) => {
     PAYMENT_METHODS.RAZORPAY,
     PAYMENT_METHODS.UPI,
     PAYMENT_METHODS.CARD,
-    PAYMENT_METHODS.WALLET
+    PAYMENT_METHODS.WALLET,
   ];
-  
+
   return onlineMethods.includes(method);
 };
 
@@ -239,15 +241,20 @@ export const requiresOnlineProcessing = (method) => {
  * @returns {Object} Sanitized data
  */
 export const sanitizePaymentData = (paymentData) => {
-  const sensitiveFields = ['razorpay_signature', 'key_secret', 'card_number', 'cvv'];
+  const sensitiveFields = [
+    "razorpay_signature",
+    "key_secret",
+    "card_number",
+    "cvv",
+  ];
   const sanitized = { ...paymentData };
-  
-  sensitiveFields.forEach(field => {
+
+  sensitiveFields.forEach((field) => {
     if (sanitized[field]) {
-      sanitized[field] = '***HIDDEN***';
+      sanitized[field] = "***HIDDEN***";
     }
   });
-  
+
   return sanitized;
 };
 
@@ -263,20 +270,41 @@ export const createRazorpayOptions = (orderData, razorpayOrder, userInfo) => {
     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     amount: razorpayOrder.amount,
     currency: razorpayOrder.currency,
-    name: process.env.NEXT_PUBLIC_COMPANY_NAME || 'RoSite',
+    name: process.env.NEXT_PUBLIC_COMPANY_NAME || "RoSite",
     description: `Order payment for ${orderData.items?.length || 0} items`,
     order_id: razorpayOrder.id,
+    
+    // Simple method configuration - let Razorpay show all available methods
+    method: {
+      upi: true,
+      card: true,
+      netbanking: true,
+      wallet: true
+    },
+    
     prefill: {
-      name: userInfo?.name || '',
-      email: userInfo?.email || '',
-      contact: userInfo?.phone || ''
+      name: userInfo?.name || "",
+      email: userInfo?.email || "",
+      contact: userInfo?.phone || "",
     },
+    
     notes: {
-      order_id: orderData.orderId || '',
-      user_id: userInfo?.id || userInfo?._id || ''
+      order_id: orderData.orderId || "",
+      user_id: userInfo?.id || userInfo?._id || "",
     },
+    
     theme: {
-      color: '#3B82F6' // Blue theme
+      color: "#3B82F6", // Blue theme
+    },
+    
+    // Enable international payments
+    accept_international: true,
+    
+    // Simple modal configuration
+    modal: {
+      ondismiss: function() {
+        console.log('Payment modal closed');
+      }
     }
   };
 };

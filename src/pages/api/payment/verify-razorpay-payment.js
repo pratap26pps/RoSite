@@ -1,7 +1,8 @@
 import razorpayService from '@/src/lib/razorpayService';
-import { PAYMENT_STATUS, ORDER_STATUS } from '@/src/lib/paymentUtils';
+import { PAYMENT_STATUS, ORDER_STATUS, generateReceiptId } from '@/src/lib/paymentUtils';
 import connectDB from '@/src/lib/dbConnect';
 import Order from '@/src/models/Order';
+import Payment from '@/src/models/Payment';
 
 /**
  * API endpoint to verify Razorpay payment
@@ -101,6 +102,41 @@ export default async function handler(req, res) {
 
     // Get payment details from Razorpay
     const paymentDetails = await razorpayService.getPaymentDetails(razorpay_payment_id);
+    
+    // Create Payment record
+    const paymentRecord = new Payment({
+      paymentId: `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      razorpayPaymentId: razorpay_payment_id,
+      razorpayOrderId: razorpay_order_id,
+      razorpaySignature: razorpay_signature,
+      orderId: order._id,
+      orderNumber: order.orderId,
+      userId: order.user,
+      amount: order.totalAmount,
+      currency: 'INR',
+      paymentMethod: 'razorpay',
+      paymentStatus: 'completed',
+      gateway: 'razorpay',
+      gatewayTransactionId: razorpay_payment_id,
+      gatewayResponse: paymentDetails.success ? paymentDetails.payment : null,
+      isVerified: true,
+      verifiedAt: new Date(),
+      verificationMethod: 'signature',
+      receiptId: order.receiptId || generateReceiptId('RCPT'),
+      description: `Payment for order ${order.orderId}`,
+      notes: {
+        orderItems: order.items.length,
+        verifiedAt: new Date().toISOString()
+      },
+      attempts: [{
+        attemptedAt: new Date(),
+        status: 'completed',
+        gatewayResponse: paymentDetails.success ? paymentDetails.payment : null
+      }],
+      completedAt: new Date()
+    });
+
+    await paymentRecord.save();
     
     // Update order with successful payment
     const updateData = {

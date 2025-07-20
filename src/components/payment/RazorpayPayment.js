@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { CreditCard, Loader2, CheckCircle, XCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { formatAmount, createRazorpayOptions } from '@/src/lib/paymentUtils';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { CreditCard, Loader2, CheckCircle, XCircle } from "lucide-react";
+import toast from "react-hot-toast";
+import { formatAmount, createRazorpayOptions } from "@/src/lib/paymentUtils";
 
 /**
  * RazorpayPayment Component
@@ -15,11 +15,11 @@ const RazorpayPayment = ({
   onPaymentSuccess,
   onPaymentError,
   disabled = false,
-  className = ''
+  className = "",
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState('idle'); // idle, processing, success, error
+  const [paymentStatus, setPaymentStatus] = useState("idle"); // idle, processing, success, error
 
   // Load Razorpay script
   useEffect(() => {
@@ -32,14 +32,14 @@ const RazorpayPayment = ({
           return;
         }
 
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.onload = () => {
           setRazorpayLoaded(true);
           resolve(true);
         };
         script.onerror = () => {
-          console.error('Failed to load Razorpay script');
+          console.error("Failed to load Razorpay script");
           setRazorpayLoaded(false);
           resolve(false);
         };
@@ -55,24 +55,24 @@ const RazorpayPayment = ({
    */
   const handlePayment = async () => {
     if (!razorpayLoaded) {
-      toast.error('Payment gateway not loaded. Please refresh and try again.');
+      toast.error("Payment gateway not loaded. Please refresh and try again.");
       return;
     }
 
     if (!orderData || !userInfo) {
-      toast.error('Missing order or user information');
+      toast.error("Missing order or user information");
       return;
     }
 
     setIsProcessing(true);
-    setPaymentStatus('processing');
+    setPaymentStatus("processing");
 
     try {
       // Create Razorpay order
-      const response = await fetch('/api/payment/create-razorpay-order', {
-        method: 'POST',
+      const response = await fetch("/api/payment/create-razorpay-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ orderData }),
       });
@@ -80,7 +80,7 @@ const RazorpayPayment = ({
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.message || 'Failed to create payment order');
+        throw new Error(result.message || "Failed to create payment order");
       }
 
       const { razorpayOrder, orderDbId, receiptId } = result.data;
@@ -94,26 +94,25 @@ const RazorpayPayment = ({
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
-            setPaymentStatus('idle');
-            toast.error('Payment cancelled');
-          }
-        }
+            setPaymentStatus("idle");
+            toast.error("Payment cancelled");
+          },
+        },
       };
 
       // Open Razorpay checkout
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', (response) => {
+      rzp.on("payment.failed", (response) => {
         handlePaymentFailure(response, orderDbId);
       });
-      
-      rzp.open();
 
+      rzp.open();
     } catch (error) {
-      console.error('Payment initiation error:', error);
+      console.error("Payment initiation error:", error);
       setIsProcessing(false);
-      setPaymentStatus('error');
-      toast.error(error.message || 'Failed to initiate payment');
-      
+      setPaymentStatus("error");
+      toast.error(error.message || "Failed to initiate payment");
+
       if (onPaymentError) {
         onPaymentError(error);
       }
@@ -125,40 +124,42 @@ const RazorpayPayment = ({
    */
   const handlePaymentSuccess = async (response, orderDbId) => {
     try {
-      setPaymentStatus('processing');
-      
+      setPaymentStatus("processing");
+
       // Verify payment with backend
-      const verifyResponse = await fetch('/api/payment/verify-razorpay-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-          orderDbId: orderDbId,
-        }),
-      });
+      const verifyResponse = await fetch(
+        "/api/payment/verify-razorpay-payment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            orderDbId: orderDbId,
+          }),
+        }
+      );
 
       const verifyResult = await verifyResponse.json();
 
       if (!verifyResult.success) {
-        throw new Error(verifyResult.message || 'Payment verification failed');
+        throw new Error(verifyResult.message || "Payment verification failed");
       }
 
-      setPaymentStatus('success');
-      toast.success('Payment successful! Your order has been confirmed.');
+      setPaymentStatus("success");
+      toast.success("Payment successful! Your order has been confirmed.");
 
       if (onPaymentSuccess) {
         onPaymentSuccess(verifyResult.data);
       }
-
     } catch (error) {
-      console.error('Payment verification error:', error);
-      setPaymentStatus('error');
-      toast.error(error.message || 'Payment verification failed');
-      
+      console.error("Payment verification error:", error);
+      setPaymentStatus("error");
+      toast.error(error.message || "Payment verification failed");
+
       if (onPaymentError) {
         onPaymentError(error);
       }
@@ -171,13 +172,13 @@ const RazorpayPayment = ({
    * Handle payment failure
    */
   const handlePaymentFailure = (response, orderDbId) => {
-    console.error('Payment failed:', response);
+    console.error("Payment failed:", response);
     setIsProcessing(false);
-    setPaymentStatus('error');
-    
-    const errorMessage = response.error?.description || 'Payment failed';
+    setPaymentStatus("error");
+
+    const errorMessage = response.error?.description || "Payment failed";
     toast.error(errorMessage);
-    
+
     if (onPaymentError) {
       onPaymentError(new Error(errorMessage));
     }
@@ -188,21 +189,21 @@ const RazorpayPayment = ({
    */
   const getButtonContent = () => {
     switch (paymentStatus) {
-      case 'processing':
+      case "processing":
         return (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             Processing Payment...
           </>
         );
-      case 'success':
+      case "success":
         return (
           <>
             <CheckCircle className="w-4 h-4 mr-2" />
             Payment Successful
           </>
         );
-      case 'error':
+      case "error":
         return (
           <>
             <XCircle className="w-4 h-4 mr-2" />
@@ -224,12 +225,12 @@ const RazorpayPayment = ({
    */
   const getButtonStyling = () => {
     switch (paymentStatus) {
-      case 'success':
-        return 'bg-green-600 hover:bg-green-700 text-white';
-      case 'error':
-        return 'bg-red-600 hover:bg-red-700 text-white';
+      case "success":
+        return "bg-green-600 hover:bg-green-700 text-white";
+      case "error":
+        return "bg-red-600 hover:bg-red-700 text-white";
       default:
-        return 'bg-blue-600 hover:bg-blue-700 text-white';
+        return "bg-blue-600 hover:bg-blue-700 text-white";
     }
   };
 
@@ -272,25 +273,25 @@ const RazorpayPayment = ({
 
           <div className="flex items-center justify-center space-x-2 mb-4 text-xs text-gray-500">
             <span>Powered by</span>
-            <img 
-              src="https://razorpay.com/assets/razorpay-logo.svg" 
-              alt="Razorpay" 
+            <img
+              src="https://razorpay.com/assets/razorpay-logo.svg"
+              alt="Razorpay"
               className="h-4"
             />
           </div>
 
           <Button
             onClick={handlePayment}
-            disabled={disabled || isProcessing || paymentStatus === 'success'}
+            disabled={disabled || isProcessing || paymentStatus === "success"}
             className={`w-full py-3 text-lg font-semibold rounded-xl shadow-lg transition-all duration-200 ${getButtonStyling()}`}
           >
             {getButtonContent()}
           </Button>
 
-          {paymentStatus === 'error' && (
+          {paymentStatus === "error" && (
             <Button
               onClick={() => {
-                setPaymentStatus('idle');
+                setPaymentStatus("idle");
                 handlePayment();
               }}
               variant="outline"

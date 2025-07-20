@@ -1,5 +1,5 @@
-import Razorpay from 'razorpay';
-import crypto from 'crypto';
+import Razorpay from "razorpay";
+import crypto from "crypto";
 
 /**
  * Razorpay Service - Modular payment gateway integration
@@ -24,14 +24,14 @@ class RazorpayService {
    */
   async createOrder(orderData) {
     try {
-      const { amount, currency = 'INR', receipt, notes = {} } = orderData;
-      
+      const { amount, currency = "INR", receipt, notes = {} } = orderData;
+
       if (!amount || amount <= 0) {
-        throw new Error('Invalid amount provided');
+        throw new Error("Invalid amount provided");
       }
-      
+
       if (!receipt) {
-        throw new Error('Receipt ID is required');
+        throw new Error("Receipt ID is required");
       }
 
       const options = {
@@ -43,18 +43,18 @@ class RazorpayService {
       };
 
       const order = await this.razorpay.orders.create(options);
-      
+
       return {
         success: true,
         order,
-        error: null
+        error: null,
       };
     } catch (error) {
-      console.error('Razorpay order creation failed:', error);
+      console.error("Razorpay order creation failed:", error);
       return {
         success: false,
         order: null,
-        error: error.message || 'Failed to create payment order'
+        error: error.message || "Failed to create payment order",
       };
     }
   }
@@ -69,31 +69,32 @@ class RazorpayService {
    */
   verifyPayment(paymentData) {
     try {
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+        paymentData;
 
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-        throw new Error('Missing required payment verification parameters');
+        throw new Error("Missing required payment verification parameters");
       }
 
-      const body = razorpay_order_id + '|' + razorpay_payment_id;
+      const body = razorpay_order_id + "|" + razorpay_payment_id;
       const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
-        .digest('hex');
+        .digest("hex");
 
       const isSignatureValid = expectedSignature === razorpay_signature;
 
       return {
         success: true,
         isValid: isSignatureValid,
-        error: null
+        error: null,
       };
     } catch (error) {
-      console.error('Payment verification failed:', error);
+      console.error("Payment verification failed:", error);
       return {
         success: false,
         isValid: false,
-        error: error.message || 'Payment verification failed'
+        error: error.message || "Payment verification failed",
       };
     }
   }
@@ -106,22 +107,22 @@ class RazorpayService {
   async getPaymentDetails(paymentId) {
     try {
       if (!paymentId) {
-        throw new Error('Payment ID is required');
+        throw new Error("Payment ID is required");
       }
 
       const payment = await this.razorpay.payments.fetch(paymentId);
-      
+
       return {
         success: true,
         payment,
-        error: null
+        error: null,
       };
     } catch (error) {
-      console.error('Failed to fetch payment details:', error);
+      console.error("Failed to fetch payment details:", error);
       return {
         success: false,
         payment: null,
-        error: error.message || 'Failed to fetch payment details'
+        error: error.message || "Failed to fetch payment details",
       };
     }
   }
@@ -136,11 +137,11 @@ class RazorpayService {
   async refundPayment(paymentId, amount = null, notes = {}) {
     try {
       if (!paymentId) {
-        throw new Error('Payment ID is required');
+        throw new Error("Payment ID is required");
       }
 
       const refundData = {
-        notes
+        notes,
       };
 
       if (amount && amount > 0) {
@@ -148,18 +149,18 @@ class RazorpayService {
       }
 
       const refund = await this.razorpay.payments.refund(paymentId, refundData);
-      
+
       return {
         success: true,
         refund,
-        error: null
+        error: null,
       };
     } catch (error) {
-      console.error('Payment refund failed:', error);
+      console.error("Payment refund failed:", error);
       return {
         success: false,
         refund: null,
-        error: error.message || 'Payment refund failed'
+        error: error.message || "Payment refund failed",
       };
     }
   }
@@ -172,22 +173,22 @@ class RazorpayService {
   async getOrderDetails(orderId) {
     try {
       if (!orderId) {
-        throw new Error('Order ID is required');
+        throw new Error("Order ID is required");
       }
 
       const order = await this.razorpay.orders.fetch(orderId);
-      
+
       return {
         success: true,
         order,
-        error: null
+        error: null,
       };
     } catch (error) {
-      console.error('Failed to fetch order details:', error);
+      console.error("Failed to fetch order details:", error);
       return {
         success: false,
         order: null,
-        error: error.message || 'Failed to fetch order details'
+        error: error.message || "Failed to fetch order details",
       };
     }
   }
@@ -203,20 +204,21 @@ class RazorpayService {
     if (!keyId || !keySecret) {
       return {
         isValid: false,
-        error: 'Razorpay credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in environment variables.'
+        error:
+          "Razorpay credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in environment variables.",
       };
     }
 
     if (keyId.length < 10 || keySecret.length < 10) {
       return {
         isValid: false,
-        error: 'Invalid Razorpay credentials format.'
+        error: "Invalid Razorpay credentials format.",
       };
     }
 
     return {
       isValid: true,
-      error: null
+      error: null,
     };
   }
 }
