@@ -49,11 +49,11 @@ export default function ModernTestimonials() {
             </h2>
           </div>
           <div className="flex items-center gap-8 mt-6 lg:mt-0 text-gray-600 text-sm">
-            <div className="text-center">
+            <div className="text-center flex items-center gap-1 justify-center">
               <div className="text-xl font-bold text-black">10M+</div>
               Happy People
             </div>
-            <div className="text-center flex gap-1">
+            <div className="text-center flex gap-1 justify-center">
               <div className="text-xl font-bold text-black">4.88</div>
             
               <div className="text-yellow-500 text-lg">★★★★★</div>

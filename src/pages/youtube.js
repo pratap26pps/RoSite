@@ -12,7 +12,7 @@ import {
 import Image from "next/image";
 export default function YoutubeTrust() {
   return (
-    <section className="relative py-20   text-gray-800 overflow-hidden font-sans">
+    <section className="relative my-10 mt-28  text-gray-800 overflow-hidden font-sans">
       <div className="max-w-6xl mx-auto relative z-10 grid md:grid-cols-2 gap-10 items-center px-6">
         {/* 🔹 Trust Information */}
         <div>

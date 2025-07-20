@@ -162,7 +162,7 @@ function ScrollToTopButton() {
 
 function FloatingContactButtons() {
   return (
-    <div className="fixed right-8 top-1/2 z-50 flex flex-col gap-4 -translate-y-1/2">
+    <div className="fixed right-2 top-1/2 z-50 flex flex-col gap-4 -translate-y-1/2">
       {/* WhatsApp Button */}
       <a
         href="https://wa.me/8252590019"  
