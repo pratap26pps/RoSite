@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect,useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
  
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
 import { placeOrder } from "@/src/redux/slices/orderSlice";
 import { useDispatch } from "react-redux";
-import { CreditCard, Banknote, Wallet } from "lucide-react";
+import { CreditCard, Banknote, Wallet, Smartphone, Shield } from "lucide-react";
+import RazorpayPayment from "@/src/components/payment/RazorpayPayment";
+import { PAYMENT_METHODS, formatAmount, generateOrderId } from "@/src/lib/paymentUtils";
 
 export default function CheckoutPage() {
 
@@ -77,6 +79,11 @@ console.log("customConfig",customConfig)
   const [postalCode, setPostalCode] = useState("");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [errors, setErrors] = useState({});
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(PAYMENT_METHODS.COD);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [placedOrderData, setPlacedOrderData] = useState(null);
+  
+  const router = useRouter();
 
   const validate = () => {
     const newErrors = {};
@@ -85,12 +92,21 @@ console.log("customConfig",customConfig)
     if (!city) newErrors.city = "City is required";
     if (!postalCode) newErrors.postalCode = "Postal code is required";
     if (!recentproduct || recentproduct.length === 0) newErrors.items = "No items to order";
+    if (!selectedPaymentMethod) newErrors.paymentMethod = "Payment method is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const checkouthandler = async () => {
     if (!validate()) return;
+    
+    // For Razorpay payments, we don't place the order here
+    // The RazorpayPayment component will handle it
+    if (selectedPaymentMethod === PAYMENT_METHODS.RAZORPAY) {
+      return; // Let RazorpayPayment component handle this
+    }
+    
+    // Handle COD orders
     setIsPlacingOrder(true);
     try {
       const itemsToOrder = isCustomOrder
@@ -105,26 +121,35 @@ console.log("customConfig",customConfig)
             price: item.price,
           }));
 
+      const orderData = {
+        user: user?._id || user?.id,
+        orderId: generateOrderId('ORDEROXID'),
+        items: itemsToOrder,
+        totalAmount: isCustomOrder ? customTotal : total,
+        shippingAddress: { address, city, postalCode, country },
+        paymentMethod: selectedPaymentMethod,
+        isCustomOrder: isCustomOrder,
+        notes: isCustomOrder ? 'Custom RO system order' : ''
+      };
+
       const res = await fetch("/api/customer/placeorder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user: user?._id || user?.id,
-          items: itemsToOrder,
-          totalAmount: isCustomOrder ? customTotal : total,
-          shippingAddress: {
-            address,
-            city,
-            postalCode,
-            country,
-          },
-          paymentMethod: "cod",
-        }),
+        body: JSON.stringify(orderData),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (data.success) {
         toast.success("Order placed successfully!");
-        // Optionally redirect or clear cart
+        setOrderPlaced(true);
+        setPlacedOrderData(data.data);
+        // Clear localStorage for custom orders
+        if (isCustomOrder) {
+          localStorage.removeItem('custom-ro-config');
+        }
+        // Redirect to order confirmation or success page
+        setTimeout(() => {
+          router.push(`/customer/orderhistory?orderId=${data.data.orderId}`);
+        }, 2000);
       } else {
         toast.error(data.message || "Failed to place order");
       }
@@ -236,27 +261,143 @@ console.log("customConfig",customConfig)
             </div>
 
             {/* Payment Methods */}
-            <RadioGroup value="cod" className="space-y-4 mt-6">
-              <div className="flex items-center gap-2 opacity-50 pointer-events-none">
-                <RadioGroupItem value="bank" disabled />
-                <span className="flex items-center gap-2"><Banknote className="w-5 h-5 text-blue-600" /> Direct bank transfer</span>
-              </div>
-              <div className="flex items-center gap-2 opacity-50 pointer-events-none">
-                <RadioGroupItem value="check" disabled />
-                <span className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-blue-600" /> Check payments</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="cod" checked readOnly />
-                <span className="flex items-center gap-2"><Wallet className="w-5 h-5 text-blue-600" /> Cash on delivery</span>
-              </div>
-            </RadioGroup>
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                <Shield className="w-5 h-5 mr-2" />
+                Choose Payment Method
+              </h3>
+              
+              <RadioGroup 
+                value={selectedPaymentMethod} 
+                onValueChange={setSelectedPaymentMethod}
+                className="space-y-4"
+              >
+                {/* Online Payment - Razorpay */}
+                <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value={PAYMENT_METHODS.RAZORPAY} />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-blue-600" />
+                        <span className="font-medium text-blue-800">Online Payment</span>
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Secure</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Pay with Credit/Debit Cards, UPI, Net Banking, Wallets
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Smartphone className="w-4 h-4 text-gray-500" />
+                        <span className="text-xs text-gray-500">Instant confirmation • Powered by Razorpay</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <Button 
-               onClick={checkouthandler}
-               disabled={isPlacingOrder || !isFormValid}
-            className="w-full mt-6 text-white bg-blue-600 hover:bg-blue-700 py-3 text-lg font-semibold rounded-xl shadow">
-              {isPlacingOrder ? "Placing order..." : "Place order"}
-            </Button>
+                {/* Cash on Delivery */}
+                <div className="border rounded-lg p-4 hover:bg-blue-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value={PAYMENT_METHODS.COD} />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Wallet className="w-5 h-5 text-blue-600" />
+                        <span className="font-medium text-blue-800">Cash on Delivery</span>
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">COD</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Pay when your order is delivered to your doorstep
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Banknote className="w-4 h-4 text-gray-500" />
+                        <span className="text-xs text-gray-500">Cash payment on delivery</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </RadioGroup>
+              
+              {errors.paymentMethod && (
+                <span className="text-red-500 text-xs mt-2 block">{errors.paymentMethod}</span>
+              )}
+            </div>
+
+            {/* Conditional Payment UI */}
+            {selectedPaymentMethod === PAYMENT_METHODS.RAZORPAY ? (
+              <div className="mt-6">
+                <RazorpayPayment
+                  orderData={{
+                    user: user?._id || user?.id,
+                    orderId: generateOrderId('ORDEROXID'),
+                    items: isCustomOrder
+                      ? customProducts.map((item) => ({
+                          product: item._id,
+                          quantity: 1,
+                          price: item.price,
+                        }))
+                      : recentproduct.map((item) => ({
+                          product: item._id,
+                          quantity: item.quantity,
+                          price: item.price,
+                        })),
+                    totalAmount: isCustomOrder ? customTotal : total,
+                    shippingAddress: { address, city, postalCode, country },
+                    paymentMethod: PAYMENT_METHODS.RAZORPAY,
+                    isCustomOrder: isCustomOrder,
+                    notes: isCustomOrder ? 'Custom RO system order' : ''
+                  }}
+                  userInfo={{
+                    id: user?._id || user?.id,
+                    name: user?.name || '',
+                    email: user?.email || '',
+                    phone: user?.phone || ''
+                  }}
+                  onPaymentSuccess={(paymentData) => {
+                    toast.success('Payment successful! Your order has been confirmed.');
+                    setOrderPlaced(true);
+                    setPlacedOrderData(paymentData);
+                    // Clear localStorage for custom orders
+                    if (isCustomOrder) {
+                      localStorage.removeItem('custom-ro-config');
+                    }
+                    // Redirect to order confirmation
+                    setTimeout(() => {
+                      router.push(`/customer/orderhistory?orderId=${paymentData.orderId}`);
+                    }, 2000);
+                  }}
+                  onPaymentError={(error) => {
+                    console.error('Payment error:', error);
+                    toast.error('Payment failed. Please try again.');
+                  }}
+                  disabled={!isFormValid}
+                  className="w-full"
+                />
+              </div>
+            ) : (
+              <Button 
+                onClick={checkouthandler}
+                disabled={isPlacingOrder || !isFormValid}
+                className="w-full mt-6 text-white bg-blue-600 hover:bg-blue-700 py-3 text-lg font-semibold rounded-xl shadow"
+              >
+                {isPlacingOrder ? "Placing order..." : `Place Order - ${formatAmount(isCustomOrder ? customTotal : total)}`}
+              </Button>
+            )}
+            
+            {/* Order Success Message */}
+            {orderPlaced && placedOrderData && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="text-green-600 mr-3">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-green-800 font-semibold">Order Placed Successfully!</h4>
+                    <p className="text-green-700 text-sm">Order ID: {placedOrderData.orderId}</p>
+                    <p className="text-green-600 text-xs mt-1">Redirecting to order history...</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
