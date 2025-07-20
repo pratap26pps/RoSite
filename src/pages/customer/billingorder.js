@@ -64,10 +64,11 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
       }
     }
   }, [customConfigParam]);
-
+console.log("customConfig",customConfig)
   // If custom config, use that for order summary and placement
   const isCustomOrder = !!customConfig;
   const customProducts = isCustomOrder ? Object.values(customConfig.selectedComponents || {}) : [];
+  console.log("customproduct",customProducts)
   const customTotal = isCustomOrder ? customConfig.finalPrice : total;
 
   const [country, setCountry] = useState("");
@@ -108,7 +109,7 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user: user?._id,
+          user: user?._id || user?.id,
           items: itemsToOrder,
           totalAmount: isCustomOrder ? customTotal : total,
           shippingAddress: {
@@ -151,34 +152,31 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
                 <Input placeholder="Full name" value={user?.name || user?.firstName  +  user?.lastName} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
               <div>
-                <Label className="text-gray-700">Email</Label>
+                <Label className="text-gray-700 pb-1">Email</Label>
                 <Input placeholder="Email" value={user?.email || ""} readOnly className="bg-white border-gray-300 text-black" /> 
               </div>
+             
               <div className="sm:col-span-2">
-                <Label className="text-gray-700">Company name (optional)</Label>
-                <Input placeholder="Company" className="bg-white border-gray-300 text-black" />
-              </div>
-              <div className="sm:col-span-2">
-                <Label className="text-gray-700">Country / Region *</Label>
+                <Label className="text-gray-700 pb-1">Country / Region *</Label>
                 <Input placeholder="e.g., India" className="bg-white border-gray-300 text-black" value={country} onChange={e => setCountry(e.target.value)} />
                 {errors.country && <span className="text-red-500 text-xs">{errors.country}</span>}
               </div>
               <div className="sm:col-span-2">
-                <Label className="text-gray-700">Street address *</Label>
+                <Label className="text-gray-700 pb-1">Street address *</Label>
                 <Input placeholder="House number and street name" className="bg-white border-gray-300 text-black" value={address} onChange={e => setAddress(e.target.value)} />
                 {errors.address && <span className="text-red-500 text-xs">{errors.address}</span>}
               </div>
-              <div className="sm:col-span-2">
-                <Label className="text-gray-700">Apartment, suite, etc. (optional)</Label>
+              <div className="sm:col-span-2 ">
+                <Label className="text-gray-700 pb-1">Apartment, suite, etc. (optional)</Label>
                 <Input placeholder="Apartment, suite, etc." className="bg-white border-gray-300 text-black" />
               </div>
               <div className="sm:col-span-2">
-                <Label className="text-gray-700">City *</Label>
+                <Label className="text-gray-700 pb-1">City *</Label>
                 <Input placeholder="City" className="bg-white border-gray-300 text-black" value={city} onChange={e => setCity(e.target.value)} />
                 {errors.city && <span className="text-red-500 text-xs">{errors.city}</span>}
               </div>
               <div className="sm:col-span-2">
-                <Label className="text-gray-700">Postal Code *</Label>
+                <Label className="text-gray-700 pb-1">Postal Code *</Label>
                 <Input placeholder="Postal Code" className="bg-white border-gray-300 text-black" value={postalCode} onChange={e => setPostalCode(e.target.value)} />
                 {errors.postalCode && <span className="text-red-500 text-xs">{errors.postalCode}</span>}
               </div>
@@ -200,10 +198,15 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
               </div>
               {isCustomOrder ? (
                 customProducts.map((item) => (
-                  <div key={item._id} className="flex items-center justify-between mb-3 text-gray-700">
+                  <div key={item._id} className="flex items-center justify-evenly mb-3 text-gray-700">
                     <img src={item?.images} alt={item?.name} className="w-16 h-16 object-cover rounded border border-gray-200" />
-                    <span className="flex-1 ml-4">{item.name} × {item.quantity}</span>
-                    <span className="font-semibold">₹{item.price * item.quantity}</span>
+                   <div>
+                    
+                   <span className="flex-1 ml-4">{item.name} × 1</span>
+                   <span className="font-semibold">₹{item.price }</span>
+                    </div> 
+                 
+
                   </div>
                 ))
               ) : (
@@ -220,6 +223,12 @@ const total = recentproduct?.reduce((sum, item) => sum + item.price * (item.quan
                 <span>Subtotal</span>
                 <span>₹{isCustomOrder ? customTotal : total}</span>
               </div>
+              {
+                isCustomOrder && <div className="flex justify-between text-blue-700">
+               <p>Installation Charges</p> <p>{customConfig?.installationPrice}</p>
+              </div>
+                
+              }
               <div className="flex justify-between font-bold text-blue-800 text-lg mt-2">
                 <span>Total</span>
                 <span>₹{isCustomOrder ? customTotal : total}</span>

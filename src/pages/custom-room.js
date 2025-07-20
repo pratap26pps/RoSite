@@ -133,9 +133,7 @@ console.log("Current Category Products:", currentCategoryProducts);
                         </p>
                       </div>
                     </div>
-                    <span className="font-semibold text-blue-600">
-                      ₹{prod.price?.toLocaleString()}
-                    </span>
+                    
                   </div>
                 );
               })}
@@ -257,9 +255,7 @@ console.log("Current Category Products:", currentCategoryProducts);
                       </div>
                     ))}
                 </div>
-                <div className="text-xl font-bold text-blue-700">
-                  ₹{product.price?.toLocaleString()}
-                </div>
+                 
               </motion.div>
             ))}
           </div>

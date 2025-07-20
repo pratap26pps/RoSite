@@ -45,7 +45,7 @@ export default function OverviewContent() {
   const [barView, setBarView] = useState('week');
   const [barData, setBarData] = useState([]);
   // Remove barLoading and barError logic
-
+ console.log("barData",barData)
   useEffect(() => {
     // Compute barData from orders
     let data = [];
@@ -54,23 +54,47 @@ export default function OverviewContent() {
       const now = new Date();
       const year = getYear(now);
       const month = getMonth(now);
-      // Helper: get week of month (1-based)
-      function getWeekOfMonth(date) {
-        const firstDay = startOfMonth(date);
-        return Math.ceil((getDate(date) + firstDay.getDay()) / 7);
+
+      // Find the first and last day of the month
+      const firstDay = startOfMonth(now);
+      const lastDay = new Date(year, month + 1, 0);
+
+      // Build week ranges for the month
+      let weekRanges = [];
+      let start = new Date(firstDay);
+      while (start <= lastDay) {
+        let end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        if (end > lastDay) end = new Date(lastDay);
+        weekRanges.push({ start: new Date(start), end: new Date(end) });
+        start.setDate(start.getDate() + 7);
       }
-      const weeks = {};
+
+      // Initialize data for each week
+      data = weekRanges.map((range, i) => ({
+        label: `Week ${i + 1}`,
+        orders: 0,
+        revenue: 0,
+      }));
+
+      // Assign orders to the correct week
       orders.forEach(order => {
         const d = new Date(order.createdAt);
         if (getYear(d) === year && getMonth(d) === month) {
-          const week = getWeekOfMonth(d);
-          if (!weeks[week]) weeks[week] = { label: `Week ${week}`, orders: 0, revenue: 0 };
-          weeks[week].orders += 1;
-          if (order.status === 'delivered') weeks[week].revenue += order.totalAmount || 0;
+          for (let i = 0; i < weekRanges.length; i++) {
+            if (d >= weekRanges[i].start && d <= weekRanges[i].end) {
+              data[i].orders += 1;
+              if (order.status === 'delivered') data[i].revenue += order.totalAmount || 0;
+              break;
+            }
+          }
         }
       });
-      // Always show all weeks in the month (1-5)
-      data = Array.from({ length: 5 }, (_, i) => weeks[i+1] || { label: `Week ${i+1}`, orders: 0, revenue: 0 });
+
+      // Always show 5 weeks for consistency
+      while (data.length < 5) {
+        data.push({ label: `Week ${data.length + 1}`, orders: 0, revenue: 0 });
+      }
     } else if (barView === 'month') {
       // Group by month of current year
       const year = new Date().getFullYear();
