@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
-import { placeOrder } from "@/src/redux/slices/orderSlice";
 import { useDispatch } from "react-redux";
 import { CreditCard, Banknote, Wallet, Smartphone, Shield } from "lucide-react";
 import RazorpayPayment from "@/src/components/payment/RazorpayPayment";
@@ -114,11 +113,15 @@ console.log("customConfig",customConfig)
             product: item._id,
             quantity: 1,
             price: item.price,
+            name: item.name || item.title,
+            image: item.image || item.images?.[0] || ''
           }))
         : recentproduct.map((item) => ({
             product: item._id,
             quantity: item.quantity,
             price: item.price,
+            name: item.name || item.title,
+            image: item.image || item.images?.[0] || ''
           }));
 
       const orderData = {
@@ -129,8 +132,16 @@ console.log("customConfig",customConfig)
         shippingAddress: { address, city, postalCode, country },
         paymentMethod: selectedPaymentMethod,
         isCustomOrder: isCustomOrder,
-        notes: isCustomOrder ? 'Custom RO system order' : ''
+        notes: isCustomOrder ? 'Custom RO system order' : '',
+        status: 'pending',
+        createdAt: new Date().toISOString()
       };
+
+      // Dispatch to Redux store immediately
+      dispatch({
+        type: 'orders/placeOrder',
+        payload: orderData
+      });
 
       const res = await fetch("/api/customer/placeorder", {
         method: "POST",
@@ -139,18 +150,40 @@ console.log("customConfig",customConfig)
       });
       const data = await res.json();
       if (data.success) {
+        // Update Redux store with server response data
+        if (data.data) {
+          dispatch({
+            type: 'orders/updateOrderStatus',
+            payload: {
+              id: orderData.orderId,
+              status: 'confirmed',
+              ...data.data
+            }
+          });
+        }
+        
         toast.success("Order placed successfully!");
         setOrderPlaced(true);
-        setPlacedOrderData(data.data);
+        setPlacedOrderData(data.data || orderData);
+        
         // Clear localStorage for custom orders
         if (isCustomOrder) {
           localStorage.removeItem('custom-ro-config');
         }
         // Redirect to order confirmation or success page
         setTimeout(() => {
-          router.push(`/customer/orderhistory?orderId=${data.data.orderId}`);
+          router.push(`/dashboard`);
         }, 2000);
       } else {
+        // Update Redux store with failed status
+        dispatch({
+          type: 'orders/updateOrderStatus',
+          payload: {
+            id: orderData.orderId,
+            status: 'failed',
+            error: data.message || 'Failed to place order'
+          }
+        });
         toast.error(data.message || "Failed to place order");
       }
     } catch (err) {
@@ -360,7 +393,7 @@ console.log("customConfig",customConfig)
                     }
                     // Redirect to order confirmation
                     setTimeout(() => {
-                      router.push(`/customer/orderhistory?orderId=${paymentData.orderId}`);
+                      router.push(`/dashboard`);
                     }, 2000);
                   }}
                   onPaymentError={(error) => {

@@ -11,13 +11,11 @@ export default function OrderHistory() {
   
   const { orders } = useSelector((state) => state.order);
   const user = useSelector((state) => state.auth.user);
-
   // Filter orders for the logged-in user
   const userOrders = useMemo(() => {
-    if (!user?._id) return [];
-    return orders.filter(order => order.user && order.user._id === user._id);
+    if (!user?.id) return [];
+    return orders.filter(order => order.user && order.user._id === user.id);
   }, [orders, user]);
-  console.log("orders",orders)
  
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [trackOrder, setTrackOrder] = useState(null);

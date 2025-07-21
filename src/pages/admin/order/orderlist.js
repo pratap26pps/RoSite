@@ -12,8 +12,9 @@ export default function OrderManagement() {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
 
+
   // Map redux orders to table format
-  const orders = useMemo(() => {
+  const allOrders = useMemo(() => {
     return reduxOrders.map(order => {
       const customer = order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() : '';
       const productNames = order.items && order.items.length > 0 ? order.items.map(item => item.product?.name || '').join(', ') : '';
@@ -33,6 +34,7 @@ export default function OrderManagement() {
       };
     });
   }, [reduxOrders]);
+  console.log("All Orders:",allOrders);
   
   const [viewOrder, setViewOrder] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
@@ -289,7 +291,7 @@ export default function OrderManagement() {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {orders.map(order => (
+              {allOrders.map(order => (
                 <OrderRow key={order.id} order={order} />
               ))}
             </tbody>

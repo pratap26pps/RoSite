@@ -1,7 +1,14 @@
  import { createSlice } from "@reduxjs/toolkit";
 
+// Load orders from localStorage if available
+const loadOrdersFromLocalStorage = () => {
+  if (typeof window === 'undefined') return [];
+  const savedOrders = localStorage.getItem("user-orders");
+  return savedOrders ? JSON.parse(savedOrders) : [];
+};
+
 const initialState = {
-  orders: [],
+  orders: loadOrdersFromLocalStorage(),
 };
 
 const orderSlice = createSlice({
@@ -9,24 +16,59 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     placeOrder(state, action) {
-      const newOrder = {
-        id: Date.now(),   
-        items: action.payload.items,
-        total: action.payload.total,
-        status: "Pending",  
-        createdAt: new Date().toISOString(),
-      };
-      state.orders.push(newOrder);
-     
-      localStorage.setItem("user-orders", JSON.stringify(state.orders));
+      const existingOrderIndex = state.orders.findIndex(
+        order => order.orderId === action.payload.orderId
+      );
+
+      if (existingOrderIndex >= 0) {
+        // Update existing order
+        state.orders[existingOrderIndex] = {
+          ...state.orders[existingOrderIndex],
+          ...action.payload,
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        // Add new order
+        const newOrder = {
+          ...action.payload,
+          status: action.payload.status || "pending",
+          createdAt: action.payload.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        state.orders.unshift(newOrder); // Add to beginning of array
+      }
+      
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("user-orders", JSON.stringify(state.orders));
+      }
     },
+    
     updateOrderStatus(state, action) {
-      const { id, status } = action.payload;
-      const order = state.orders.find((o) => o.id === id);
-      if (order) order.status = status;
+      const { orderId, status, ...updates } = action.payload;
+      const orderIndex = state.orders.findIndex(o => o.orderId === orderId || o.id === orderId);
+      
+      if (orderIndex >= 0) {
+        state.orders[orderIndex] = {
+          ...state.orders[orderIndex],
+          status,
+          ...updates,
+          updatedAt: new Date().toISOString()
+        };
+        
+        // Save to localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("user-orders", JSON.stringify(state.orders));
+        }
+      }
     },
+    
     setOrders(state, action) {
       state.orders = action.payload;
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("user-orders", JSON.stringify(state.orders));
+      }
     },
   },
 });
